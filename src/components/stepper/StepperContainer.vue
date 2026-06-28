@@ -1,15 +1,9 @@
 <template>
   <div>
     <div class="stepper-header">
-      <div :class="['step-indicator', { active: currentStep === 1 }]">
-        <span class="material-icons">touch_app</span> 1. Selección
-      </div>
-      <div :class="['step-indicator', { active: currentStep === 2 }]">
-        <span class="material-icons">import_export</span> 2. Exportación
-      </div>
-      <div :class="['step-indicator', { active: currentStep === 3 }]">
-        <span class="material-icons">fact_check</span> 3. Revisión
-      </div>
+      <div :class="['step-indicator', { active: currentStep === 1 }]"><span class="material-icons">touch_app</span> 1. Selección</div>
+      <div :class="['step-indicator', { active: currentStep === 2 }]"><span class="material-icons">import_export</span> 2. Exportación</div>
+      <div :class="['step-indicator', { active: currentStep === 3 }]"><span class="material-icons">fact_check</span> 3. Revisión</div>
     </div>
 
     <div class="stepper-content">
@@ -19,22 +13,12 @@
     </div>
 
     <div class="stepper-actions">
-      <button class="btn" :disabled="currentStep === 1" @click="currentStep--">
-        <span class="material-icons btn-icon">arrow_back</span> Atrás
-      </button>
-      <button class="btn" v-if="currentStep < 3" @click="currentStep++">
-        Siguiente <span class="material-icons btn-icon">arrow_forward</span>
-      </button>
-      <button class="btn" style="background: linear-gradient(135deg, #4caf50, #2e7d32);" v-if="currentStep === 3" @click="finishStepper">
-        <span class="material-icons btn-icon">done</span> Finalizar Stepper
-      </button>
+      <button class="btn" :disabled="currentStep === 1" @click="currentStep--"><span class="material-icons btn-icon">arrow_back</span> Atrás</button>
+      <button class="btn" v-if="currentStep < 3" @click="currentStep++">Siguiente <span class="material-icons btn-icon">arrow_forward</span></button>
+      <button class="btn" style="background: linear-gradient(135deg, #4caf50, #2e7d32);" v-if="currentStep === 3" @click="finishStepper"><span class="material-icons btn-icon">done</span> Finalizar Stepper</button>
     </div>
 
-    <SummaryModal 
-      :show="showSummary" 
-      :summaryData="{ total: gridData.length, selected: selectedItems.length }" 
-      @close="showSummary = false" 
-    />
+    <SummaryModal :show="showSummary" :summaryData="{ total: gridData.length, selected: selectedItems.length }" @close="showSummary = false" />
   </div>
 </template>
 
@@ -56,7 +40,5 @@ const gridData = ref(Array.from({ length: 35 }).map((_, i) => ({
   ...Object.fromEntries(gridColumns.slice(1).map(c => [c, `Data ${i+1}-${c.slice(-1)}`]))
 })))
 
-const finishStepper = () => {
-  showSummary.value = true
-}
+const finishStepper = () => { showSummary.value = true }
 </script>

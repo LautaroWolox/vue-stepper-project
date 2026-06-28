@@ -21,14 +21,13 @@ const emit = defineEmits(['submenu-click'])
 const isMobileOpen = ref(false)
 
 const toggleMobileSubmenu = () => {
-  // Solo aplica si estamos en pantalla pequeña (donde no funciona el :hover igual que en PC)
   if (window.innerWidth <= 1100) {
     isMobileOpen.value = !isMobileOpen.value
   }
 }
 
 const handleSubClick = (sub) => {
-  isMobileOpen.value = false // Cierra el menú al hacer click
+  isMobileOpen.value = false
   emit('submenu-click', sub)
 }
 </script>

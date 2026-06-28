@@ -9,45 +9,30 @@
 
     <div :class="['grid-container', { fullscreen: isFullscreen }]">
       <div v-if="isFullscreen" style="margin-bottom: 20px; text-align: right;">
-        <button class="btn btn-danger" @click="toggleFullscreen">
-          <span class="material-icons btn-icon">close</span> Cerrar Vista
-        </button>
+        <button class="btn btn-danger" @click="toggleFullscreen"><span class="material-icons btn-icon">close</span> Cerrar Vista</button>
       </div>
       
       <table>
         <thead>
           <tr>
-            <th style="width: 50px; text-align: center;">
-              <input type="checkbox" @change="toggleSelectAllPage" :checked="isAllPageSelected" title="Seleccionar página actual" />
-            </th>
+            <th style="width: 50px; text-align: center;"><input type="checkbox" @change="toggleSelectAllPage" :checked="isAllPageSelected" /></th>
             <th v-for="col in columns" :key="col">{{ col }}</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="row in paginatedData" :key="row.ID" :class="{ disabled: row.disabled }">
-            <td style="text-align: center;">
-              <input type="checkbox" :value="row" v-model="localSelected" :disabled="row.disabled" @change="emitSelection" />
-            </td>
-            <td v-for="col in columns" :key="col">
-              <span v-if="row.disabled && col === columns[0]" class="material-icons" style="font-size:14px; color:#b0bec5; margin-right:5px;">block</span>
-              {{ row[col] }}
-            </td>
+            <td style="text-align: center;"><input type="checkbox" :value="row" v-model="localSelected" :disabled="row.disabled" @change="emitSelection" /></td>
+            <td v-for="col in columns" :key="col"><span v-if="row.disabled && col === columns[0]" class="material-icons" style="font-size:14px; color:#b0bec5; margin-right:5px;">block</span>{{ row[col] }}</td>
           </tr>
         </tbody>
       </table>
 
       <div class="pagination">
-        <div>
-          Seleccionados en total: <strong>{{ localSelected.length }}</strong>
-        </div>
+        <div>Seleccionados en total: <strong>{{ localSelected.length }}</strong></div>
         <div style="display:flex; gap:10px; align-items:center;">
-          <button class="btn" @click="prevPage" :disabled="currentPage === 1">
-            <span class="material-icons btn-icon">chevron_left</span> Anterior
-          </button>
+          <button class="btn" @click="prevPage" :disabled="currentPage === 1"><span class="material-icons btn-icon">chevron_left</span> Anterior</button>
           <span style="font-weight:500;">Página {{ currentPage }} de {{ totalPages }}</span>
-          <button class="btn" @click="nextPage" :disabled="currentPage === totalPages">
-            Siguiente <span class="material-icons btn-icon">chevron_right</span>
-          </button>
+          <button class="btn" @click="nextPage" :disabled="currentPage === totalPages">Siguiente <span class="material-icons btn-icon">chevron_right</span></button>
         </div>
       </div>
     </div>
@@ -60,11 +45,7 @@
 import { ref, computed, watch } from 'vue'
 import FullScreenLoader from '../loading/FullScreenLoader.vue'
 
-const props = defineProps({
-  data: Array,
-  columns: Array,
-  modelValue: Array
-})
+const props = defineProps({ data: Array, columns: Array, modelValue: Array })
 const emit = defineEmits(['update:modelValue'])
 
 const localSelected = ref([...props.modelValue])
@@ -89,30 +70,21 @@ const toggleSelectAllPage = (e) => {
   const checked = e.target.checked
   validPageItems.value.forEach(item => {
     const exists = localSelected.value.findIndex(sel => sel.ID === item.ID)
-    if (checked && exists === -1) {
-      localSelected.value.push(item)
-    } else if (!checked && exists !== -1) {
-      localSelected.value.splice(exists, 1)
-    }
+    if (checked && exists === -1) localSelected.value.push(item)
+    else if (!checked && exists !== -1) localSelected.value.splice(exists, 1)
   })
   emitSelection()
 }
 
 const emitSelection = () => emit('update:modelValue', localSelected.value)
-
 const nextPage = () => { if (currentPage.value < totalPages.value) currentPage.value++ }
 const prevPage = () => { if (currentPage.value > 1) currentPage.value-- }
 
 const toggleFullscreen = () => {
   if (!isFullscreen.value) {
     isLoadingFullscreen.value = true
-    setTimeout(() => {
-      isLoadingFullscreen.value = false
-      isFullscreen.value = true
-    }, 2000) 
-  } else {
-    isFullscreen.value = false
-  }
+    setTimeout(() => { isLoadingFullscreen.value = false; isFullscreen.value = true }, 2000) 
+  } else { isFullscreen.value = false }
 }
 
 watch(() => props.modelValue, (newVal) => { localSelected.value = [...newVal] }, { deep: true })

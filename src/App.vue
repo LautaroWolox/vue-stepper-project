@@ -25,4 +25,5 @@ const { isAuthenticated } = useAuth()
 @import './assets/css/search-accordion.css';
 @import './assets/css/step-two.css';
 @import './assets/css/step-three.css';
+@import './assets/css/materiales.css';
 </style>

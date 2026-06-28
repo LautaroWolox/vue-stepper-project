@@ -1,134 +1,24 @@
-/* Contenedor principal del menú */
-.app-menu { 
-  background: #00bcd4; /* Color cyan de la imagen */
-  color: white; 
-  display: flex; 
-  justify-content: space-between; 
-  align-items: center;
-  padding: 0 15px; 
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-  position: relative;
-  z-index: 2000;
-}
-
-/* Agrupación de los ítems de navegación */
-.nav-items {
-  display: flex;
-  flex-wrap: wrap;
-  flex: 1;
-}
-
-/* Ítem individual */
-.menu-item { 
-  position: relative; 
-  padding: 15px 12px; 
-  cursor: pointer; 
-  display: flex; 
-  align-items: center; 
-  gap: 5px; 
-  font-size: 13px;
-  font-weight: 500;
-  transition: background 0.3s; 
-}
+.app-menu { background: #00bcd4; color: white; display: flex; justify-content: space-between; align-items: center; padding: 0 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); position: relative; z-index: 2000; }
+.nav-items { display: flex; flex-wrap: wrap; flex: 1; }
+.menu-item { position: relative; padding: 15px 12px; cursor: pointer; display: flex; align-items: center; gap: 5px; font-size: 13px; font-weight: 500; transition: background 0.3s; }
 .menu-item:hover { background: #0097a7; }
-
-/* Submenús */
-.submenu { 
-  position: absolute; 
-  top: 100%; 
-  left: 0; 
-  background: #0097a7; 
-  min-width: 200px; 
-  display: none; 
-  box-shadow: 0 4px 10px rgba(0,0,0,0.2); 
-  border-radius: 0 0 6px 6px; 
-  overflow: hidden; 
-}
+.submenu { position: absolute; top: 100%; left: 0; background: #0097a7; min-width: 200px; display: none; box-shadow: 0 4px 10px rgba(0,0,0,0.2); border-radius: 0 0 6px 6px; overflow: hidden; }
 .menu-item:hover .submenu { display: block; animation: fadeIn 0.2s ease; }
-.submenu div { 
-  padding: 12px 15px; 
-  border-bottom: 1px solid #00838f; 
-  display: flex; 
-  align-items: center; 
-  gap: 10px; 
-  transition: background 0.2s; 
-}
+.submenu div { padding: 12px 15px; border-bottom: 1px solid #00838f; display: flex; align-items: center; gap: 10px; transition: background 0.2s; }
 .submenu div:hover { background: #006064; }
-
-/* Perfil de Usuario (Lado derecho) */
-.user-profile {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 15px;
-  cursor: pointer;
-  position: relative;
-  font-weight: 500;
-  font-size: 14px;
-}
+.user-profile { display: flex; align-items: center; gap: 8px; padding: 10px 15px; cursor: pointer; position: relative; font-weight: 500; font-size: 14px; }
 .user-profile:hover { background: #0097a7; }
-.user-submenu {
-  position: absolute;
-  top: 100%;
-  right: 0;
-  background: #263238;
-  min-width: 150px;
-  display: none;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-  border-radius: 0 0 6px 6px;
-}
+.user-submenu { position: absolute; top: 100%; right: 0; background: #263238; min-width: 150px; display: none; box-shadow: 0 4px 10px rgba(0,0,0,0.2); border-radius: 0 0 6px 6px; }
 .user-profile:hover .user-submenu { display: block; }
-.user-submenu div {
-  padding: 12px 15px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  color: #ff5252;
-}
+.user-submenu div { padding: 12px 15px; display: flex; align-items: center; gap: 10px; color: #ff5252; }
 .user-submenu div:hover { background: #37474f; }
+.mobile-toggle { display: none; cursor: pointer; padding: 15px; }
 
-/* Botón Hamburguesa para Móviles */
-.mobile-toggle {
-  display: none;
-  cursor: pointer;
-  padding: 15px;
-}
-
-/* =========================================
-   RESPONSIVE DESIGN (Tablets y Celulares)
-   ========================================= */
 @media (max-width: 1100px) {
   .mobile-toggle { display: block; }
-  
-  .nav-items {
-    display: none; /* Oculto por defecto en móvil */
-    flex-direction: column;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    width: 100%;
-    background: #00bcd4;
-    max-height: 80vh;
-    overflow-y: auto;
-    box-shadow: 0 10px 15px rgba(0,0,0,0.2);
-  }
-  
+  .nav-items { display: none; flex-direction: column; position: absolute; top: 100%; left: 0; width: 100%; background: #00bcd4; max-height: 80vh; overflow-y: auto; box-shadow: 0 10px 15px rgba(0,0,0,0.2); }
   .nav-items.is-open { display: flex; }
-  
-  .menu-item {
-    padding: 15px 20px;
-    border-bottom: 1px solid #0097a7;
-    flex-wrap: wrap;
-  }
-  
-  /* En móvil, el submenú empuja el contenido hacia abajo en vez de flotar */
-  .submenu {
-    position: relative;
-    width: 100%;
-    box-shadow: none;
-    border-radius: 0;
-    background: #00838f;
-  }
+  .menu-item { padding: 15px 20px; border-bottom: 1px solid #0097a7; flex-wrap: wrap; }
+  .submenu { position: relative; width: 100%; box-shadow: none; border-radius: 0; background: #00838f; }
 }
-
 @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }

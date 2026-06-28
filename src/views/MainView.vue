@@ -1,15 +1,17 @@
 <template>
   <div class="main-layout">
-    <AppMenu @load-module="moduleLoaded = true" />
+    <AppMenu @load-module="loadModule" />
     
-    <div class="content-area" style="padding: 30px; max-width: 1400px; margin: 0 auto;">
-      <div v-if="!moduleLoaded" style="text-align: center; margin-top: 50px; color: #546e7a;">
+    <div class="content-area" style="padding: 20px; max-width: 100%; margin: 0 auto;">
+      <div v-if="activeModule === 'none'" style="text-align: center; margin-top: 50px; color: #90a4ae;">
         <span class="material-icons" style="font-size: 80px; opacity: 0.5;">widgets</span>
-        <h1>Bienvenido al Field Manager</h1>
-        <p>Por favor, despliega el menú "Gestión Principal" y haz clic en "Cargar Módulo Búsqueda".</p>
+        <h2>Bienvenido al Field Manager</h2>
+        <p>Selecciona un módulo desde el menú superior.</p>
       </div>
       
-      <SearchAccordion v-if="moduleLoaded" />
+      <SearchAccordion v-if="activeModule === 'search-classic'" />
+      <GestionMateriales v-if="activeModule === 'materiales-ot'" title="Gestionar Materiales en OTs" type="OT" />
+      <GestionMateriales v-if="activeModule === 'materiales-descargados'" title="Materiales Descargados" type="DESC" />
     </div>
   </div>
 </template>
@@ -18,6 +20,11 @@
 import { ref } from 'vue'
 import AppMenu from '../components/menu/AppMenu.vue'
 import SearchAccordion from '../components/accordion/SearchAccordion.vue'
+import GestionMateriales from '../components/materiales/GestionMateriales.vue'
 
-const moduleLoaded = ref(false)
+const activeModule = ref('none')
+
+const loadModule = (action) => {
+  activeModule.value = action
+}
 </script>
