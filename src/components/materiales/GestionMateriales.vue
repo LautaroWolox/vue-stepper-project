@@ -1,6 +1,5 @@
 <template>
   <div>
-    <!-- Acordeón 1: Formulario de Búsqueda -->
     <div class="soft-accordion">
       <div class="soft-accordion-header" @click="openFilters = !openFilters">
         <span><span class="material-icons" style="vertical-align: middle;">filter_alt</span> FILTROS DE BÚSQUEDA - {{ title }}</span>
@@ -12,18 +11,18 @@
           <div class="form-group">
             <label>Región *</label>
             <select class="form-control" :class="{'input-error': errorRegion}" v-model="form.region">
-              <option value="">None selected</option>
+              <option value=""></option>
               <option value="AMBA">AMBA</option>
               <option value="CEN">Centro</option>
               <option value="NOR">Norte</option>
             </select>
-            <span class="error-text" v-if="errorRegion">Este campo es obligatorio.</span>
+            <span class="error-text" v-if="errorRegion">Debe seleccionar una Región para buscar.</span>
           </div>
           
           <div class="form-group">
             <label>Sub Región</label>
             <select class="form-control" v-model="form.subRegion">
-              <option value="">None selected</option>
+              <option value=""></option>
               <option value="CABA">CABA</option>
               <option value="GBA">GBA</option>
             </select>
@@ -32,7 +31,7 @@
           <div class="form-group">
             <label>Centro Logístico</label>
             <select class="form-control" v-model="form.centro">
-              <option value="">None selected</option>
+              <option value=""></option>
               <option value="CL1">Logística Norte</option>
             </select>
           </div>
@@ -40,7 +39,7 @@
           <div class="form-group">
             <label>Almacén</label>
             <select class="form-control" v-model="form.almacen">
-              <option value="">None selected</option>
+              <option value=""></option>
               <option value="A1">Almacén Principal</option>
             </select>
           </div>
@@ -57,118 +56,107 @@
 
           <div class="form-group">
             <label>Fecha Ult. Modif. Desde</label>
-            <input type="date" class="form-control" v-model="form.fechaDesde" :disabled="!canUseDates">
+            <input type="date" class="form-control" v-model="form.fechaDesde">
           </div>
 
           <div class="form-group">
             <label>Fecha Ult. Modif. Hasta</label>
-            <input type="date" class="form-control" v-model="form.fechaHasta" :disabled="!canUseDates">
+            <input type="date" class="form-control" v-model="form.fechaHasta" :disabled="!form.fechaDesde">
           </div>
         </div>
         
         <div style="text-align: center; margin-top: 10px;">
-          <button class="btn" @click="handleSearch" style="margin-right: 10px;">BUSCAR</button>
-          <button class="btn btn-danger" @click="resetForm">LIMPIAR</button>
+          <button class="btn" @click="handleSearch" style="margin-right: 10px;"><span class="material-icons btn-icon">search</span> BUSCAR</button>
+          <button class="btn btn-danger" @click="resetForm"><span class="material-icons btn-icon">clear_all</span> LIMPIAR</button>
         </div>
       </div>
     </div>
 
-    <!-- Acordeón 2: Stepper Completo -->
     <div class="soft-accordion" v-if="hasSearched">
       <div class="soft-accordion-header" @click="openResults = !openResults">
-        <span style="text-transform: uppercase;"><span class="material-icons" style="vertical-align: middle;">list_alt</span> RESULTADOS Y GESTIÓN - {{ title }}</span>
+        <span style="text-transform: uppercase;"><span class="material-icons" style="vertical-align: middle;">list_alt</span> GESTIÓN EN LOTE - {{ title }}</span>
         <span class="material-icons">{{ openResults ? 'remove' : 'add' }}</span>
       </div>
       
       <div class="soft-accordion-content" v-show="openResults">
-        <!-- HEADER DE LOS 3 PASOS -->
         <div class="stepper-header" style="margin-bottom: 15px;">
           <div :class="['step-indicator', { active: currentStep === 1 }]"><span class="material-icons">touch_app</span> 1. Selección</div>
-          <div :class="['step-indicator', { active: currentStep === 2 }]"><span class="material-icons">import_export</span> 2. Exportación</div>
-          <div :class="['step-indicator', { active: currentStep === 3 }]"><span class="material-icons">fact_check</span> 3. Revisión</div>
+          <div :class="['step-indicator', { active: currentStep === 2 }]"><span class="material-icons">fact_check</span> 2. Revisión</div>
+          <div :class="['step-indicator', { active: currentStep === 3 }]"><span class="material-icons">import_export</span> 3. Exportación</div>
         </div>
 
-        <!-- PASO 1: Selección y Filtro -->
         <div v-show="currentStep === 1">
           <AdvancedGrid 
             :data="mockData" 
             :columns="gridColumns" 
             v-model="selectedRows"
-            @update:visibleCols="updateVisibleColumns"
-            @cell-click="handleCellClick"
-            @add-material="triggerRominaError"
+            @update:visibleCols="updateVisibleCols"
+            @edit-ot="openEditPopup"
           />
           <div style="text-align: right; margin-top: 20px;">
-            <button class="btn" @click="currentStep = 2" :disabled="selectedRows.length === 0">
-              Siguiente <span class="material-icons btn-icon">arrow_forward</span>
-            </button>
+            <button class="btn" @click="currentStep = 2" :disabled="selectedRows.length === 0">Siguiente a Revisión <span class="material-icons btn-icon">arrow_forward</span></button>
           </div>
         </div>
 
-        <!-- PASO 2: Exportación -->
         <div v-if="currentStep === 2">
-          <h3 style="color: #00838f;">Registros listos para exportar</h3>
-          <p>Se exportarán <strong>{{ selectedRows.length }}</strong> registros seleccionados.</p>
-          <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: space-between;">
-            <button class="btn" @click="currentStep = 1"><span class="material-icons btn-icon">arrow_back</span> Atrás</button>
-            <div>
-              <button class="btn" style="background: linear-gradient(135deg, #4caf50, #2e7d32); margin-right: 10px;" @click="exportExcel">
-                <span class="material-icons btn-icon">table_view</span> Descargar Excel
-              </button>
-              <button class="btn" @click="currentStep = 3">Siguiente <span class="material-icons btn-icon">arrow_forward</span></button>
+          <h3 style="color: #00838f;">Revisión de Gestión</h3>
+          
+          <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+            <div style="flex: 1; min-width: 300px; background: #f8f9fa; padding: 20px; border-radius: 8px; border: 1px solid #cfd8dc; position: relative;">
+              <h4 style="margin-top: 0; color: #455a64;">Para Exportación</h4>
+              <p style="font-size: 24px; font-weight: bold; color: #00bcd4; margin: 10px 0;">{{ selectedRows.length }}</p>
+              
+              <button class="btn btn-danger" style="padding: 2px 8px; font-size: 11px;" @click="openExportDetailPopup($event)">Ver Detalle</button>
+              
+              <p style="font-size: 13px; color: #90a4ae; margin-top: 10px;">OTs marcadas en la grilla.</p>
+            </div>
+            
+            <div style="flex: 1; min-width: 300px; background: #f0fbfc; padding: 20px; border-radius: 8px; border: 1px solid #b2ebf2;">
+              <h4 style="margin-top: 0; color: #00838f;">OTs Modificadas / Validadas</h4>
+              <p style="font-size: 24px; font-weight: bold; color: #00bcd4; margin: 10px 0;">{{ modifiedOts.length }}</p>
+              
+              <ul style="padding-left: 20px; font-size: 13px;">
+                <li v-for="(mod, index) in modifiedOts" :key="index" style="margin-bottom: 8px;">
+                  OT: <strong>{{ mod.ot.nroot }}</strong> 
+                  <button class="btn btn-danger" style="padding: 2px 8px; font-size: 11px; margin-left: 10px;" @click="openModPopup($event, mod)">Ver Detalle</button>
+                </li>
+              </ul>
+              <p v-if="modifiedOts.length === 0" style="font-size: 13px; color: #90a4ae;">No se han validado cambios en ninguna OT.</p>
             </div>
           </div>
+
+          <div style="margin-top: 25px; display: flex; justify-content: space-between;">
+            <button class="btn" @click="currentStep = 1"><span class="material-icons btn-icon">arrow_back</span> Atrás</button>
+            <button class="btn" @click="currentStep = 3">Siguiente a Exportación <span class="material-icons btn-icon">arrow_forward</span></button>
+          </div>
         </div>
 
-        <!-- PASO 3: Revisión Final (Grilla Solo Lectura) -->
         <div v-if="currentStep === 3">
-          <h3 style="color: #00838f;"><span class="material-icons">preview</span> Revisión Final</h3>
-          <p style="color: #546e7a;">Haz clic en cualquier celda para cargar sus datos en el sistema central.</p>
+          <h3 style="color: #00838f;"><span class="material-icons">file_download</span> Finalizar y Exportar</h3>
+          <p>Al descargar el Excel se exportarán las <strong>{{ currentVisibleCols.length }}</strong> columnas visibles de los <strong>{{ selectedRows.length }}</strong> registros.</p>
           
-          <div class="table-responsive">
-            <table class="advanced-grid">
-              <thead>
-                <tr><th v-for="col in currentVisibleCols" :key="col.field">{{ col.label }}</th></tr>
-              </thead>
-              <tbody>
-                <tr v-for="row in selectedRows" :key="row.id">
-                  <td 
-                    v-for="col in currentVisibleCols" 
-                    :key="col.field" 
-                    class="clickable-cell"
-                    style="cursor: pointer;"
-                    @click="handleCellClick($event, row[col.field])"
-                  >
-                    {{ row[col.field] }}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <div style="margin-top: 20px; display: flex; justify-content: space-between;">
+          <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: space-between;">
             <button class="btn" @click="currentStep = 2"><span class="material-icons btn-icon">arrow_back</span> Atrás</button>
-            <button class="btn" style="background: linear-gradient(135deg, #00acc1, #00838f);" @click="resetForm">
-              <span class="material-icons btn-icon">done_all</span> Finalizar Stepper
+            <button class="btn" style="background: linear-gradient(135deg, #4caf50, #2e7d32);" @click="exportExcel">
+              <span class="material-icons btn-icon">table_view</span> Descargar CSV
             </button>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Componente del Popup (Tipito Tipeando) -->
-    <FloatingPopup :show="popup.show" :position="popup.pos" :fieldData="popup.data" @accept="popup.show = false" @cancel="popup.show = false" />
-    
-    <!-- Modal de Error (Romina Castro) -->
-    <ErrorModal :show="showError" @close="showError = false" />
+    <FloatingPopup :show="popup.show" :position="popup.pos" :otData="popup.data" @accept="handleSaveOt" @cancel="popup.show = false" />
+    <ModifiedPopup :show="modPopup.show" :position="modPopup.pos" :data="modPopup.data" @close="modPopup.show = false" />
+    <ExportDetailPopup :show="exportPopup.show" :position="exportPopup.pos" :data="exportPopup.data" @close="exportPopup.show = false" />
   </div>
 </template>
 
 <script setup>
-import { ref, computed, reactive } from 'vue'
+import { ref, reactive } from 'vue'
 import AdvancedGrid from './AdvancedGrid.vue'
 import FloatingPopup from '../popup/FloatingPopup.vue'
-import ErrorModal from '../modal/ErrorModal.vue'
+import ModifiedPopup from '../popup/ModifiedPopup.vue'
+import ExportDetailPopup from '../popup/ExportDetailPopup.vue'
 
 const props = defineProps(['title', 'type'])
 
@@ -179,15 +167,15 @@ const currentStep = ref(1)
 
 const form = reactive({ region: '', subRegion: '', centro: '', almacen: '', tecnico: '', ot: '', fechaDesde: '', fechaHasta: '' })
 const errorRegion = ref(false)
+
 const selectedRows = ref([])
 const currentVisibleCols = ref([])
+const modifiedOts = ref([]) 
 
-// Estados de Popups y Errores
+// Popups
 const popup = reactive({ show: false, pos: { x: 0, y: 0 }, data: null })
-const showError = ref(false)
-
-// Lógica para bloquear fechas
-const canUseDates = computed(() => { return form.region && form.subRegion && form.centro && form.almacen && form.ot })
+const modPopup = reactive({ show: false, pos: { x: 0, y: 0 }, data: null })
+const exportPopup = reactive({ show: false, pos: { x: 0, y: 0 }, data: [] })
 
 const handleSearch = () => {
   errorRegion.value = false
@@ -199,29 +187,43 @@ const handleSearch = () => {
 
 const resetForm = () => {
   Object.keys(form).forEach(k => form[k] = '')
-  errorRegion.value = false
-  hasSearched.value = false
-  selectedRows.value = []
+  errorRegion.value = false; hasSearched.value = false
+  selectedRows.value = []; modifiedOts.value = []
 }
 
-// Abrir el Popup del Tipito Tipeando
-const handleCellClick = (event, value) => {
-  let x = event.clientX + 15
-  let y = event.clientY + 15
-  if (x + 300 > window.innerWidth) x = window.innerWidth - 320
-  if (y + 200 > window.innerHeight) y = window.innerHeight - 220
-  popup.pos.x = x
-  popup.pos.y = y
-  popup.data = value
+// Abrir Edición (Paso 1)
+const openEditPopup = (event, row) => {
+  popup.pos.x = event.clientX + 10; popup.pos.y = event.clientY + 10
+  if (popup.pos.x + 550 > window.innerWidth) popup.pos.x = window.innerWidth - 560
+  if (popup.pos.y + 400 > window.innerHeight) popup.pos.y = window.innerHeight - 420
+  popup.data = row
   popup.show = true
 }
 
-// Abrir Modal de Error Romina Castro
-const triggerRominaError = () => {
-  showError.value = true
+const handleSaveOt = (modifiedData) => {
+  modifiedOts.value.push(modifiedData)
+  popup.show = false
 }
 
-const updateVisibleColumns = (cols) => { currentVisibleCols.value = cols }
+// Abrir Revisión Modificados (Paso 2)
+const openModPopup = (event, modData) => {
+  modPopup.pos.x = event.clientX + 10; modPopup.pos.y = event.clientY + 10
+  if (modPopup.pos.x + 450 > window.innerWidth) modPopup.pos.x = window.innerWidth - 460
+  if (modPopup.pos.y + 300 > window.innerHeight) modPopup.pos.y = window.innerHeight - 320
+  modPopup.data = modData
+  modPopup.show = true
+}
+
+// Abrir Detalles de Exportación (Paso 2)
+const openExportDetailPopup = (event) => {
+  exportPopup.pos.x = event.clientX + 10; exportPopup.pos.y = event.clientY + 10
+  if (exportPopup.pos.x + 500 > window.innerWidth) exportPopup.pos.x = window.innerWidth - 510
+  if (exportPopup.pos.y + 400 > window.innerHeight) exportPopup.pos.y = window.innerHeight - 420
+  exportPopup.data = selectedRows.value
+  exportPopup.show = true
+}
+
+const updateVisibleCols = (cols) => { currentVisibleCols.value = cols }
 
 const exportExcel = () => {
   if (!selectedRows.value.length || !currentVisibleCols.value.length) return
@@ -231,9 +233,7 @@ const exportExcel = () => {
   const link = document.createElement("a")
   link.setAttribute("href", encodeURI(csvContent))
   link.setAttribute("download", `Export_${props.type}.csv`)
-  document.body.appendChild(link)
-  link.click()
-  document.body.removeChild(link)
+  document.body.appendChild(link); link.click(); document.body.removeChild(link)
 }
 
 const gridColumns = ref(

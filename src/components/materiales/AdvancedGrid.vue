@@ -15,12 +15,16 @@
       <table class="advanced-grid">
         <thead>
           <tr>
-            <th style="width: 40px; text-align: center;">
+            <th style="width: 40px; text-align: center; vertical-align: middle;">
               <input type="checkbox" @change="toggleSelectAllPage" :checked="isAllPageSelected" title="Seleccionar página actual">
             </th>
-            <th v-for="col in visibleCols" :key="col.field">{{ col.label }}</th>
+            <th style="width: 80px; text-align: center;">ACCIÓN</th>
+            <th v-for="col in visibleCols" :key="col.field">
+              <div class="resizable-header">{{ col.label }}</div>
+            </th>
           </tr>
           <tr class="filter-row">
+            <th></th>
             <th></th>
             <th v-for="col in visibleCols" :key="'filter-'+col.field">
               <input type="text" class="col-filter-input" v-model="filters[col.field]" placeholder="Filtrar..." @input="currentPage = 1">
@@ -32,21 +36,28 @@
             <td style="text-align: center;">
               <input type="checkbox" :value="row" v-model="localSelected" @change="emitSelection">
             </td>
+            <td style="text-align: center;">
+              <button class="btn btn-danger" style="padding: 4px 8px;" @click="$emit('edit-ot', $event, row)" title="Ver Detalle OT">
+                <span class="material-icons" style="font-size: 16px;">edit</span>
+              </button>
+            </td>
             <td v-for="col in visibleCols" :key="col.field">{{ row[col.field] }}</td>
           </tr>
           <tr v-if="paginatedData.length === 0">
-            <td :colspan="visibleCols.length + 1" style="text-align: center; padding: 20px;">No hay resultados con estos filtros.</td>
+            <td :colspan="visibleCols.length + 2" style="text-align: center; padding: 20px;">No hay resultados con estos filtros.</td>
           </tr>
         </tbody>
       </table>
     </div>
 
-    <div class="pagination" style="margin-top: 15px;">
-      <div>Seleccionados en total: <strong>{{ localSelected.length }}</strong></div>
-      <div style="display:flex; gap:10px; align-items:center;">
-        <button class="btn" @click="currentPage--" :disabled="currentPage === 1"><span class="material-icons">chevron_left</span></button>
-        <span>Página {{ currentPage }} de {{ totalPages || 1 }}</span>
-        <button class="btn" @click="currentPage++" :disabled="currentPage >= totalPages || totalPages === 0"><span class="material-icons">chevron_right</span></button>
+    <div class="grid-footer">
+      <div class="pagination" style="padding: 0; border: none; background: transparent; display: flex; width: 100%; justify-content: space-between; align-items: center;">
+        <div>Seleccionados: <strong>{{ localSelected.length }}</strong></div>
+        <div style="display:flex; gap:10px; align-items:center;">
+          <button class="btn" style="padding: 4px 8px;" @click="currentPage--" :disabled="currentPage === 1"><span class="material-icons">chevron_left</span></button>
+          <span>Pág {{ currentPage }} de {{ totalPages || 1 }}</span>
+          <button class="btn" style="padding: 4px 8px;" @click="currentPage++" :disabled="currentPage >= totalPages || totalPages === 0"><span class="material-icons">chevron_right</span></button>
+        </div>
       </div>
     </div>
   </div>
@@ -56,12 +67,11 @@
 import { ref, computed, watch, reactive } from 'vue'
 
 const props = defineProps(['data', 'columns', 'modelValue'])
-const emit = defineEmits(['update:modelValue', 'update:visibleCols'])
+const emit = defineEmits(['update:modelValue', 'update:visibleCols', 'edit-ot'])
 
 const cols = reactive([...props.columns])
 const filters = reactive({})
 const showColumnConfig = ref(false)
-
 const localSelected = ref([...props.modelValue])
 const currentPage = ref(1)
 const itemsPerPage = 8

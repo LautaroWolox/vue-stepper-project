@@ -1,24 +1,64 @@
-.floating-popup { position: fixed; background: white; border: 1px solid #cfd8dc; box-shadow: 0 15px 35px rgba(0,0,0,0.3); z-index: 3000; border-radius: 8px; width: 400px; display: flex; flex-direction: column; animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); overflow: hidden; }
-.floating-popup.expanded { width: 80vw !important; height: 80vh !important; top: 10vh !important; left: 10vw !important; }
+/* src/assets/css/popup.css */
+
+.floating-popup { position: fixed; background: white; border: 1px solid #cfd8dc; box-shadow: 0 15px 35px rgba(0,0,0,0.4); z-index: 3000; border-radius: 8px; width: 550px; display: flex; flex-direction: column; animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); overflow: hidden; border: 4px solid transparent; transition: border 0.3s; }
+
+/* Borde grueso que funciona como "marco" para doble clic */
+.floating-popup-frame { padding: 4px; background: #eceff1; cursor: pointer; }
+.floating-popup-frame:hover { background: #cfd8dc; }
+
+.floating-popup.expanded { width: 90vw !important; height: 90vh !important; top: 5vh !important; left: 5vw !important; }
+
 .popup-header { background: #00bcd4; color: white; padding: 10px 15px; cursor: grab; display: flex; justify-content: space-between; align-items: center; user-select: none; }
 .popup-header:active { cursor: grabbing; }
-.popup-title { display: flex; align-items: center; gap: 8px; font-weight: bold; }
+.popup-title { display: flex; align-items: center; gap: 8px; font-weight: bold; font-size: 15px; }
 .popup-controls { display: flex; gap: 10px; }
 .popup-controls .material-icons { cursor: pointer; font-size: 20px; opacity: 0.8; transition: opacity 0.2s; }
 .popup-controls .material-icons:hover { opacity: 1; }
-.popup-body { padding: 20px; flex: 1; overflow-y: auto; position: relative; }
-.popup-loader { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 180px; color: #00838f; font-weight: 500; }
-.svg-coder { width: 140px; height: 140px; margin-bottom: 10px; }
+
+.popup-body { padding: 20px; flex: 1; overflow-y: auto; background: #fafafa; position: relative; display: flex; flex-direction: column; }
+
+/* === CENTRADO Y ALTURA GARANTIZADA === */
+.popup-loader { 
+  display: flex; 
+  flex-direction: column; 
+  align-items: center; 
+  justify-content: center; 
+  min-height: 180px; /* Evita que el popup colapse y corte al tipito */
+  flex: 1;
+  background: #fafafa;
+  color: #00838f; 
+  font-weight: bold; 
+  font-size: 15px;
+}
+
+/* Tamaño súper estricto y visible para que nunca se corte */
+.svg-coder { 
+  width: 100px !important; 
+  height: auto !important; 
+  flex-shrink: 0;
+  margin-bottom: 15px; 
+  overflow: visible !important; /* Clave para que la cabeza y el monitor no se corten */
+}
+
 .screen-glow { animation: glow 1.5s infinite alternate; }
 .code-line { animation: typeCode 0.8s infinite alternate; }
-.arm-left { transform-origin: 160px 85px; animation: typeArmLeft 0.15s infinite alternate ease-in-out; }
-.arm-right { transform-origin: 140px 85px; animation: typeArmRight 0.12s infinite alternate ease-in-out; }
+
+/* Brazos hiper rápidos simulando tipeo furioso */
+.arm-left { transform-origin: 160px 85px; animation: typeArmLeft 0.05s infinite alternate ease-in-out; }
+.arm-right { transform-origin: 140px 85px; animation: typeArmRight 0.07s infinite alternate ease-in-out; }
+
 @keyframes glow { 0% { fill: #00bcd4; } 100% { fill: #0097a7; } }
 @keyframes typeCode { 0% { opacity: 0.2; transform: translateX(-2px); } 100% { opacity: 1; transform: translateX(0px); } }
-@keyframes typeArmLeft { 0% { transform: rotate(0deg); } 100% { transform: rotate(12deg); } }
-@keyframes typeArmRight { 0% { transform: rotate(0deg); } 100% { transform: rotate(18deg); } }
-.popup-grid { width: 100%; border-collapse: collapse; margin-top: 15px; }
-.popup-grid th, .popup-grid td { border: 1px solid #eceff1; padding: 8px; text-align: left; }
-.popup-grid th { background: #f8f9fa; font-weight: bold; }
-.popup-actions { padding: 15px; border-top: 1px solid #eceff1; display: flex; justify-content: flex-end; gap: 10px; background: #fafafa; }
+@keyframes typeArmLeft { 0% { transform: rotate(0deg); } 100% { transform: rotate(15deg); } }
+@keyframes typeArmRight { 0% { transform: rotate(0deg); } 100% { transform: rotate(20deg); } }
+/* ==================================== */
+
+.popup-form-row { display: flex; gap: 10px; align-items: flex-end; margin-bottom: 15px; background: white; padding: 15px; border-radius: 6px; border: 1px solid #e0e0e0; }
+.popup-grid { width: 100%; border-collapse: collapse; margin-top: 15px; background: white; }
+.popup-grid th, .popup-grid td { border: 1px solid #eceff1; padding: 8px; text-align: left; font-size: 13px; }
+.popup-grid th { background: #f8f9fa; font-weight: bold; color: #455a64; }
+.popup-grid tr:hover { background: #f0fbfc; }
+
+.popup-actions { padding: 15px; border-top: 1px solid #eceff1; display: flex; justify-content: flex-end; gap: 10px; background: white; }
+
 @keyframes popIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
