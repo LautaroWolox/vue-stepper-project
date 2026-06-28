@@ -21,7 +21,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import { useAuth } from '../../composables/useAuth'
+import { useAuth } from '../../composables/useAuth.js'
 
 const { login } = useAuth()
 const username = ref('')

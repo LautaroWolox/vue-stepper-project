@@ -14,6 +14,8 @@
 </template>
 
 <script setup>
+import MenuItem from './MenuItem.vue'
+
 const emit = defineEmits(['load-module'])
 const handleSubmenu = (sub) => {
   if (sub.id === 1) emit('load-module')

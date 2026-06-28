@@ -24,7 +24,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="row in paginatedData" :key="row.id" :class="{ disabled: row.disabled }">
+          <tr v-for="row in paginatedData" :key="row.ID" :class="{ disabled: row.disabled }">
             <td style="text-align: center;">
               <input type="checkbox" :value="row" v-model="localSelected" :disabled="row.disabled" @change="emitSelection" />
             </td>
@@ -82,13 +82,13 @@ const paginatedData = computed(() => {
 const validPageItems = computed(() => paginatedData.value.filter(i => !i.disabled))
 const isAllPageSelected = computed(() => {
   if (validPageItems.value.length === 0) return false
-  return validPageItems.value.every(item => localSelected.value.some(sel => sel.id === item.id))
+  return validPageItems.value.every(item => localSelected.value.some(sel => sel.ID === item.ID))
 })
 
 const toggleSelectAllPage = (e) => {
   const checked = e.target.checked
   validPageItems.value.forEach(item => {
-    const exists = localSelected.value.findIndex(sel => sel.id === item.id)
+    const exists = localSelected.value.findIndex(sel => sel.ID === item.ID)
     if (checked && exists === -1) {
       localSelected.value.push(item)
     } else if (!checked && exists !== -1) {

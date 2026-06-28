@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import MainView from './views/MainView.vue'
-import { useAuth } from './composables/useAuth'
+import { useAuth } from './composables/useAuth.js'
 
 const routes = [
   { path: '/', component: MainView, meta: { requiresAuth: true } }

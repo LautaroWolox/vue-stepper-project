@@ -34,7 +34,6 @@ const props = defineProps(['data', 'columns'])
 const popup = reactive({ show: false, pos: { x: 0, y: 0 }, data: null })
 
 const openPopup = (event, value) => {
-  // Ajuste de coordenadas para que no se salga de la pantalla
   let x = event.clientX + 15
   let y = event.clientY + 15
   if (x + 280 > window.innerWidth) x = window.innerWidth - 300

@@ -15,7 +15,7 @@
     <div class="stepper-content">
       <DataGrid v-show="currentStep === 1" :data="gridData" :columns="gridColumns" v-model="selectedItems" />
       <StepTwo v-if="currentStep === 2" :selectedData="selectedItems" :columns="gridColumns" />
-      <StepThree v-if="currentStep === 3" :data="gridData" :columns="gridColumns" />
+      <StepThree v-if="currentStep === 3" :data="selectedItems" :columns="gridColumns" />
     </div>
 
     <div class="stepper-actions">
@@ -49,11 +49,10 @@ const currentStep = ref(1)
 const showSummary = ref(false)
 const selectedItems = ref([])
 
-// Generando datos dinámicos (más de 10 columnas como pediste para la pantalla completa)
 const gridColumns = ['ID', 'Campo1', 'Campo2', 'Campo3', 'Campo4', 'Campo5', 'Campo6', 'Campo7', 'Campo8', 'Campo9', 'Campo10', 'Campo11']
 const gridData = ref(Array.from({ length: 35 }).map((_, i) => ({
   ID: i + 1,
-  disabled: i % 5 === 0, // 1 de cada 5 registros estará grisado/deshabilitado
+  disabled: i % 5 === 0, 
   ...Object.fromEntries(gridColumns.slice(1).map(c => [c, `Data ${i+1}-${c.slice(-1)}`]))
 })))
 
