@@ -19,8 +19,33 @@
 
     <div class="popup-body">
       <div v-if="isLoading" class="popup-loader">
-        <div class="spinner"></div>
-        <span>Cargando datos extendidos...</span>
+        <svg class="svg-coder" viewBox="0 0 200 150" xmlns="http://www.w3.org/2000/svg">
+          <rect x="10" y="120" width="180" height="8" fill="#B0BEC5" rx="4"/>
+          
+          <rect x="55" y="95" width="10" height="25" fill="#78909C"/>
+          <rect x="40" y="115" width="40" height="5" fill="#607D8B" rx="2"/>
+          
+          <rect x="20" y="35" width="80" height="60" fill="#263238" rx="5"/>
+          <rect x="25" y="40" width="70" height="45" fill="#00BCD4" class="screen-glow" rx="2"/>
+          
+          <g class="code-lines">
+            <rect x="30" y="45" width="40" height="3" fill="#ffffff" class="code-line" style="animation-delay: 0s;"/>
+            <rect x="30" y="52" width="50" height="3" fill="#ffffff" class="code-line" style="animation-delay: 0.2s;"/>
+            <rect x="30" y="59" width="30" height="3" fill="#ffffff" class="code-line" style="animation-delay: 0.4s;"/>
+            <rect x="30" y="66" width="45" height="3" fill="#ffffff" class="code-line" style="animation-delay: 0.6s;"/>
+          </g>
+          
+          <rect x="85" y="116" width="40" height="4" fill="#455A64" transform="skewX(-20)"/>
+          
+          <path d="M120,120 Q130,70 150,70 Q170,70 180,120 Z" fill="#0097A7"/>
+          <circle cx="150" cy="50" r="18" fill="#FFB74D"/>
+          <path d="M132,45 Q150,30 168,45" stroke="#3E2723" stroke-width="6" fill="none" stroke-linecap="round"/>
+          <rect x="135" y="46" width="8" height="12" fill="#37474F" rx="3"/>
+          
+          <path class="arm-left" d="M160,85 Q130,95 105,115" stroke="#00838F" stroke-width="10" fill="none" stroke-linecap="round"/>
+          <path class="arm-right" d="M140,85 Q115,100 90,115" stroke="#00BCD4" stroke-width="10" fill="none" stroke-linecap="round"/>
+        </svg>
+        <span>Procesando datos en el sistema...</span>
       </div>
 
       <div v-else>
@@ -62,7 +87,7 @@
 </template>
 
 <script setup>
-import { ref, watch, reactive } from 'vue'
+import { ref, watch } from 'vue'
 
 const props = defineProps(['show', 'position', 'fieldData'])
 const emit = defineEmits(['accept', 'cancel'])
@@ -91,9 +116,11 @@ watch(() => props.show, (newVal) => {
     pos.value = { ...props.position }
     isExpanded.value = false
     isLoading.value = true
+    
+    // 2.5 segundos para apreciar al tipito trabajando
     setTimeout(() => {
       isLoading.value = false
-    }, 1200) // Simula 1.2 segundos de carga
+    }, 2500) 
   }
 })
 
@@ -104,7 +131,7 @@ const toggleExpand = () => {
 
 // Lógica de arrastrar (Drag & Drop)
 const startDrag = (e) => {
-  if (isExpanded.value) return // Si está en pantalla completa no se arrastra
+  if (isExpanded.value) return 
   isDragging.value = true
   startX = e.clientX
   startY = e.clientY
