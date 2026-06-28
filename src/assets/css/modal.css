@@ -1,0 +1,7 @@
+.modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(38,50,56,0.7); display: flex; justify-content: center; align-items: center; z-index: 5000; backdrop-filter: blur(4px); }
+.modal-content { background: white; padding: 30px; border-radius: 12px; width: 450px; box-shadow: 0 20px 40px rgba(0,0,0,0.3); text-align: center; animation: slideUp 0.4s ease; }
+.modal-icon-success { font-size: 60px; color: #4caf50; margin-bottom: 15px; }
+.modal-details { text-align: left; background: #f8f9fa; padding: 15px; border-radius: 6px; margin: 20px 0; }
+.modal-details ul { list-style: none; padding: 0; margin: 0; }
+.modal-details li { padding: 8px 0; border-bottom: 1px solid #eceff1; display: flex; justify-content: space-between; }
+@keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }

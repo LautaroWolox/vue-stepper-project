@@ -1,0 +1,13 @@
+.grid-container { overflow-x: auto; background: white; border-radius: 8px; border: 1px solid #cfd8dc; }
+.grid-container.fullscreen { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 1000; padding: 30px; border-radius: 0; border: none; box-shadow: none; display: flex; flex-direction: column; }
+.grid-container.fullscreen table { flex: 1; }
+table { width: 100%; border-collapse: collapse; min-width: 800px; }
+th, td { border-bottom: 1px solid #eceff1; padding: 12px 15px; text-align: left; font-size: 14px; }
+th { background-color: #f8f9fa; color: #455a64; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; position: sticky; top: 0; z-index: 2; }
+tbody tr { transition: background 0.2s; }
+tbody tr:hover:not(.disabled) { background-color: #e0f7fa; }
+tr.disabled { background-color: #fafafa; color: #b0bec5; }
+input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; accent-color: #00bcd4; }
+input[type="checkbox"]:disabled { cursor: not-allowed; }
+.pagination { padding: 15px; display: flex; justify-content: space-between; align-items: center; background: #f8f9fa; border-top: 1px solid #cfd8dc; }
+.fullscreen-controls { display: flex; justify-content: flex-end; margin-bottom: 15px; }

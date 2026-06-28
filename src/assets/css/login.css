@@ -1,0 +1,9 @@
+.login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, rgba(0,0,0,0.8), rgba(38,50,56,0.9)); display: flex; justify-content: center; align-items: center; z-index: 2000; backdrop-filter: blur(5px); }
+.login-box { background: white; padding: 40px; border-radius: 12px; width: 350px; text-align: center; box-shadow: 0 15px 30px rgba(0,0,0,0.3); }
+.login-box .material-icons { font-size: 48px; color: #00bcd4; margin-bottom: 15px; }
+.input-group { position: relative; margin-bottom: 20px; }
+.input-group .material-icons { position: absolute; left: 10px; top: 12px; color: #90a4ae; font-size: 20px; }
+.input-group input { width: 100%; padding: 12px 12px 12px 40px; border: 1px solid #cfd8dc; border-radius: 6px; font-size: 14px; outline: none; transition: border 0.3s; }
+.input-group input:focus { border-color: #00bcd4; }
+.login-btn { width: 100%; padding: 12px; font-size: 16px; }
+.error-msg { color: #d32f2f; margin-top: 15px; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 5px; }

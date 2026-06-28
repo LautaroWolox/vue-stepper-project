@@ -1,0 +1,5 @@
+/* step-three.css */
+.step-three h3 { color: #00838f; display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
+.step-three-grid { border: 2px solid #00bcd4; border-radius: 8px; overflow: hidden; }
+.step-three-grid td { cursor: pointer; transition: background 0.2s, transform 0.1s; position: relative; }
+.step-three-grid td:hover { background: #e0f7fa; transform: scale(1.02); z-index: 10; box-shadow: 0 2px 5px rgba(0,0,0,0.1); border-radius: 4px; font-weight: bold; color: #00838f; }

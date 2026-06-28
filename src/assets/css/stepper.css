@@ -1,0 +1,6 @@
+.stepper-header { display: flex; justify-content: space-between; margin-bottom: 30px; border-bottom: 2px solid #eceff1; padding-bottom: 10px; position: relative; }
+.step-indicator { flex: 1; text-align: center; padding: 15px; color: #90a4ae; font-weight: 500; display: flex; flex-direction: column; align-items: center; gap: 5px; transition: all 0.3s; }
+.step-indicator .material-icons { font-size: 28px; background: #eceff1; border-radius: 50%; padding: 10px; transition: all 0.3s; }
+.step-indicator.active { color: #00bcd4; }
+.step-indicator.active .material-icons { background: #00bcd4; color: white; box-shadow: 0 4px 10px rgba(0, 188, 212, 0.4); }
+.stepper-actions { margin-top: 30px; display: flex; justify-content: space-between; border-top: 1px solid #eceff1; padding-top: 20px; }

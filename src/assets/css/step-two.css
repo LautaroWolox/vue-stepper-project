@@ -1,0 +1,3 @@
+/* step-two.css */
+.step-two h3 { color: #00838f; display: flex; align-items: center; gap: 10px; }
+.export-container { margin-top: 25px; text-align: right; background: #f8f9fa; padding: 15px; border-radius: 6px; border: 1px solid #eceff1; }
