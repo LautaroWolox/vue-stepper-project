@@ -1,13 +1,10 @@
 body { margin: 0; font-family: 'Roboto', sans-serif; background: #f0f2f5; color: #333; }
 * { box-sizing: border-box; }
 h1, h2, h3, h4 { margin-top: 0; color: #263238; }
-
-.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 20px; cursor: pointer; border: none; border-radius: 6px; background: linear-gradient(135deg, #00bcd4, #0097a7); color: white; font-weight: 500; font-size: 14px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 0.5px; outline: none; }
-.btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0, 188, 212, 0.3); background: linear-gradient(135deg, #00acc1, #00838f); }
-.btn:active:not(:disabled) { transform: translateY(0); box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 20px; cursor: pointer; border: none; border-radius: 6px; background: linear-gradient(135deg, #00bcd4, #0097a7); color: white; font-weight: 500; font-size: 14px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 0.5px; outline: none; }
+.btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,188,212,0.3); background: linear-gradient(135deg, #00acc1, #00838f); }
+.btn:active:not(:disabled) { transform: translateY(0); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
 .btn:disabled { background: #b0bec5; cursor: not-allowed; box-shadow: none; transform: none; color: #eceff1; }
-
 .btn-danger { background: white; border: 1px solid #00bcd4; color: #00bcd4; }
 .btn-danger:hover:not(:disabled) { background: #e0f7fa; box-shadow: none; transform: none; }
-
 .btn-icon { font-size: 18px; }

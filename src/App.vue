@@ -8,7 +8,6 @@
 <script setup>
 import { useAuth } from './composables/useAuth.js'
 import LoginModal from './components/login/LoginModal.vue'
-
 const { isAuthenticated } = useAuth()
 </script>
 
@@ -26,4 +25,5 @@ const { isAuthenticated } = useAuth()
 @import './assets/css/step-two.css';
 @import './assets/css/step-three.css';
 @import './assets/css/materiales.css';
+@import './assets/css/certificacion.css';
 </style>

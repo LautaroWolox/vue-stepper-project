@@ -12,6 +12,9 @@
       <SearchAccordion v-if="activeModule === 'search-classic'" />
       <GestionMateriales v-if="activeModule === 'materiales-ot'" title="Gestionar Materiales en OTs" type="OT" />
       <GestionMateriales v-if="activeModule === 'materiales-descargados'" title="Materiales Descargados" type="DESC" />
+      <ConfigJobtype v-if="activeModule === 'config-jobtype'" />
+      
+      <ConfigCmoActividad v-if="activeModule === 'config-cmo'" />
     </div>
   </div>
 </template>
@@ -21,6 +24,8 @@ import { ref } from 'vue'
 import AppMenu from '../components/menu/AppMenu.vue'
 import SearchAccordion from '../components/accordion/SearchAccordion.vue'
 import GestionMateriales from '../components/materiales/GestionMateriales.vue'
+import ConfigJobtype from '../components/certificacion/ConfigJobtype.vue'
+import ConfigCmoActividad from '../components/certificacion/ConfigCmoActividad.vue'
 
 const activeModule = ref('none')
 

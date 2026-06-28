@@ -1,22 +1,11 @@
 <template>
-  <div 
-    class="floating-popup" 
-    style="width: 500px;" 
-    :class="{ expanded: isExpanded }" 
-    :style="!isExpanded ? { top: pos.y + 'px', left: pos.x + 'px' } : {}" 
-    v-if="show"
-  >
+  <div class="floating-popup" style="width: 500px;" :class="{ expanded: isExpanded }" :style="!isExpanded ? { top: pos.y + 'px', left: pos.x + 'px' } : {}" v-if="show">
     <div class="floating-popup-frame" @dblclick="toggleExpand">
       <div class="popup-header" @mousedown="startDrag">
         <div class="popup-title"><span class="material-icons">list_alt</span> OTs para Exportar</div>
-        <div class="popup-controls">
-          <span class="material-icons" @click.stop="toggleExpand" :title="isExpanded ? 'Restaurar' : 'Maximizar'">
-            {{ isExpanded ? 'fullscreen_exit' : 'fullscreen' }}
-          </span>
-        </div>
+        <div class="popup-controls"><span class="material-icons" @click.stop="toggleExpand">{{ isExpanded ? 'fullscreen_exit' : 'fullscreen' }}</span></div>
       </div>
     </div>
-    
     <div class="popup-body">
       <div v-if="isLoading" class="popup-loader">
         <svg class="svg-coder" viewBox="0 0 200 150" xmlns="http://www.w3.org/2000/svg">
@@ -39,74 +28,29 @@
           <path class="arm-left" d="M160,85 Q130,95 105,115" stroke="#00838F" stroke-width="10" fill="none" stroke-linecap="round"/>
           <path class="arm-right" d="M140,85 Q115,100 90,115" stroke="#00BCD4" stroke-width="10" fill="none" stroke-linecap="round"/>
         </svg>
-        <span>Recopilando registros para la tabla...</span>
+        <span>Recopilando registros...</span>
       </div>
-
       <div v-show="!isLoading" style="flex: 1;">
         <p style="color: #455a64; margin-top: 0;">Se exportarán las siguientes <strong>{{ data.length }}</strong> OTs:</p>
         <div>
           <table class="popup-grid">
-            <thead>
-              <tr><th>Nro OT</th><th>Estado</th><th>Técnico / Almacén</th></tr>
-            </thead>
-            <tbody>
-              <tr v-for="row in data" :key="row.id">
-                <td style="font-weight: bold; color: #00838f;">{{ row.nroot }}</td>
-                <td>{{ row.estadoOt || row.estadoFm }}</td>
-                <td>{{ row.tecnico || row.almacen }}</td>
-              </tr>
-            </tbody>
+            <thead><tr><th>Nro OT</th><th>Estado</th><th>Técnico / Almacén</th></tr></thead>
+            <tbody><tr v-for="row in data" :key="row.id"><td style="font-weight: bold; color: #00838f;">{{ row.nroot }}</td><td>{{ row.estadoOt || row.estadoFm }}</td><td>{{ row.tecnico || row.almacen }}</td></tr></tbody>
           </table>
         </div>
       </div>
     </div>
-
-    <div class="popup-actions" v-show="!isLoading">
-      <button class="btn" @click="$emit('close')"><span class="material-icons btn-icon">check</span> Entendido</button>
-    </div>
+    <div class="popup-actions" v-show="!isLoading"><button class="btn" @click="$emit('close')"><span class="material-icons btn-icon">check</span> Entendido</button></div>
   </div>
 </template>
-
 <script setup>
 import { ref, watch } from 'vue'
-
-const props = defineProps(['show', 'position', 'data'])
-const emit = defineEmits(['close'])
-
-const pos = ref({ x: 0, y: 0 })
-const isExpanded = ref(false)
-const isLoading = ref(true)
-const isDragging = ref(false)
+const props = defineProps(['show', 'position', 'data']); const emit = defineEmits(['close'])
+const pos = ref({ x: 0, y: 0 }); const isExpanded = ref(false); const isLoading = ref(true); const isDragging = ref(false)
 let startX = 0, startY = 0, initialX = 0, initialY = 0
-
-watch(() => props.show, (newVal) => { 
-  if (newVal) { 
-    pos.value = { ...props.position } 
-    isExpanded.value = false
-    isLoading.value = true
-    setTimeout(() => { isLoading.value = false }, 1500)
-  } 
-})
-
+watch(() => props.show, (newVal) => { if (newVal) { pos.value = { ...props.position }; isExpanded.value = false; isLoading.value = true; setTimeout(() => { isLoading.value = false }, 1500) } })
 const toggleExpand = () => { isExpanded.value = !isExpanded.value }
-
-const startDrag = (e) => {
-  if (isExpanded.value) return
-  isDragging.value = true
-  startX = e.clientX; startY = e.clientY
-  initialX = pos.value.x; initialY = pos.value.y
-  document.addEventListener('mousemove', onDrag)
-  document.addEventListener('mouseup', stopDrag)
-}
-
-const onDrag = (e) => {
-  if (!isDragging.value) return
-  pos.value.x = initialX + (e.clientX - startX)
-  pos.value.y = initialY + (e.clientY - startY)
-}
-
-const stopDrag = () => {
-  isDragging.value = false
-  document.removeEventListener('mousemove', onDrag); document.removeEventListener('mouseup', stopDrag)
-}
+const startDrag = (e) => { if (isExpanded.value) return; isDragging.value = true; startX = e.clientX; startY = e.clientY; initialX = pos.value.x; initialY = pos.value.y; document.addEventListener('mousemove', onDrag); document.addEventListener('mouseup', stopDrag) }
+const onDrag = (e) => { if (!isDragging.value) return; pos.value.x = initialX + (e.clientX - startX); pos.value.y = initialY + (e.clientY - startY) }
+const stopDrag = () => { isDragging.value = false; document.removeEventListener('mousemove', onDrag); document.removeEventListener('mouseup', stopDrag) }
 </script>

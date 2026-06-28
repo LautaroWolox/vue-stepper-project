@@ -1,0 +1,91 @@
+/* src/assets/css/certificacion.css */
+
+.active-row {
+  background-color: #b2ebf2 !important; 
+}
+.active-row td {
+  color: #006064 !important;
+  font-weight: 500;
+}
+
+/* Botonera inferior izquierda de la grilla */
+.grid-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; padding: 10px 15px; background: #fafafa; border: 1px solid #cfd8dc; border-radius: 0 0 4px 4px; flex-wrap: wrap; gap: 10px; }
+.grid-footer-left { display: flex; gap: 15px; align-items: center; }
+
+.icon-btn {
+  background: transparent;
+  border: none;
+  color: #263238; /* Color oscuro como en la captura */
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 4px;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.icon-btn .material-icons {
+  font-size: 24px; 
+  font-weight: 600;
+}
+.icon-btn:hover:not(:disabled) {
+  background: #eceff1;
+  color: #00838f;
+  transform: scale(1.1);
+}
+.icon-btn:disabled {
+  color: #cfd8dc;
+  cursor: not-allowed;
+}
+
+/* PAGINADO MODERNO */
+.modern-pagination {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  color: #455a64;
+}
+.modern-pagination .icon-nav {
+  cursor: pointer;
+  font-size: 20px;
+  color: #546e7a;
+  transition: color 0.2s;
+  user-select: none;
+}
+.modern-pagination .icon-nav:hover:not(.disabled) { color: #00bcd4; }
+.modern-pagination .icon-nav.disabled { color: #cfd8dc; cursor: not-allowed; }
+.modern-pagination input {
+  width: 45px;
+  text-align: center;
+  border: 1px solid #cfd8dc;
+  border-radius: 4px;
+  padding: 4px;
+  font-size: 12px;
+  outline: none;
+}
+.modern-pagination input:focus { border-color: #00bcd4; }
+
+/* Layout del Popup de Alta */
+.alta-form-row { display: flex; gap: 15px; align-items: flex-end; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #eceff1; flex-wrap: wrap; }
+.popup-inner-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 15px; padding: 10px 0; border-top: 1px solid #eceff1; }
+
+/* Contenedor central para el tipito cargando en la vista principal */
+.main-loader-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 250px;
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  color: #00838f;
+  font-weight: bold;
+}
+
+@media (max-width: 768px) {
+  .grid-footer { flex-direction: column; align-items: center; }
+  .grid-footer-left { margin-bottom: 10px; }
+  .modern-pagination { flex-direction: column; gap: 5px; }
+}

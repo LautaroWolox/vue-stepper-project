@@ -5,7 +5,13 @@
     </div>
 
     <div :class="['nav-items', { 'is-open': isMobileMenuOpen }]">
-      <MenuItem v-for="(menu, index) in menuList" :key="index" :title="menu.title" :submenus="menu.submenus" @submenu-click="handleSubmenu" />
+      <MenuItem 
+        v-for="(menu, index) in menuList" 
+        :key="index" 
+        :title="menu.title" 
+        :submenus="menu.submenus" 
+        @submenu-click="handleSubmenu" 
+      />
     </div>
 
     <div class="user-profile">
@@ -16,6 +22,8 @@
         <div @click="handleLogout"><span class="material-icons">logout</span> Cerrar Sesión</div>
       </div>
     </div>
+    
+    <div class="animated-bar"></div>
   </nav>
 </template>
 
@@ -28,56 +36,43 @@ const { logout } = useAuth()
 const emit = defineEmits(['load-module'])
 const isMobileMenuOpen = ref(false)
 
-const handleLogout = () => {
-  logout()
-}
+const handleLogout = () => logout()
 
-const handleSubmenu = (sub) => {
+const handleSubmenu = (item) => {
   isMobileMenuOpen.value = false
-  if (sub.action && sub.action !== 'none') {
-    emit('load-module', sub.action)
+  if (item.action && item.action !== 'none') {
+    emit('load-module', item.action)
   } else {
-    alert(`Módulo en construcción: ${sub.label}`)
+    alert(`Módulo en construcción: ${item.label}`)
   }
 }
 
 const menuList = ref([
-  {
-    title: 'Gestión de Materiales',
+  { title: 'Gestión del Extendido', submenus: [{ id: 1, label: 'Búsqueda Clásica', action: 'search-classic' }] },
+  { title: 'Monitoreo', submenus: [] },
+  { title: 'Administración', submenus: [] },
+  { 
+    title: 'Gestión de Materiales', 
     submenus: [
-      { id: 1, label: 'Gestionar Materiales en OTs', icon: 'build', action: 'materiales-ot' },
-      { id: 2, label: 'Materiales Descargados', icon: 'download', action: 'materiales-descargados' }
-    ]
+      { id: 5, label: 'Gestionar Materiales en OTs', action: 'materiales-ot' },
+      { id: 6, label: 'Materiales Descargados', action: 'materiales-descargados' }
+    ] 
   },
-  {
-    title: 'Gestión del Extendido',
+  { title: 'Alarmas', submenus: [] },
+  { title: 'GDA Operaciones', submenus: [] },
+  { title: 'Reportes', submenus: [] },
+  { title: 'Ordenes Trabajo', submenus: [] },
+  { title: 'Web de Guardias', submenus: [] },
+  { title: 'Agendamiento', submenus: [] },
+  { 
+    title: 'Certificación Contratista', 
     submenus: [
-      { id: 3, label: 'Búsqueda Clásica', icon: 'search', action: 'search-classic' },
-      { id: 4, label: 'Configuraciones Generales', icon: 'settings', action: 'none' }
-    ]
-  },
-  {
-    title: 'Monitoreo',
-    submenus: [
-      { id: 5, label: 'Dashboard en Tiempo Real', icon: 'speed', action: 'none' }
-    ]
-  },
-  {
-    title: 'Administración',
-    submenus: [
-      { id: 6, label: 'Usuarios y Roles', icon: 'people', action: 'none' }
-    ]
-  },
-  {
-    title: 'Alarmas',
-    submenus: [
-      { id: 7, label: 'Visor de Eventos', icon: 'notifications_active', action: 'none' }
-    ]
-  },
-  {
-    title: 'Reportes',
-    submenus: [
-      { id: 8, label: 'Exportación Mensual', icon: 'picture_as_pdf', action: 'none' }
+      { id: 101, label: 'WorkAround', action: 'none' },
+      { id: 102, label: 'Gestión de Reglas', mobileExpanded: false, children: [{ id: 1021, label: 'Consultar Reglas', action: 'none' }, { id: 1022, label: 'Monitoreo y Ejecución de Reglas', action: 'none' }] },
+      { id: 103, label: 'Gestión de Actas', mobileExpanded: false, children: [{ id: 1031, label: 'Consultar Actas', action: 'none' }, { id: 1032, label: 'Consultar Notas de Crédito', action: 'none' }, { id: 1033, label: 'Consultar Notas de Débito', action: 'none' }] },
+      { id: 104, label: 'Parametrizaciones', mobileExpanded: false, children: [{ id: 1041, label: 'Configuración Jobtype-Contrato', action: 'config-jobtype' }, { id: 1042, label: 'Configuración CMO-Actividad', action: 'config-cmo' }] },
+      { id: 105, label: 'Registro OTs Fallidas', action: 'none' },
+      { id: 106, label: 'Búsqueda de OTs', action: 'none' }
     ]
   }
 ])
