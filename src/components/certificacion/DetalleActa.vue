@@ -1,7 +1,6 @@
 <template>
   <div style="position: relative;">
     
-    <!-- PANTALLA DE CARGA (Para Buscar y Certificar) -->
     <div v-if="isLoading" class="popup-loader" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 1000; background: rgba(255,255,255,0.9);">
       <svg class="svg-coder" viewBox="0 0 200 150" xmlns="http://www.w3.org/2000/svg">
         <rect x="10" y="120" width="180" height="8" fill="#B0BEC5" rx="4"/><rect x="55" y="95" width="10" height="25" fill="#78909C"/><rect x="40" y="115" width="40" height="5" fill="#607D8B" rx="2"/><rect x="20" y="35" width="80" height="60" fill="#263238" rx="5"/><rect x="25" y="40" width="70" height="45" fill="#00BCD4" class="screen-glow" rx="2"/><g class="code-lines"><rect x="30" y="45" width="40" height="3" fill="#ffffff" class="code-line" style="animation-delay: 0s;"/><rect x="30" y="52" width="50" height="3" fill="#ffffff" class="code-line" style="animation-delay: 0.2s;"/><rect x="30" y="59" width="30" height="3" fill="#ffffff" class="code-line" style="animation-delay: 0.4s;"/><rect x="30" y="66" width="45" height="3" fill="#ffffff" class="code-line" style="animation-delay: 0.6s;"/></g><rect x="85" y="116" width="40" height="4" fill="#455A64" transform="skewX(-20)"/><path d="M120,120 Q130,70 150,70 Q170,70 180,120 Z" fill="#0097A7"/><circle cx="150" cy="50" r="18" fill="#FFB74D"/><path d="M132,45 Q150,30 168,45" stroke="#3E2723" stroke-width="6" fill="none" stroke-linecap="round"/><rect x="135" y="46" width="8" height="12" fill="#37474F" rx="3"/><path class="arm-left" d="M160,85 Q130,95 105,115" stroke="#00838F" stroke-width="10" fill="none" stroke-linecap="round"/><path class="arm-right" d="M140,85 Q115,100 90,115" stroke="#00BCD4" stroke-width="10" fill="none" stroke-linecap="round"/>
@@ -9,14 +8,12 @@
       <span style="margin-top: 15px; color: #00838f; font-weight: bold;">{{ loadingMsg }}</span>
     </div>
 
-    <!-- Botón Volver -->
     <div style="margin-bottom: 15px;">
       <button class="btn btn-danger" style="border-radius: 20px; padding: 8px 25px;" @click="$emit('volver')">
         <span class="material-icons btn-icon">arrow_back</span> VOLVER A BÚSQUEDA
       </button>
     </div>
 
-    <!-- Acordeón 1: Detalle del Acta -->
     <div class="soft-accordion">
       <div class="soft-accordion-header" @click="openDetalle = !openDetalle">
         <span><span class="material-icons">info</span> DETALLE DE ACTA</span>
@@ -25,9 +22,9 @@
       <div class="soft-accordion-content" v-show="openDetalle">
         
         <div class="form-grid" style="grid-template-columns: repeat(4, 1fr);">
-          <div class="form-group"><label>Numero de Acta</label><input type="text" class="form-control" :value="acta.nro_acta" disabled></div>
-          <div class="form-group"><label>Provincia</label><input type="text" class="form-control" :value="acta.provincia" disabled></div>
-          <div class="form-group"><label>Empresa Contratista</label><input type="text" class="form-control" :value="acta.contratista" disabled></div>
+          <div class="form-group"><label>Numero de Acta</label><input type="text" class="form-control" :value="acta?.nro_acta || 'A2701'" disabled></div>
+          <div class="form-group"><label>Provincia</label><input type="text" class="form-control" :value="acta?.provincia || 'BUENOS AIRES'" disabled></div>
+          <div class="form-group"><label>Empresa Contratista</label><input type="text" class="form-control" :value="acta?.contratista || 'AGB SRL'" disabled></div>
           <div class="form-group" style="align-items: center;">
             <label>Calificación</label>
             <div class="star-rating">
@@ -36,10 +33,10 @@
           </div>
         </div>
         <div class="form-grid" style="grid-template-columns: repeat(4, 1fr); border-bottom: 2px solid #eceff1; padding-bottom: 15px; margin-bottom: 15px;">
-          <div class="form-group"><label>Sociedad</label><input type="text" class="form-control" :value="acta.sociedad" disabled></div>
-          <div class="form-group"><label>Tipo de Contrato</label><input type="text" class="form-control" :value="acta.tipo_contrato" disabled></div>
-          <div class="form-group"><label>Periodo</label><input type="text" class="form-control" :value="acta.periodo" disabled></div>
-          <div class="form-group"><label>Estado</label><input type="text" class="form-control" :value="acta.estado" disabled></div>
+          <div class="form-group"><label>Sociedad</label><input type="text" class="form-control" :value="acta?.sociedad || 'Telecom Argentina'" disabled></div>
+          <div class="form-group"><label>Tipo de Contrato</label><input type="text" class="form-control" :value="acta?.tipo_contrato || 'Eventos SMB'" disabled></div>
+          <div class="form-group"><label>Periodo</label><input type="text" class="form-control" :value="acta?.periodo || 'Del 16/06 al 15/07'" disabled></div>
+          <div class="form-group"><label>Estado</label><input type="text" class="form-control" :value="acta?.estado || 'En Curso'" disabled></div>
         </div>
 
         <div class="form-grid" style="grid-template-columns: repeat(4, 1fr);">
@@ -80,7 +77,6 @@
       
       <div class="soft-accordion-content" v-show="openOts" style="padding: 0;">
         
-        <!-- SELECTOR DE COLUMNAS -->
         <div class="column-config-wrapper">
           <button class="btn-columnas" @click="showColConfig = !showColConfig">
             <span class="material-icons" style="font-size: 18px;">view_column</span> SELECCIONAR COLUMNAS
@@ -92,12 +88,14 @@
           </div>
         </div>
 
-        <!-- TABLA DINÁMICA -->
         <div class="table-responsive" style="border: none; border-top: 1px solid #e0e0e0; max-height: 400px;">
           <table class="advanced-grid">
             <thead>
               <tr>
-                <th style="width: 40px; text-align: center;"><input type="checkbox" class="custom-checkbox" @change="toggleSelectAllPage" :checked="isAllPageSelected"></th>
+                <th style="width: 40px; text-align: center;">
+                  <!-- SELECT ALL ARREGLADO -->
+                  <input type="checkbox" class="custom-checkbox" v-model="selectAll" @change="toggleSelectAllPage">
+                </th>
                 <th v-for="col in visibleCols" :key="col.field">
                   <div class="resizable-header">{{ col.label }}</div>
                 </th>
@@ -140,7 +138,6 @@
           </div>
         </div>
 
-        <!-- Botones de Acción Globales del Acta -->
         <div style="padding: 15px; border-top: 1px solid #eceff1; display: flex; justify-content: space-between;">
           <div style="display: flex; gap: 10px;">
             <button class="btn btn-danger" style="border-radius: 20px;" @click="openExportarActa"><span class="material-icons btn-icon">file_download</span> EXPORTAR ACTA</button>
@@ -158,15 +155,13 @@
     <DetalleNotaPopup :show="showNota" @close="showNota = false" />
     <DetalleOtPopup :show="showOt" :otNumber="selectedOt" @close="showOt = false" />
     <ExcluirOtPopup :show="showExcluir" @close="showExcluir = false" @confirmar="marcarExcluidas" />
-    
-    <!-- Al popup de exportar le pasamos solo las OTs seleccionadas -->
     <ExportarActaPopup :show="showExportar" :otsParaExportar="otsSeleccionadas" @close="showExportar = false" />
     <GestionarTraspasoPopup :show="showTraspaso" @close="showTraspaso = false" />
   </div>
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted, watch } from 'vue'
 import DetalleNotaPopup from '../popup/DetalleNotaPopup.vue'
 import DetalleOtPopup from '../popup/DetalleOtPopup.vue'
 import ExcluirOtPopup from '../popup/ExcluirOtPopup.vue'
@@ -192,7 +187,6 @@ const selectedOt = ref('')
 
 const filtrosOt = reactive({ nroOt: '', codigoTarea: '', estadoReglas: '', techNum: '', excluida: '' })
 
-// 26 Columnas
 const otColumns = reactive([
   { field: 'nro_ot', label: 'NRO_OT', visible: true }, { field: 'fecha_cierre', label: 'FECHA_CIERRE', visible: true }, { field: 'codigo_tarea', label: 'CÓDIGO_TAREA', visible: true },
   { field: 'direccion', label: 'DIRECCION', visible: true }, { field: 'ciudad', label: 'CIUDAD', visible: true }, { field: 'sector', label: 'SECTOR', visible: true },
@@ -207,14 +201,14 @@ const otColumns = reactive([
 
 const visibleCols = computed(() => otColumns.filter(c => c.visible))
 
-// Generar 50 OTs de prueba para el Paginado
+// Generar 50 OTs de prueba
 const mockOts = ref([])
 onMounted(() => {
   for (let i = 1; i <= 50; i++) {
     mockOts.value.push({
       id: i,
       selected: false,
-      nro_ot: `J0000000000257994${i.toString().padStart(2, '0')}`,
+      nro_ot: `J000000000025799${i.toString().padStart(3, '0')}`,
       fecha_cierre: '18/06/2026 12:35:45',
       codigo_tarea: '9HDA0 | DOM - ALTAS HFC',
       direccion: `SARMIENTO ${2600 + i}`,
@@ -223,13 +217,13 @@ onMounted(() => {
       provincia: 'BUENOS AIRES',
       pais: 'ARGENTINA',
       base: 'MAR DEL PLATA',
-      excluida: i % 15 === 0 ? 'S' : 'N', // Simula algunas ya excluidas
+      excluida: i % 12 === 0 ? 'S' : 'N', 
       nota: ''
     })
   }
 })
 
-// PAGINADO
+// Paginado
 const currentPage = ref(1)
 const itemsPerPage = ref(10)
 const totalPages = computed(() => Math.ceil(mockOts.value.length / itemsPerPage.value))
@@ -238,19 +232,27 @@ const paginatedData = computed(() => {
   return mockOts.value.slice(start, start + itemsPerPage.value)
 })
 
-// SELECT ALL LOGIC
-const isAllPageSelected = computed(() => {
-  const selectable = paginatedData.value.filter(r => r.excluida === 'N')
-  if (selectable.length === 0) return false
-  return selectable.every(r => r.selected)
-})
+// LOGICA SELECT ALL ARREGLADA EN VUE 3
+const selectAll = ref(false)
 
-const toggleSelectAllPage = (e) => {
-  const checked = e.target.checked
+const toggleSelectAllPage = () => {
+  const isChecked = selectAll.value
   paginatedData.value.forEach(row => {
-    if (row.excluida === 'N') row.selected = checked
+    if (row.excluida === 'N') {
+      row.selected = isChecked
+    }
   })
 }
+
+// Escuchar cambios para apagar el master checkbox si se desmarca uno
+watch(paginatedData, (newData) => {
+  const selectable = newData.filter(r => r.excluida === 'N')
+  if (selectable.length === 0) {
+    selectAll.value = false
+    return
+  }
+  selectAll.value = selectable.every(r => r.selected)
+}, { deep: true })
 
 const otsSeleccionadas = computed(() => mockOts.value.filter(ot => ot.selected))
 const selectedRowsCount = computed(() => otsSeleccionadas.value.length)
@@ -260,26 +262,7 @@ const simularCarga = (msg) => { isLoading.value = true; loadingMsg.value = msg; 
 const limpiarFiltrosOt = () => { Object.keys(filtrosOt).forEach(k => filtrosOt[k] = '') }
 const openNotaPopup = () => { showNota.value = true }
 const openOtDetail = (nro) => { selectedOt.value = nro; showOt.value = true }
-
-const openExcluirPopup = () => {
-  if (selectedRowsCount.value > 0) showExcluir.value = true
-}
-
-const marcarExcluidas = () => {
-  mockOts.value.forEach(ot => {
-    if (ot.selected) {
-      ot.excluida = 'S'
-      ot.selected = false // Se deseleccionan al excluir
-    }
-  })
-  showExcluir.value = false
-}
-
-const openExportarActa = () => {
-  if (otsSeleccionadas.value.length === 0) {
-    alert("Por favor, seleccione al menos una OT de la grilla para exportar.")
-    return
-  }
-  showExportar.value = true
-}
+const openExcluirPopup = () => { if (selectedRowsCount.value > 0) showExcluir.value = true }
+const marcarExcluidas = () => { mockOts.value.forEach(ot => { if (ot.selected) { ot.excluida = 'S'; ot.selected = false } }); showExcluir.value = false }
+const openExportarActa = () => { if (otsSeleccionadas.value.length === 0) { alert("Por favor, seleccione al menos una OT de la grilla para exportar."); return }; showExportar.value = true }
 </script>

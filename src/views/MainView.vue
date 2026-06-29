@@ -14,9 +14,10 @@
       <GestionMateriales v-if="activeModule === 'materiales-descargados'" title="Materiales Descargados" type="DESC" />
       <ConfigJobtype v-if="activeModule === 'config-jobtype'" />
       <ConfigCmoActividad v-if="activeModule === 'config-cmo'" />
-      
-      <!-- NUEVO MÓDULO DE ACTAS -->
       <ConsultarActas v-if="activeModule === 'consultar-actas'" />
+      
+      <!-- NUEVO MÓDULO -->
+      <ConsultarNotaCredito v-if="activeModule === 'consultar-nota-credito'" />
     </div>
   </div>
 </template>
@@ -29,6 +30,7 @@ import GestionMateriales from '../components/materiales/GestionMateriales.vue'
 import ConfigJobtype from '../components/certificacion/ConfigJobtype.vue'
 import ConfigCmoActividad from '../components/certificacion/ConfigCmoActividad.vue'
 import ConsultarActas from '../components/certificacion/ConsultarActas.vue'
+import ConsultarNotaCredito from '../components/certificacion/ConsultarNotaCredito.vue'
 
 const activeModule = ref('none')
 

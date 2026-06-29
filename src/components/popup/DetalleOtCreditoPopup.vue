@@ -1,7 +1,6 @@
 <template>
   <div class="floating-popup" style="width: 1100px; height: 650px; max-width: 95vw; max-height: 90vh;" :class="{ expanded: isExpanded }" :style="!isExpanded ? { top: pos.y + 'px', left: pos.x + 'px' } : {}" v-if="show">
     
-    <!-- HEADER -->
     <div class="floating-popup-frame" @dblclick="toggleExpand">
       <div class="popup-header" style="background: white; color: #00bcd4; border-bottom: 1px solid #eceff1;" @mousedown="startDrag">
         <div class="popup-title" style="font-weight: bold; font-size: 16px;">{{ otNumber }}</div>
@@ -12,8 +11,7 @@
       </div>
     </div>
     
-    <!-- BODY PRINCIPAL (Scroll global) -->
-    <div class="popup-body" style="background: #fafafa; padding: 15px; display: flex; flex-direction: column; position: relative; overflow-y: auto;">
+    <div class="popup-body" style="background: #fafafa; padding: 15px; display: flex; flex-direction: column; overflow-y: auto; position: relative;">
       
       <!-- PANTALLA DE CARGA (TIPITO) -->
       <div v-if="isLoading" class="popup-loader" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 1000; background: rgba(255,255,255,0.9); display: flex; flex-direction: column; align-items: center; justify-content: center;">
@@ -23,7 +21,6 @@
         <span style="margin-top: 15px; color: #00838f; font-weight: bold;">{{ loadingMsg }}</span>
       </div>
 
-      <!-- INFO SUPERIOR -->
       <div class="form-grid" style="grid-template-columns: 2fr 3fr 2fr 2fr 2fr; margin-bottom: 10px; background: white; padding: 10px; border-radius: 4px; border: 1px solid #eceff1;">
         <div class="form-group"><label>Tarea</label><input type="text" class="form-control" value="DOM - ALTAS HFC" disabled></div>
         <div class="form-group"><label>Domicilio</label><input type="text" class="form-control" value="DE LUJAN NTRA SRA 1525" disabled></div>
@@ -32,7 +29,6 @@
         <div class="form-group"><label>Nro Cliente</label><input type="text" class="form-control" value="8.10081755121E15" disabled></div>
       </div>
 
-      <!-- TABS -->
       <div class="nav-tabs">
         <div class="tab-item" :class="{ active: activeTab === 'actividades' }" @click="activeTab = 'actividades'">Actividades</div>
         <div class="tab-item" :class="{ active: activeTab === 'base' }" @click="activeTab = 'base'">Base Instalada</div>
@@ -41,10 +37,8 @@
         <div class="tab-item" :class="{ active: activeTab === 'siniestros' }" @click="activeTab = 'siniestros'">Siniestros</div>
       </div>
 
-      <!-- SECCIÓN DINÁMICA (Parte superior cambiante según Tab) -->
       <div style="background: white; border: 1px solid #eceff1; border-top: none; padding: 15px; margin-bottom: 15px;">
         
-        <!-- Tab 1: Actividades -->
         <div v-show="activeTab === 'actividades'">
           <h4 style="margin-top: 0; color: #263238; font-size: 14px;">Actividades Originales</h4>
           <div class="table-responsive" style="max-height: 150px; border: 1px solid #e0e0e0;">
@@ -57,14 +51,8 @@
               </tbody>
             </table>
           </div>
-          <div class="modern-pagination" style="justify-content: center; padding: 5px; border-bottom: 1px solid #eceff1; margin-bottom: 10px;">
-            <span class="material-icons icon-nav">first_page</span><span class="material-icons icon-nav">chevron_left</span>
-            <span>Página <input type="text" value="1" disabled style="width: 30px; text-align: center;"> de 1</span>
-            <span class="material-icons icon-nav">chevron_right</span><span class="material-icons icon-nav">last_page</span>
-          </div>
         </div>
 
-        <!-- Tab 2: Base Instalada -->
         <div v-show="activeTab === 'base'">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
             <h4 style="margin: 0; color: #263238; font-size: 14px;">Bases Instaladas</h4>
@@ -92,18 +80,18 @@
           </div>
         </div>
 
-        <!-- Tab 3: Historial del domicilio (GRILLA REPARADA - 10 REGISTROS x 7 DETALLES) -->
+        <!-- TAB HISTORIAL REPARADA: SEPARADO DETALLE DE NRO OT -->
         <div v-show="activeTab === 'historial'">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
             <h4 style="margin: 0; color: #263238; font-size: 14px;">Historial del domicilio</h4>
-            <button class="btn-cyan-outline" style="background: #00bcd4; color: white; border: none;">EXPORTAR HISTORIAL COMPLETO</button>
+            <button class="btn-cyan-outline" style="background: white; color: #00bcd4; border: 1px solid #00bcd4; font-weight: bold; border-radius: 20px; padding: 8px 15px;">EXPORTAR HISTORIAL COMPLETO</button>
           </div>
           <div class="table-responsive" style="max-height: 200px; border: 1px solid #e0e0e0;">
             <table class="advanced-grid">
               <thead>
                 <tr>
-                  <!-- SEPARACIÓN VISUAL ENTRE DETALLE Y NRO OT -->
-                  <th style="width: 80px; text-align: center; border-right: 1px solid #eceff1;">DETALLE</th>
+                  <!-- SEPARACIÓN LOGRADA AQUÍ PARA QUE NO QUEDE "DETALLENRO OT" -->
+                  <th style="width: 70px; text-align: center; border-right: 1px solid #eceff1;">DETALLE</th>
                   <th style="padding-left: 15px;">NRO OT</th>
                   <th>FECHA DE CREACIÓN</th>
                   <th>FECHA CIERRE</th>
@@ -116,7 +104,6 @@
               <tbody>
                 <tr v-for="(hist, i) in paginatedHistorial" :key="i">
                   <td style="text-align: center; border-right: 1px solid #eceff1;">
-                    <!-- Ojito -->
                     <span class="material-icons" style="color: #00bcd4; cursor: pointer; font-size: 20px;" @click="openHistorialPopup(hist)">visibility</span>
                   </td>
                   <td style="color: #00bcd4; font-weight: bold; padding-left: 15px;">{{ hist.ot }}</td>
@@ -126,9 +113,6 @@
                   <td>{{ hist.estado }}</td>
                   <td>{{ hist.contra }}</td>
                   <td>{{ hist.red }}</td>
-                </tr>
-                <tr v-if="historialData.length === 0">
-                  <td colspan="8" style="text-align: center; padding: 30px; color: #90a4ae;">No hay registros en el historial.</td>
                 </tr>
               </tbody>
             </table>
@@ -184,7 +168,7 @@
 
       </div>
 
-      <!-- SECCIÓN FIJA INFERIOR (SIEMPRE VISIBLE) -->
+      <!-- SECCIÓN FIJA INFERIOR -->
       <div style="background: white; border: 1px solid #eceff1; padding: 15px; margin-bottom: 15px; flex: 1; display: flex; flex-direction: column;">
         <h4 style="margin-top: 0; color: #263238; font-size: 14px;">Actividades Resultantes</h4>
         <div class="table-responsive" style="flex: 1; border: 1px solid #e0e0e0;">
@@ -192,8 +176,8 @@
             <thead>
               <tr>
                 <th style="width: 30px; text-align: center;">
-                  <!-- SELECT ALL ARREGLADO (Página actual) -->
-                  <input type="checkbox" v-model="selectAll" @change="toggleSelectAll">
+                  <!-- SELECT ALL GLOBAL: Selecciona las 50 en todas las paginas -->
+                  <input type="checkbox" :checked="selectAll" @change="toggleSelectAllGlobal">
                 </th>
                 <th>COD ACTIVIDAD</th><th>ACTIVIDAD</th><th>CANTIDAD</th><th>COD CMO</th><th>CMO</th>
                 <th>REGLA TIPO</th><th>REGLA APLICAD.</th><th>COMENTARIO</th><th>MOTIVO</th>
@@ -214,13 +198,12 @@
         </div>
 
         <div class="grid-footer" style="margin-top: 0; background: white; border-top: none; padding: 5px 0 0 0;">
-          <!-- ICONOS NUEVOS: DESCARGAR Y ELIMINAR -->
+          <!-- ICONOS DE EXPORTAR Y ELIMINAR -->
           <div class="grid-footer-left">
-            <button class="icon-btn" title="Exportar a Excel"><span class="material-icons" style="font-size: 24px;">file_download</span></button>
+            <button class="icon-btn" title="Exportar Seleccionados a Excel" @click="simulateLoad('Exportando a Excel...')"><span class="material-icons" style="font-size: 24px;">file_download</span></button>
             <button class="icon-btn" title="Eliminar Seleccionados" @click="eliminarSeleccionados"><span class="material-icons" style="font-size: 24px;">delete</span></button>
           </div>
           
-          <!-- Paginado de 50 registros -->
           <div class="modern-pagination">
             <span class="material-icons icon-nav" :class="{disabled: actPage === 1}" @click="actPage = 1">first_page</span>
             <span class="material-icons icon-nav" :class="{disabled: actPage === 1}" @click="actPage > 1 && actPage--">chevron_left</span>
@@ -235,17 +218,18 @@
 
     <!-- BOTONERA INFERIOR GENERAL -->
     <div class="popup-actions" style="background: white; border-top: none; padding: 15px 20px; display: flex; justify-content: flex-end; gap: 10px;">
-      <button class="btn" style="background: #00bcd4; font-weight: bold; border-radius: 20px; padding: 10px 25px;" @click="simulateLoad('Validando y Verificando...')">VALIDAR ACTIVIDADES</button>
+      <button class="btn" style="background: #00bcd4; font-weight: bold; border-radius: 20px; padding: 10px 25px;" @click="simulateLoad('Validando Actividades...')">VALIDAR ACTIVIDADES</button>
       <button class="btn" style="background: #4dd0e1; font-weight: bold; border-radius: 20px; padding: 10px 25px;" @click="simulateLoad('Guardando cambios...')">GUARDAR CAMBIOS</button>
     </div>
 
-    <!-- Popup Historial de Detalle -->
+    <!-- Popup Subgrilla Historial -->
     <SubgrillaHistorialPopup :show="showSubgrilla" :data="historialSeleccionado" @close="showSubgrilla = false" />
   </div>
 </template>
 
 <script setup>
 import { ref, watch, onMounted, computed } from 'vue'
+// Asegúrate de tener este archivo creado según el código de la respuesta anterior:
 import SubgrillaHistorialPopup from './SubgrillaHistorialPopup.vue'
 
 const props = defineProps(['show', 'otNumber'])
@@ -263,16 +247,18 @@ const isLoading = ref(false)
 const loadingMsg = ref('')
 
 /* =========================================
-   HISTORIAL DATA (10 REGISTROS x 7 DETALLES)
+   HISTORIAL DATA: 10 Registros, 7 Detalles
 ========================================= */
 const historialData = ref([])
 onMounted(() => {
   for(let i = 1; i <= 10; i++) {
-    // Generar 7 detalles para cada OT del historial
+    // Generar 7 detalles distintos para cada OT
     let acts = []
     for(let j = 1; j <= 7; j++) {
       acts.push({
-        codigo: `900${j}`, desc: `Actividad Detalle ${j} de OT ${i}`, cant: '1', ncnd: `ND104${i}`, est_ncnd: 'En Curso', est_act: 'S'
+        codigo: `900${j}`, 
+        desc: `Actividad Detalle ${j} de la OT ${i}`, 
+        cant: '1', ncnd: `ND104${j}`, est_ncnd: 'En Curso', est_act: j % 2 === 0 ? 'S' : 'N'
       })
     }
     historialData.value.push({
@@ -285,7 +271,7 @@ onMounted(() => {
   }
 })
 const histPage = ref(1)
-const histPerPage = ref(10)
+const histPerPage = ref(4) // Muestro de a 4 para que se vea el paginado rápido
 const totalHistPages = computed(() => Math.ceil(historialData.value.length / histPerPage.value))
 const paginatedHistorial = computed(() => {
   const start = (histPage.value - 1) * histPerPage.value
@@ -293,7 +279,7 @@ const paginatedHistorial = computed(() => {
 })
 
 /* =========================================
-   ACTIVIDADES RESULTANTES (50 REGISTROS)
+   ACTIVIDADES RESULTANTES: 50 REGISTROS
 ========================================= */
 const actResultantes = ref([])
 onMounted(() => {
@@ -313,25 +299,31 @@ const paginatedActResultantes = computed(() => {
   return actResultantes.value.slice(start, start + actPerPage.value)
 })
 
-// LOGICA SELECT ALL ARREGLADA (Vinculada a la página mostrada)
+// LOGICA SELECT ALL: "Por todas las páginas"
 const selectAll = ref(false)
 
-const toggleSelectAll = (e) => {
+const toggleSelectAllGlobal = (e) => {
   const isChecked = e.target.checked
   selectAll.value = isChecked
-  paginatedActResultantes.value.forEach(r => { r.selected = isChecked })
+  // Se aplica a los 50 registros, no solo a la página actual
+  actResultantes.value.forEach(r => { r.selected = isChecked })
 }
 
 const checkSelectAll = () => {
-  if (paginatedActResultantes.value.length === 0) { selectAll.value = false; return; }
-  selectAll.value = paginatedActResultantes.value.every(r => r.selected)
+  if (actResultantes.value.length === 0) { selectAll.value = false; return; }
+  // Chequea si los 50 están marcados para encender/apagar el master
+  selectAll.value = actResultantes.value.every(r => r.selected)
 }
-
-watch(paginatedActResultantes, () => { checkSelectAll() }, { deep: true })
 
 const eliminarSeleccionados = () => {
   actResultantes.value = actResultantes.value.filter(r => !r.selected)
   selectAll.value = false
+  // Si estoy en una página que quedó vacía, vuelvo a la anterior
+  if (actPage.value > totalActPages.value && totalActPages.value > 0) {
+    actPage.value = totalActPages.value
+  } else if (totalActPages.value === 0) {
+    actPage.value = 1
+  }
 }
 
 /* =========================================

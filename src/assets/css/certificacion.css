@@ -41,7 +41,6 @@
 .btn-cyan-outline { background: white; color: #00bcd4; border: 1px solid #00bcd4; padding: 8px 15px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 12px; transition: background 0.3s; text-transform: uppercase; }
 .btn-cyan-outline:hover { background: #e0f7fa; }
 
-/* Selector de Columnas y Checkbox */
 .column-config-wrapper { position: relative; display: inline-block; margin: 15px; }
 .btn-columnas { background: white; border: 1px solid #00bcd4; color: #00bcd4; padding: 8px 15px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 12px; display: flex; align-items: center; gap: 5px; transition: all 0.3s; text-transform: uppercase; }
 .btn-columnas:hover { background: #e0f7fa; }
@@ -49,10 +48,18 @@
 .column-config-menu label { font-size: 12px; display: flex; align-items: center; gap: 8px; cursor: pointer; color: #37474f; }
 .custom-checkbox { accent-color: #00bcd4; width: 16px; height: 16px; cursor: pointer; }
 
-/* Estrellitas de Calificación */
 .star-rating { display: flex; gap: 5px; color: #cfd8dc; font-size: 24px; cursor: pointer; user-select: none; margin-top: 5px; }
 .star-rating span { transition: color 0.2s; }
 .star-rating span:hover, .star-rating span.active { color: #ffca28; }
+
+/* NUEVOS ESTILOS: Grilla con Subgrilla (Historial) */
+.expand-icon { cursor: pointer; transition: transform 0.2s; user-select: none; color: #546e7a; }
+.expand-icon:hover { color: #00bcd4; }
+.expand-icon.rotated { transform: rotate(90deg); color: #00bcd4; }
+.subgrid-container { background: #fafafa; padding: 10px; border-top: none; }
+.subgrid-table { width: 100%; background: white; border: 1px solid #cfd8dc; border-collapse: collapse; font-size: 11px; }
+.subgrid-table th { background: #eceff1; padding: 8px; border: 1px solid #cfd8dc; color: #37474f; text-align: left; }
+.subgrid-table td { padding: 8px; border: 1px solid #cfd8dc; color: #455a64; }
 
 @media (max-width: 768px) {
   .grid-footer { flex-direction: column; align-items: center; }

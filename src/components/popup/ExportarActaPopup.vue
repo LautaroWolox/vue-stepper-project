@@ -8,7 +8,7 @@
       </div>
     </div>
     
-    <div class="popup-body" style="background: #fafafa; padding: 20px; display: flex; flex-direction: column;">
+    <div class="popup-body" style="background: #fafafa; padding: 20px; display: flex; flex-direction: column; overflow-y: auto;">
       
       <div style="text-align: right; margin-bottom: 10px;">
         <label style="font-size: 13px; font-weight: bold; color: #263238; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;">
@@ -26,6 +26,7 @@
             </tr>
           </thead>
           <tbody>
+            <!-- AHORA RENDERIZA DINÁMICAMENTE LAS SELECCIONADAS DE VERDAD -->
             <tr v-for="(ot, index) in otsParaExportar" :key="index">
               <td v-for="col in visibleCols" :key="col.field">
                 <span v-if="col.field === 'contratista'">TELEWORLD ARGENTINA</span>
@@ -37,13 +38,13 @@
                 <span v-else-if="col.field === 'concepto'">RECONEXION DE ACOMETIDA</span>
                 <span v-else-if="col.field === 'estado'">Reglas B Aplicadas</span>
                 <span v-else-if="col.field === 'excluida'">{{ ot.excluida }}</span>
-                <span v-else-if="col.field === 'nota' && incluirExcluidas">-</span>
-                <span v-else-if="col.field === 'motivo' && incluirExcluidas">-</span>
+                <span v-else-if="col.field === 'nota' && incluirExcluidas">{{ ot.nota || '-' }}</span>
+                <span v-else-if="col.field === 'motivo' && incluirExcluidas">{{ ot.motivo_exclusion || '-' }}</span>
                 <span v-else></span>
               </td>
             </tr>
             <tr v-if="otsParaExportar.length === 0">
-              <td :colspan="visibleCols.length" style="text-align: center; padding: 20px; color: #90a4ae;">
+              <td :colspan="visibleCols.length" style="text-align: center; padding: 30px; color: #90a4ae;">
                 No hay OTs seleccionadas para exportar.
               </td>
             </tr>
@@ -54,8 +55,8 @@
 
     <!-- BOTONES EXPORTAR -->
     <div class="popup-actions" style="background: white; border-top: none; padding: 15px 20px; justify-content: flex-end; gap: 15px;">
-      <button class="btn" style="background: #00acc1; font-weight: bold; border-radius: 20px; padding: 10px 20px;" @click="exportar">EXPORTAR COMPLETO</button>
-      <button class="btn" style="background: #00bcd4; font-weight: bold; border-radius: 20px; padding: 10px 20px;" @click="exportar">EXPORTAR CAMPOS COMPLETOS</button>
+      <button class="btn" style="background: #00acc1; font-weight: bold; border-radius: 20px; padding: 10px 20px;" @click="$emit('close')">EXPORTAR COMPLETO</button>
+      <button class="btn" style="background: #00bcd4; font-weight: bold; border-radius: 20px; padding: 10px 20px;" @click="$emit('close')">EXPORTAR CAMPOS COMPLETOS</button>
     </div>
   </div>
 </template>
@@ -81,21 +82,13 @@ const allColumns = [
   { field: 'tecnico', label: 'CODIGO TECNICO' }, { field: 'barrio', label: 'BARRIO ESPECIAL' },
   { field: 'evaluacion', label: 'EVALUACION' }, { field: 'convenio', label: 'CONVENIO' },
   { field: 'contrato', label: 'CONTRATO' }, { field: 'estado', label: 'ESTADO REGLAS' },
-  { field: 'excluida', label: 'EXCLUIDA' }, 
-  { field: 'nota', label: 'NOTA' }, 
-  { field: 'motivo', label: 'MOTIVO' }
+  { field: 'excluida', label: 'EXCLUIDA' }, { field: 'nota', label: 'NOTA' }, { field: 'motivo', label: 'MOTIVO' }
 ]
 
 const visibleCols = computed(() => {
   return allColumns.filter(c => {
-    if (!incluirExcluidas.value && (c.field === 'nota' || c.field === 'motivo')) {
-      return false
-    }
+    if (!incluirExcluidas.value && (c.field === 'nota' || c.field === 'motivo')) return false
     return true
   })
 })
-
-const exportar = () => {
-  emit('close')
-}
 </script>
