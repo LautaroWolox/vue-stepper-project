@@ -50,7 +50,7 @@ const menuList = ref([
     submenus: [
       { id: 4, label: 'Errores de Gestión Sucursal', action: 'errores-gestion-sucursal' },
       { id: 5, label: 'Gestionar Materiales en OTs', action: 'materiales-ot' },
-      { id: 7, label: 'Errores de Gestión', action: 'none' },
+      { id: 7, label: 'Errores de Gestión', action: 'errores-gestion' },
       { id: 8, label: 'Registro de OTs Fallidas', action: 'none' },
       { id: 6, label: 'Materiales Descargados', action: 'materiales-descargados' },
       { id: 9, label: 'Validación OT de Redes', action: 'none' }
