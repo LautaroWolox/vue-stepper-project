@@ -55,6 +55,7 @@
 import { ref, reactive } from 'vue'
 import GridNotasCredito from './GridNotasCredito.vue'
 import DetalleActaCredito from './DetalleActaCredito.vue'
+import { searchNotasDebito } from '../../services/certificacionService.js'
 
 const currentView = ref('search')
 const selectedNota = ref(null)
@@ -76,27 +77,15 @@ const resetForm = () => {
   openResults.value = true
 }
 
-const handleSearch = () => {
+const handleSearch = async () => {
   openFilters.value = false
   hasSearched.value = true
   isLoading.value = true
-  setTimeout(() => {
-    generateMockData()
+  try {
+    gridData.value = await searchNotasDebito({ ...form })
+  } finally {
     isLoading.value = false
-  }, 1200)
-}
-
-const generateMockData = () => {
-  gridData.value = [
-    { id: 1, nro_nota: 'ND1046', acta: 'A2732', estado: 'En Curso', periodo: 'Del 16/05 al 15/06', anio: '2026', f_crea: '2026-06-25 16:30', f_cierre: '', contra: 'NET AND WORK S.A.', pais: 'ARGENTINA', prov: 'BUENOS AIRES', reg: 'AMBA', tipo: 'Eventos', soc: 'Telecom Argentina S.A.', usu: '', val: '2' },
-    { id: 2, nro_nota: 'ND1043', acta: 'A2711', estado: 'Cerrado', periodo: 'Del 16/03 al 15/04', anio: '2026', f_crea: '2026-04-17 11:46', f_cierre: '2026-04-17 11:47', contra: 'GREENIN S.A.S.', pais: 'ARGENTINA', prov: 'CAPITAL FEDERAL', reg: 'AMBA', tipo: 'Eventos', soc: 'Telecom Argentina S.A.', usu: 'z002456', val: '1' },
-    { id: 3, nro_nota: 'NDP011', acta: 'P0125', estado: 'En Curso', periodo: 'Del 16/01 al 15/02', anio: '2026', f_crea: '2026-03-06 13:40', f_cierre: '', contra: 'BULLS', pais: 'PARAGUAY', prov: 'PARAGUAY', reg: 'PARAGUAY', tipo: 'WIRELESS', soc: 'Nucleo S.A.', usu: '', val: '4' }
-  ].filter((row) => {
-    return (!form.nota_debito || row.nro_nota.toLowerCase().includes(form.nota_debito.toLowerCase())) &&
-      (!form.acta_asociada || row.acta.toLowerCase().includes(form.acta_asociada.toLowerCase())) &&
-      (!form.estado || row.estado === form.estado) &&
-      (!form.provincia || row.prov === form.provincia)
-  })
+  }
 }
 
 const openDetalleNota = (notaRow) => {
