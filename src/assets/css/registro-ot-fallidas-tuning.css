@@ -63,26 +63,54 @@
   font-size: 13px !important;
 }
 
-/* Columnas más dinámicas: permite achicar más el ancho visual */
+/* Columnas dinámicas reales: los anchos vienen desde Vue por colgroup/th/td */
+.fallidas-page .fallidas-grid {
+  table-layout: fixed !important;
+  width: max-content !important;
+  min-width: 100% !important;
+}
+
 .fallidas-page .fallidas-grid th,
 .fallidas-page .fallidas-grid td {
-  min-width: 36px !important;
+  min-width: 0 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
 }
 
 .fallidas-page .fallidas-grid th {
-  resize: horizontal !important;
-  overflow: hidden !important;
-  min-width: 36px !important;
-  max-width: none !important;
-}
-
-.fallidas-page .fallidas-grid td {
-  max-width: none !important;
+  resize: none !important;
+  position: relative !important;
 }
 
 .fallidas-page .fallidas-grid .filter-row input {
   width: min(70px, calc(100% - 20px)) !important;
-  min-width: 22px !important;
+  min-width: 18px !important;
+}
+
+.fallidas-page .fallidas-grid tbody tr.selectable {
+  cursor: pointer !important;
+}
+
+.fallidas-page .resize-handle {
+  position: absolute !important;
+  top: 0 !important;
+  right: -4px !important;
+  width: 9px !important;
+  height: 100% !important;
+  cursor: col-resize !important;
+  z-index: 50 !important;
+  border-right: 2px solid transparent !important;
+}
+
+.fallidas-page .resize-handle:hover {
+  border-right-color: #00bcd4 !important;
+  background: rgba(0, 188, 212, 0.14) !important;
+}
+
+body.column-resizing,
+body.column-resizing * {
+  cursor: col-resize !important;
+  user-select: none !important;
 }
 
 @media (max-width: 980px) {
