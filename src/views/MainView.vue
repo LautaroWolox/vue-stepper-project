@@ -15,9 +15,8 @@
       <ConfigJobtype v-if="activeModule === 'config-jobtype'" />
       <ConfigCmoActividad v-if="activeModule === 'config-cmo'" />
       <ConsultarActas v-if="activeModule === 'consultar-actas'" />
-      
-      <!-- NUEVO MÓDULO -->
       <ConsultarNotaCredito v-if="activeModule === 'consultar-nota-credito'" />
+      <ConsultarNotaDebito v-if="activeModule === 'consultar-nota-debito'" />
     </div>
   </div>
 </template>
@@ -31,6 +30,7 @@ import ConfigJobtype from '../components/certificacion/ConfigJobtype.vue'
 import ConfigCmoActividad from '../components/certificacion/ConfigCmoActividad.vue'
 import ConsultarActas from '../components/certificacion/ConsultarActas.vue'
 import ConsultarNotaCredito from '../components/certificacion/ConsultarNotaCredito.vue'
+import ConsultarNotaDebito from '../components/certificacion/ConsultarNotaDebito.vue'
 
 const activeModule = ref('none')
 
