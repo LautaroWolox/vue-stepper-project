@@ -52,6 +52,16 @@
 .star-rating span { transition: color 0.2s; }
 .star-rating span:hover, .star-rating span.active { color: #ffca28; }
 
+/* Detalle de Acta: el campo EXCLUIDA debe medir como N° de OT y no ocupar toda la fila */
+.soft-accordion-content .form-grid[style*="1fr 3fr"] {
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+}
+
+.soft-accordion-content .form-grid[style*="1fr 3fr"] .form-group:first-child {
+  width: 100%;
+  max-width: none;
+}
+
 /* NUEVOS ESTILOS: Grilla con Subgrilla (Historial) */
 .expand-icon { cursor: pointer; transition: transform 0.2s; user-select: none; color: #546e7a; }
 .expand-icon:hover { color: #00bcd4; }
@@ -105,6 +115,7 @@
   .grid-footer-left { margin-bottom: 10px; }
   .modern-pagination { flex-direction: column; gap: 5px; }
   .column-config-menu { width: 300px; grid-template-columns: 1fr; }
+  .soft-accordion-content .form-grid[style*="1fr 3fr"] { grid-template-columns: 1fr !important; }
   .grid-footer[style*="justify-content: center"] .modern-pagination > .icon-btn[title="Exportar a CSV"],
   .grid-footer[style*="justify-content: center"] .modern-pagination > div:last-child {
     position: static;
