@@ -1,29 +1,14 @@
 <template>
   <div class="fm-brand" aria-label="Field Manager">
-    <div class="fm-logo-orb">
-      <svg class="fm-logo-svg" viewBox="0 0 220 220" role="img" aria-hidden="true">
-        <defs>
-          <linearGradient id="fmTealGradient" x1="28" y1="34" x2="174" y2="190" gradientUnits="userSpaceOnUse">
-            <stop offset="0" stop-color="#00c8cf" />
-            <stop offset="1" stop-color="#009da7" />
-          </linearGradient>
-          <filter id="fmSoftShadow" x="-30%" y="-30%" width="160%" height="160%">
-            <feDropShadow dx="0" dy="14" stdDeviation="12" flood-color="#00838f" flood-opacity="0.14" />
-          </filter>
-        </defs>
-
-        <circle class="fm-logo-halo" cx="110" cy="110" r="82" />
+    <div class="fm-logo-mark">
+      <span class="fm-logo-corner"></span>
+      <svg class="fm-logo-ring" viewBox="0 0 160 160" role="img" aria-hidden="true">
         <path
-          class="fm-logo-ring"
-          filter="url(#fmSoftShadow)"
-          d="M66 45 H113 C150 45 181 76 181 113 C181 155 149 187 110 187 C68 187 39 155 39 113 V45"
+          class="fm-ring-path"
+          d="M40 36 H84 C110 36 132 58 132 84 C132 116 107 140 80 140 C50 140 28 117 28 86 V36"
         />
-        <rect class="fm-logo-square" x="39" y="30" width="15" height="15" rx="2" />
       </svg>
-
-      <div class="fm-logo-text" aria-hidden="true">
-        <span>F</span><span>M</span>
-      </div>
+      <div class="fm-logo-text" aria-hidden="true">FM</div>
     </div>
   </div>
 </template>
@@ -36,21 +21,34 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: min(330px, 52vw);
+  width: min(350px, 44vw);
   aspect-ratio: 1;
   pointer-events: none;
 }
 
-.fm-logo-orb {
-  position: relative;
+.fm-logo-mark {
   width: 100%;
   height: 100%;
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
+  filter: drop-shadow(0 12px 14px rgba(0, 0, 0, 0.06));
 }
 
-.fm-logo-svg {
+.fm-logo-corner {
+  position: absolute;
+  left: 22.8%;
+  top: 22%;
+  width: 6.8%;
+  height: 6.8%;
+  display: block;
+  background: #4f4f4f;
+  opacity: 0;
+  animation: fmCornerIn 260ms ease-out 80ms both;
+}
+
+.fm-logo-ring {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -58,64 +56,37 @@
   overflow: visible;
 }
 
-.fm-logo-halo {
-  fill: #ffffff;
-  opacity: 0.48;
-  transform-origin: 110px 110px;
-  animation: fmHaloIn 650ms ease-out both;
-}
-
-.fm-logo-ring {
+.fm-ring-path {
   fill: none;
-  stroke: url(#fmTealGradient);
-  stroke-width: 16;
-  stroke-linecap: round;
+  stroke: #08b8bb;
+  stroke-width: 10;
+  stroke-linecap: square;
   stroke-linejoin: round;
-  stroke-dasharray: 460;
-  stroke-dashoffset: 460;
-  animation: fmRingDraw 1200ms cubic-bezier(0.22, 1, 0.36, 1) 120ms forwards;
-}
-
-.fm-logo-square {
-  fill: #4f4f4f;
-  opacity: 0;
-  animation: fmSquareIn 360ms ease-out 180ms forwards;
+  stroke-dasharray: 390;
+  stroke-dashoffset: 390;
+  animation: fmRingDraw 1150ms ease 160ms forwards;
 }
 
 .fm-logo-text {
   position: relative;
   z-index: 2;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 2px;
-  font-family: 'Roboto', Arial, sans-serif;
-  font-size: clamp(64px, 10vw, 96px);
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(64px, 9vw, 92px);
   font-weight: 900;
-  letter-spacing: -7px;
-  color: #686868;
+  letter-spacing: -8px;
+  color: #777;
   opacity: 0;
   transform: scale(0.82);
-  animation: fmTextIn 520ms ease-out 850ms forwards, fmTextBeat 2300ms ease-in-out 1500ms infinite;
+  animation: fmTextIn 520ms ease-out 880ms forwards, fmTextBeat 2300ms ease-in-out 1500ms infinite;
 }
 
-.fm-logo-text span {
-  display: inline-block;
-  line-height: 0.9;
-}
-
-@keyframes fmHaloIn {
-  from { opacity: 0; transform: scale(0.88); }
-  to { opacity: 0.48; transform: scale(1); }
+@keyframes fmCornerIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes fmRingDraw {
   to { stroke-dashoffset: 0; }
-}
-
-@keyframes fmSquareIn {
-  from { opacity: 0; transform: translateY(-6px); }
-  to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes fmTextIn {
@@ -125,16 +96,26 @@
 
 @keyframes fmTextBeat {
   0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.035); opacity: 0.96; }
+  50% { transform: scale(1.035); opacity: 0.97; }
+}
+
+@media (max-width: 1200px) {
+  .fm-brand {
+    width: min(320px, 48vw);
+  }
+
+  .fm-logo-text {
+    font-size: clamp(58px, 10vw, 84px);
+  }
 }
 
 @media (max-width: 768px) {
   .fm-brand {
-    width: min(285px, 70vw);
+    width: min(285px, 68vw);
   }
 
   .fm-logo-text {
-    font-size: clamp(54px, 17vw, 82px);
+    font-size: clamp(52px, 17vw, 76px);
     letter-spacing: -6px;
   }
 }
@@ -145,7 +126,7 @@
   }
 
   .fm-logo-text {
-    font-size: clamp(46px, 20vw, 72px);
+    font-size: clamp(44px, 20vw, 66px);
     letter-spacing: -5px;
   }
 }
