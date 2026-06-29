@@ -38,13 +38,14 @@
 
 .fm-logo-corner {
   position: absolute;
-  left: 22.8%;
-  top: 22%;
+  left: 20.45%;
+  top: 19.75%;
   width: 6.8%;
   height: 6.8%;
   display: block;
   background: #4f4f4f;
   opacity: 0;
+  z-index: 3;
   animation: fmCornerIn 260ms ease-out 80ms both;
 }
 
