@@ -61,9 +61,53 @@
 .subgrid-table th { background: #eceff1; padding: 8px; border: 1px solid #cfd8dc; color: #37474f; text-align: left; }
 .subgrid-table td { padding: 8px; border: 1px solid #cfd8dc; color: #455a64; }
 
+/* Footer de Notas de Crédito/Débito: exportar a la izquierda, paginado al centro, contador a la derecha */
+.grid-footer[style*="justify-content: center"] {
+  position: relative;
+  justify-content: center !important;
+  min-height: 48px;
+  background: #fff;
+}
+
+.grid-footer[style*="justify-content: center"] .modern-pagination {
+  width: 100%;
+  justify-content: center;
+  position: relative;
+}
+
+.grid-footer[style*="justify-content: center"] .modern-pagination > .icon-btn[title="Exportar a CSV"] {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-left: 0 !important;
+  padding: 0 !important;
+  color: #000;
+  background: transparent !important;
+}
+
+.grid-footer[style*="justify-content: center"] .modern-pagination > .icon-btn[title="Exportar a CSV"] .material-icons {
+  font-size: 21px;
+  color: #000;
+}
+
+.grid-footer[style*="justify-content: center"] .modern-pagination > div:last-child {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-left: 0 !important;
+  white-space: nowrap;
+}
+
 @media (max-width: 768px) {
   .grid-footer { flex-direction: column; align-items: center; }
   .grid-footer-left { margin-bottom: 10px; }
   .modern-pagination { flex-direction: column; gap: 5px; }
   .column-config-menu { width: 300px; grid-template-columns: 1fr; }
+  .grid-footer[style*="justify-content: center"] .modern-pagination > .icon-btn[title="Exportar a CSV"],
+  .grid-footer[style*="justify-content: center"] .modern-pagination > div:last-child {
+    position: static;
+    transform: none;
+  }
 }
