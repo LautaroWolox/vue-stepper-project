@@ -9,7 +9,7 @@
       
       <SearchAccordion v-if="activeModule === 'search-classic'" />
       <ErroresGestionSucursal v-if="activeModule === 'errores-gestion-sucursal'" />
-      <GestionMateriales v-if="activeModule === 'materiales-ot'" title="Gestionar Materiales en OTs" type="OT" />
+      <GestionMaterialesOt v-if="activeModule === 'materiales-ot'" />
       <GestionMateriales v-if="activeModule === 'materiales-descargados'" title="Materiales Descargados" type="DESC" />
       <ConfigJobtype v-if="activeModule === 'config-jobtype'" />
       <ConfigCmoActividad v-if="activeModule === 'config-cmo'" />
@@ -26,6 +26,7 @@ import AppMenu from '../components/menu/AppMenu.vue'
 import FmSplash from '../components/brand/FmSplash.vue'
 import SearchAccordion from '../components/accordion/SearchAccordion.vue'
 import ErroresGestionSucursal from '../components/materiales/ErroresGestionSucursal.vue'
+import GestionMaterialesOt from '../components/materiales/GestionMaterialesOt.vue'
 import GestionMateriales from '../components/materiales/GestionMateriales.vue'
 import ConfigJobtype from '../components/certificacion/ConfigJobtype.vue'
 import ConfigCmoActividad from '../components/certificacion/ConfigCmoActividad.vue'
