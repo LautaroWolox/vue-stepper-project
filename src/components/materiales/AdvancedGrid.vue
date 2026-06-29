@@ -27,13 +27,13 @@
         </tbody>
       </table>
     </div>
-    <div class="grid-footer" style="display: flex; align-items: center; justify-content: space-between; min-height: 54px; padding: 10px 14px;">
-      <div class="grid-action-bar" style="display: flex !important; flex-direction: row !important; align-items: center; gap: 10px; margin: 0; padding: 0;">
-        <button class="icon-btn" style="width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center;" title="Descargar Vista" @click="exportVisibleCsv" :disabled="filteredData.length === 0"><span class="material-icons action-icon" style="font-size: 21px; line-height: 1;">get_app</span></button>
-        <button class="icon-btn" style="width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center;" title="Configurar Grilla" @click="showColumnConfig = !showColumnConfig"><span class="material-icons action-icon" style="font-size: 21px; line-height: 1;">build</span></button>
-        <button class="icon-btn" style="width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center;" title="Agregar Material" @click="$emit('add-material')"><span class="material-icons action-icon" style="font-size: 21px; line-height: 1;">add_box</span></button>
+    <div class="grid-footer" style="display: flex; align-items: center; justify-content: space-between; min-height: 42px; padding: 7px 14px; background: #fff;">
+      <div class="grid-action-bar" style="display: inline-flex; flex-direction: row; align-items: center; justify-content: flex-start; gap: 12px; margin: 0; padding: 0; width: auto; flex: 0 0 auto; white-space: nowrap;">
+        <button class="materiales-footer-icon" title="Descargar Vista" @click="exportVisibleCsv" :disabled="filteredData.length === 0"><span class="material-icons">file_download</span></button>
+        <button class="materiales-footer-icon" title="Configurar Grilla" @click="showColumnConfig = !showColumnConfig"><span class="material-icons">build</span></button>
+        <button class="materiales-footer-icon" title="Agregar Material" @click="$emit('add-material')"><span class="material-icons">settings</span></button>
       </div>
-      <div class="pagination" style="padding: 0; border: none; background: transparent; display: flex; align-items: center; justify-content: flex-end; gap: 18px; margin: 0;">
+      <div class="pagination" style="padding: 0; border: none; background: transparent; display: flex; align-items: center; justify-content: flex-end; gap: 18px; margin: 0; width: auto; flex: 1 1 auto;">
         <div>Seleccionados: <strong>{{ localSelected.length }}</strong></div>
         <div style="display:flex; gap:10px; align-items:center;"><button class="btn" style="padding: 4px 8px; min-width: 34px;" @click="currentPage--" :disabled="currentPage === 1"><span class="material-icons">chevron_left</span></button><span>Pág {{ currentPage }} de {{ totalPages || 1 }}</span><button class="btn" style="padding: 4px 8px; min-width: 34px;" @click="currentPage++" :disabled="currentPage >= totalPages || totalPages === 0"><span class="material-icons">chevron_right</span></button></div>
       </div>
@@ -116,3 +116,40 @@ watch(totalPages, (pages) => {
   if (currentPage.value > pages) currentPage.value = pages || 1
 })
 </script>
+
+<style scoped>
+.materiales-footer-icon {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  color: #000;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: auto;
+  height: auto;
+  min-width: 0;
+  min-height: 0;
+  padding: 0;
+  margin: 0;
+  line-height: 1;
+}
+
+.materiales-footer-icon .material-icons {
+  color: #000;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.materiales-footer-icon:hover:not(:disabled) .material-icons {
+  color: #00838f;
+}
+
+.materiales-footer-icon:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+</style>
