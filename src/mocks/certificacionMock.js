@@ -1,6 +1,15 @@
 const pick = (list, index) => list[index % list.length]
 const pad = (value, size = 2) => String(value).padStart(size, '0')
 
+export const provinciasCertificacion = [
+  'BUENOS AIRES', 'CAPITAL FEDERAL', 'CATAMARCA', 'CHACO', 'CHUBUT', 'CORDOBA', 'CORRIENTES',
+  'ENTRE RIOS', 'FORMOSA', 'JUJUY', 'LA PAMPA', 'LA RIOJA', 'MENDOZA', 'MISIONES', 'NEUQUEN',
+  'RIO NEGRO', 'SALTA', 'SAN JUAN', 'SAN LUIS', 'SANTA CRUZ', 'SANTA FE', 'SANTIAGO DEL ESTERO',
+  'TIERRA DEL FUEGO', 'TUCUMAN', 'ARTIGAS', 'CANELONES', 'CERRO LARGO', 'COLONIA', 'DURAZNO',
+  'FLORES', 'FLORIDA', 'LAVALLEJA', 'MALDONADO', 'MONTEVIDEO', 'PAYSANDU', 'RIO NEGRO UY',
+  'RIVERA', 'ROCHA', 'SALTO', 'SAN JOSE', 'SORIANO', 'TACUAREMBO', 'TREINTA Y TRES', 'PARAGUAY'
+]
+
 export const getActasMock = (listas) => {
   const rows = []
   const estados = ['En Curso', 'Certificada', 'Cerrado']
@@ -34,34 +43,37 @@ export const getActasMock = (listas) => {
 }
 
 const makeNotaRows = (prefix) => {
-  const contratistas = ['NET AND WORK S.A.', 'GREENIN S.A.S.', 'BULLS', 'DUNKEL', 'ALL VISION S.A.', 'INTERCATV S.R.L.']
-  const provincias = ['BUENOS AIRES', 'CAPITAL FEDERAL', 'PARAGUAY', 'CORDOBA', 'MENDOZA']
-  const regiones = ['AMBA', 'PARAGUAY', 'INTERIOR']
-  const tipos = ['Eventos', 'WIRELESS', 'DTH', 'Eventos SMB']
-  const sociedades = ['Telecom Argentina S.A.', 'Núcleo S.A.', 'La Capital Cable S.A.']
+  const contratistas = ['NET AND WORK S.A.', 'GREENIN S.A.S.', 'BULLS', 'DUNKEL', 'ALL VISION S.A.', 'INTERCATV S.R.L.', 'ADOBE CONSTRUCCIONES', 'CONECTAR S.R.L.', 'DIGITAL OESTE S.R.L.', 'AYKO S.A.']
+  const regiones = ['AMBA', 'PARAGUAY', 'INTERIOR', 'CAPITAL', 'Provincia de Buenos Aires']
+  const tipos = ['Eventos', 'WIRELESS', 'DTH', 'Eventos SMB', 'Siniestros']
+  const sociedades = ['Telecom Argentina S.A.', 'Núcleo S.A.', 'La Capital Cable S.A.', 'Bersabel S.A.']
   const estados = ['En Curso', 'Cerrado']
 
-  return Array.from({ length: 80 }, (_, index) => {
+  return Array.from({ length: 166 }, (_, index) => {
     const id = index + 1
-    const isParaguay = index % 4 === 2
+    const provincia = index === 0 ? 'BUENOS AIRES' : pick(provinciasCertificacion, index)
+    const isParaguay = provincia === 'PARAGUAY'
     const day = pad((index % 28) + 1)
+    const isClosed = index % 3 !== 0
+    const nroNota = index === 0 ? `${prefix}1046` : `${prefix}${pad(1020 + id, 4)}`
+    const acta = index === 0 ? 'A2732' : (isParaguay ? `P${pad(1100 + id, 4)}` : `A${2400 + id}`)
 
     return {
       id,
-      nro_nota: `${prefix}${pad(1000 + id, 4)}`,
-      acta: isParaguay ? `P${pad(1100 + id, 4)}` : `A${2700 + id}`,
-      estado: pick(estados, index),
-      periodo: pick(['Del 16/05 al 15/06', 'Del 16/03 al 15/04', 'Del 16/01 al 15/02', 'Del 16/06 al 15/07'], index),
-      anio: String(2024 + (index % 3)),
-      f_crea: `2026-06-${day} ${pad(8 + (index % 10))}:${pad((index * 5) % 60)}`,
-      f_cierre: index % 2 === 0 ? '' : `2026-06-${day} ${pad(10 + (index % 8))}:${pad((index * 7) % 60)}`,
-      contra: pick(contratistas, index),
+      nro_nota: nroNota,
+      acta,
+      estado: isClosed ? 'Cerrado' : 'En Curso',
+      periodo: pick(['Del 16/05 al 15/06', 'Del 16/03 al 15/04', 'Del 16/01 al 15/02', 'Del 16/06 al 15/07', 'Del 16/11 al 15/12'], index),
+      anio: String(2023 + (index % 4)),
+      f_crea: index === 0 ? '2026-06-25 16:30:16.0' : `${2024 + (index % 3)}-${pad((index % 12) + 1)}-${day} ${pad(8 + (index % 10))}:${pad((index * 5) % 60)}:${pad((index * 7) % 60)}.0`,
+      f_cierre: isClosed ? `${2024 + (index % 3)}-${pad((index % 12) + 1)}-${day} ${pad(10 + (index % 8))}:${pad((index * 7) % 60)}:${pad((index * 9) % 60)}.0` : '',
+      contra: index === 0 ? 'NET AND WORK S.A.' : pick(contratistas, index),
       pais: isParaguay ? 'PARAGUAY' : 'ARGENTINA',
-      prov: isParaguay ? 'PARAGUAY' : pick(provincias, index),
+      prov: provincia,
       reg: pick(regiones, index),
       tipo: pick(tipos, index),
       soc: isParaguay ? 'Núcleo S.A.' : pick(sociedades, index),
-      usu: index % 3 === 0 ? `z00${2450 + index}` : '',
+      usu: isClosed ? `z00${2450 + index}` : '',
       val: String((index % 5) + 1)
     }
   })
