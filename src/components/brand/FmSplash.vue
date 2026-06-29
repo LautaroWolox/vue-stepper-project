@@ -29,6 +29,7 @@
   align-items: center;
   justify-content: center;
   background: #f4f6f8;
+  animation: fmSplashOut 420ms ease-in 2600ms forwards;
 }
 
 .fm-splash-card {
@@ -139,6 +140,10 @@
 @keyframes fmLabelIn {
   from { opacity: 0; transform: translateY(6px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fmSplashOut {
+  to { opacity: 0; visibility: hidden; pointer-events: none; }
 }
 
 @media (max-width: 560px) {
