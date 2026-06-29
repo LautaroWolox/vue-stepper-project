@@ -58,6 +58,7 @@
 import { ref, reactive } from 'vue'
 import GridActas from './GridActas.vue'
 import DetalleActa from './DetalleActa.vue'
+import { searchActas } from '../../services/certificacionService.js'
 
 const currentView = ref('search')
 const selectedActa = ref(null)
@@ -80,32 +81,12 @@ const gridData = ref([])
 
 const resetForm = () => { Object.keys(form).forEach(k => form[k] = ''); hasSearched.value = false; gridData.value = [] }
 
-const handleSearch = () => {
+const handleSearch = async () => {
   openFilters.value = false; hasSearched.value = true; isLoading.value = true
-  setTimeout(() => { generateMockData(); isLoading.value = false }, 1200)
-}
-
-const generateMockData = () => {
-  gridData.value = []
-  for (let i = 1; i <= 60; i++) {
-    gridData.value.push({
-      id: i,
-      nro_acta: `A${2700 + i}`,
-      nd: 'NO', nc: 'NO',
-      estado: 'En Curso',
-      periodo: 'Del 16/06 al 15/07',
-      anio: '2026',
-      fecha_crea: '2026-06-26 15:12:00',
-      fecha_cierre: '',
-      contratista: listas.contratistas[i % 5],
-      pais: 'ARGENTINA',
-      provincia: 'BUENOS AIRES',
-      region: 'AMBA',
-      tipo_contrato: listas.tipos_contrato[i % 3],
-      sociedad: 'Telecom Argentina',
-      usuario: '',
-      valoracion: ''
-    })
+  try {
+    gridData.value = await searchActas({ ...form }, listas)
+  } finally {
+    isLoading.value = false
   }
 }
 
