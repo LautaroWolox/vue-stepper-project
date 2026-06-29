@@ -8,7 +8,8 @@ const list = (response) => Array.isArray(response) ? response : response?.data |
 const PATHS = {
   search: '/certificacion/ots-fallidas/consultar',
   process: '/certificacion/ots-fallidas/procesar',
-  include: '/certificacion/ots-fallidas/incluir'
+  include: '/certificacion/ots-fallidas/incluir',
+  exclude: '/certificacion/ots-fallidas/excluir'
 }
 
 export const searchRegistroOtFallidas = async (filters = {}) => {
@@ -34,4 +35,9 @@ export const processRegistroOtFallidas = async (rows = []) => {
 export const includeRegistroOtFallida = async (payload) => {
   if (USE_MOCKS()) return wait({ ok: true, ...payload })
   return apiClient.post(PATHS.include, payload)
+}
+
+export const excludeRegistroOtFallidas = async (payload) => {
+  if (USE_MOCKS()) return wait({ ok: true, ...payload })
+  return apiClient.post(PATHS.exclude, payload)
 }
