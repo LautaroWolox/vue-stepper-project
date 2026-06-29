@@ -57,3 +57,55 @@ button .material-icons,
 .fallidas-page .footer-reprocess .material-icons,
 .fallidas-page .icon-cell .material-icons { font-size: 18px !important; line-height: 1 !important; }
 .fallidas-page .icon-cell { width: 24px !important; height: 24px !important; padding: 0 !important; display: inline-flex !important; align-items: center !important; justify-content: center !important; }
+
+/* Registro OTs Fallidas: encabezados fijos y separadores de celdas más marcados */
+.fallidas-page .grid-scroll {
+  position: relative !important;
+  overflow: auto !important;
+  border: 1px solid #9eabb4 !important;
+  background: #ffffff !important;
+}
+
+.fallidas-page .fallidas-grid {
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+}
+
+.fallidas-page .fallidas-grid th,
+.fallidas-page .fallidas-grid td {
+  border-right: 1px solid #b5c0c8 !important;
+  border-bottom: 1px solid #b5c0c8 !important;
+}
+
+.fallidas-page .fallidas-grid th:first-child,
+.fallidas-page .fallidas-grid td:first-child {
+  border-left: 1px solid #b5c0c8 !important;
+}
+
+.fallidas-page .fallidas-grid thead tr:first-child th {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 30 !important;
+  background: #f3f5f6 !important;
+  border-top: 1px solid #9eabb4 !important;
+  border-bottom: 1px solid #9eabb4 !important;
+  box-shadow: 0 1px 0 #9eabb4 !important;
+}
+
+.fallidas-page .fallidas-grid thead tr.filter-row th {
+  position: sticky !important;
+  top: 40px !important;
+  z-index: 29 !important;
+  background: #ffffff !important;
+  border-bottom: 2px solid #9eabb4 !important;
+  box-shadow: 0 1px 0 #9eabb4 !important;
+}
+
+.fallidas-page .fallidas-grid thead th.check-col,
+.fallidas-page .fallidas-grid tbody td.check-col {
+  border-right: 1px solid #9eabb4 !important;
+}
+
+.fallidas-page .fallidas-grid tbody tr:hover td {
+  background-image: linear-gradient(rgba(0, 188, 212, 0.035), rgba(0, 188, 212, 0.035)) !important;
+}
