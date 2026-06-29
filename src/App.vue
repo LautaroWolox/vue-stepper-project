@@ -1,13 +1,17 @@
 <template>
   <div id="app-root">
     <LoginModal v-if="!isAuthenticated" />
-    <router-view v-else />
+    <template v-else>
+      <FmSplash />
+      <router-view />
+    </template>
   </div>
 </template>
 
 <script setup>
 import { useAuth } from './composables/useAuth.js'
 import LoginModal from './components/login/LoginModal.vue'
+import FmSplash from './components/brand/FmSplash.vue'
 const { isAuthenticated } = useAuth()
 </script>
 
