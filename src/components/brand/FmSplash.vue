@@ -5,7 +5,7 @@
       <svg class="fm-logo-ring" viewBox="0 0 160 160" role="img" aria-hidden="true">
         <path
           class="fm-ring-path"
-          d="M40 36 H84 C110 36 132 58 132 84 C132 116 107 140 80 140 C50 140 28 117 28 86 V36"
+          d="M52 36 H84 C110 36 132 58 132 84 C132 116 107 140 80 140 C50 140 28 117 28 86 V36"
         />
       </svg>
       <div class="fm-logo-text" aria-hidden="true">FM</div>
@@ -38,8 +38,8 @@
 
 .fm-logo-corner {
   position: absolute;
-  left: 20.45%;
-  top: 19.75%;
+  left: 21.7%;
+  top: 19.4%;
   width: 6.8%;
   height: 6.8%;
   display: block;
