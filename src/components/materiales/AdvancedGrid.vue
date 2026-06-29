@@ -27,15 +27,15 @@
         </tbody>
       </table>
     </div>
-    <div class="grid-footer">
-      <div class="grid-action-bar">
-        <button class="icon-btn" title="Descargar Vista" @click="exportVisibleCsv" :disabled="filteredData.length === 0"><span class="material-icons action-icon">get_app</span></button>
-        <button class="icon-btn" title="Configurar Grilla" @click="showColumnConfig = !showColumnConfig"><span class="material-icons action-icon">build</span></button>
-        <button class="icon-btn" title="Agregar Material" @click="$emit('add-material')"><span class="material-icons action-icon">add_box</span></button>
+    <div class="grid-footer" style="display: flex; align-items: center; justify-content: space-between; min-height: 54px; padding: 10px 14px;">
+      <div class="grid-action-bar" style="display: flex !important; flex-direction: row !important; align-items: center; gap: 10px; margin: 0; padding: 0;">
+        <button class="icon-btn" style="width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center;" title="Descargar Vista" @click="exportVisibleCsv" :disabled="filteredData.length === 0"><span class="material-icons action-icon" style="font-size: 21px; line-height: 1;">get_app</span></button>
+        <button class="icon-btn" style="width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center;" title="Configurar Grilla" @click="showColumnConfig = !showColumnConfig"><span class="material-icons action-icon" style="font-size: 21px; line-height: 1;">build</span></button>
+        <button class="icon-btn" style="width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center;" title="Agregar Material" @click="$emit('add-material')"><span class="material-icons action-icon" style="font-size: 21px; line-height: 1;">add_box</span></button>
       </div>
-      <div class="pagination" style="padding: 0; border: none; background: transparent;">
-        <div style="margin-right: 15px;">Seleccionados: <strong>{{ localSelected.length }}</strong></div>
-        <div style="display:flex; gap:10px; align-items:center;"><button class="btn" style="padding: 4px 8px;" @click="currentPage--" :disabled="currentPage === 1"><span class="material-icons">chevron_left</span></button><span>Pág {{ currentPage }} de {{ totalPages || 1 }}</span><button class="btn" style="padding: 4px 8px;" @click="currentPage++" :disabled="currentPage >= totalPages || totalPages === 0"><span class="material-icons">chevron_right</span></button></div>
+      <div class="pagination" style="padding: 0; border: none; background: transparent; display: flex; align-items: center; justify-content: flex-end; gap: 18px; margin: 0;">
+        <div>Seleccionados: <strong>{{ localSelected.length }}</strong></div>
+        <div style="display:flex; gap:10px; align-items:center;"><button class="btn" style="padding: 4px 8px; min-width: 34px;" @click="currentPage--" :disabled="currentPage === 1"><span class="material-icons">chevron_left</span></button><span>Pág {{ currentPage }} de {{ totalPages || 1 }}</span><button class="btn" style="padding: 4px 8px; min-width: 34px;" @click="currentPage++" :disabled="currentPage >= totalPages || totalPages === 0"><span class="material-icons">chevron_right</span></button></div>
       </div>
     </div>
   </div>
