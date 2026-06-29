@@ -8,78 +8,25 @@
 
       <div v-show="filtersOpen" class="fm-panel-content filters-content">
         <div class="filters-row">
-          <div class="fm-field">
-            <label>Region</label>
-            <select v-model="filters.region" class="form-control">
-              <option value="">None selected</option>
-              <option value="AMBA">AMBA</option>
-              <option value="CAPITAL">CAPITAL</option>
-              <option value="INTERIOR">INTERIOR</option>
-            </select>
-          </div>
-
-          <div class="fm-field">
-            <label>Sub Region</label>
-            <select v-model="filters.subRegion" class="form-control">
-              <option value="">None selected</option>
-              <option value="CABA">CABA</option>
-              <option value="GBA NORTE">GBA NORTE</option>
-              <option value="GBA SUR">GBA SUR</option>
-            </select>
-          </div>
-
-          <div class="fm-field">
-            <label>Centro Logístico</label>
-            <select v-model="filters.centro" class="form-control">
-              <option value="">None selected</option>
-              <option value="PNT1">PNT1</option>
-              <option value="PNL1">PNL1</option>
-              <option value="OC15">OC15</option>
-            </select>
-          </div>
-
-          <div class="fm-field">
-            <label>Almacen</label>
-            <select v-model="filters.almacen" class="form-control">
-              <option value="">None selected</option>
-              <option value="OC15">OC15</option>
-              <option value="OC01">OC01</option>
-              <option value="A-0">A-0</option>
-            </select>
-          </div>
+          <div class="fm-field"><label>Region</label><select v-model="filters.region" class="form-control"><option value="">None selected</option><option value="AMBA">AMBA</option><option value="CAPITAL">CAPITAL</option><option value="INTERIOR">INTERIOR</option></select></div>
+          <div class="fm-field"><label>Sub Region</label><select v-model="filters.subRegion" class="form-control"><option value="">None selected</option><option value="CABA">CABA</option><option value="GBA NORTE">GBA NORTE</option><option value="GBA SUR">GBA SUR</option><option value="LA PLATA">LA PLATA</option></select></div>
+          <div class="fm-field"><label>Centro Logístico</label><select v-model="filters.centro" class="form-control"><option value="">None selected</option><option value="PNT1">PNT1</option><option value="PNL1">PNL1</option><option value="OC15">OC15</option></select></div>
+          <div class="fm-field"><label>Almacen</label><select v-model="filters.almacen" class="form-control"><option value="">None selected</option><option value="OC15">OC15</option><option value="OC01">OC01</option><option value="A-0">A-0</option></select></div>
         </div>
 
         <div class="filters-row second-row">
-          <div class="fm-field">
-            <label>Nro. Ot</label>
-            <input v-model.trim="filters.nroOt" class="form-control" />
-          </div>
-
-          <div class="fm-field">
-            <label>Código Material</label>
-            <input v-model.trim="filters.codigoMaterial" class="form-control" />
-          </div>
-
-          <div class="fm-field">
-            <label>Nro Serie</label>
-            <input v-model.trim="filters.nroSerie" class="form-control" />
-          </div>
-
-          <div class="fm-field">
-            <label>Fecha Ult Mod Desde</label>
-            <input v-model="filters.fechaDesde" type="text" class="form-control" />
-          </div>
+          <div class="fm-field"><label>Nro. Ot</label><input v-model.trim="filters.nroOt" class="form-control" /></div>
+          <div class="fm-field"><label>Código Material</label><input v-model.trim="filters.codigoMaterial" class="form-control" /></div>
+          <div class="fm-field"><label>Nro Serie</label><input v-model.trim="filters.nroSerie" class="form-control" /></div>
+          <div class="fm-field"><label>Fecha Ult Mod Desde</label><input v-model="filters.fechaDesde" type="text" class="form-control" /></div>
         </div>
 
         <div class="filters-row third-row">
-          <div class="fm-field">
-            <label>Fecha Ult Mod Hasta</label>
-            <input v-model="filters.fechaHasta" type="text" class="form-control" :disabled="!filters.fechaDesde" />
-          </div>
+          <div class="fm-field"><label>Fecha Ult Mod Hasta</label><input v-model="filters.fechaHasta" type="text" class="form-control" :disabled="!filters.fechaDesde" /></div>
         </div>
 
         <div class="filters-actions">
-          <button type="button" class="btn-cyan" @click="handleSearch">BUSCAR</button>
+          <button type="button" class="btn-cyan" @click="handleSearch" :disabled="isLoading">{{ isLoading ? 'BUSCANDO...' : 'BUSCAR' }}</button>
           <button type="button" class="btn-cyan-outline" @click="clearFilters">LIMPIAR</button>
         </div>
       </div>
@@ -93,101 +40,58 @@
 
       <div v-show="resultsOpen" class="fm-panel-content grid-content">
         <div v-if="showColumnConfig" class="column-config-menu">
-          <label v-for="column in columns" :key="column.field">
-            <input type="checkbox" class="custom-checkbox" v-model="column.visible" />
-            {{ column.label }}
-          </label>
+          <label v-for="column in columns" :key="column.field"><input type="checkbox" class="custom-checkbox" v-model="column.visible" /> {{ column.label }}</label>
         </div>
 
         <div class="error-table-wrap">
           <table class="error-grid">
             <thead>
               <tr>
-                <th v-for="column in visibleColumns" :key="column.field" class="resizable-th" :style="{ width: column.width, minWidth: column.minWidth }">
-                  <div class="resize-header">{{ column.label }}</div>
-                </th>
+                <th v-for="column in visibleColumns" :key="column.field" class="resizable-th" :style="{ width: column.width, minWidth: column.minWidth }"><div class="resize-header">{{ column.label }}</div></th>
               </tr>
               <tr class="filter-row">
                 <th v-for="column in visibleColumns" :key="`filter-${column.field}`" :style="{ width: column.width, minWidth: column.minWidth }">
-                  <div class="col-filter">
-                    <span>{{ column.field === 'materialValidado' ? '^' : '~' }}</span>
-                    <input v-model="columnFilters[column.field]" class="col-filter-input" @input="currentPage = 1" />
-                    <button type="button" @click="clearColumnFilter(column.field)">x</button>
-                  </div>
+                  <div class="col-filter"><span>{{ column.field === 'materialValidado' ? '^' : '~' }}</span><input v-model="columnFilters[column.field]" class="col-filter-input" @input="currentPage = 1" /><button type="button" @click="clearColumnFilter(column.field)">x</button></div>
                 </th>
               </tr>
             </thead>
             <tbody>
               <tr v-for="row in paginatedRows" :key="row.id">
-                <td v-for="column in visibleColumns" :key="`${row.id}-${column.field}`" :title="row[column.field]">
-                  {{ row[column.field] }}
-                </td>
+                <td v-for="column in visibleColumns" :key="`${row.id}-${column.field}`" :title="row[column.field]">{{ row[column.field] }}</td>
               </tr>
-              <tr v-if="paginatedRows.length === 0">
-                <td :colspan="visibleColumns.length" class="empty-cell"></td>
-              </tr>
+              <tr v-if="paginatedRows.length === 0"><td :colspan="visibleColumns.length" class="empty-cell"></td></tr>
             </tbody>
           </table>
         </div>
 
         <div class="error-grid-footer">
           <div class="footer-icons">
-            <button class="plain-icon" type="button" title="Descargar" :disabled="filteredRows.length === 0" @click="exportRows">
-              <span class="material-icons">file_download</span>
-            </button>
-            <button class="plain-icon" type="button" title="Gestionar" :disabled="filteredRows.length === 0" @click="showNoResultsAlert">
-              <span class="material-icons">build</span>
-            </button>
-            <button class="plain-icon" type="button" title="Reprocesar" :disabled="filteredRows.length === 0" @click="showNoResultsAlert">
-              <span class="material-icons">assignment_return</span>
-            </button>
-            <button class="plain-icon" type="button" title="Actualizar" @click="handleSearch">
-              <span class="material-icons">refresh</span>
-            </button>
-            <button class="plain-icon" type="button" title="Configurar columnas" @click="showColumnConfig = !showColumnConfig">
-              <span class="material-icons">visibility</span>
-            </button>
+            <button class="plain-icon" type="button" title="Descargar" :disabled="filteredRows.length === 0" @click="exportRows"><span class="material-icons">file_download</span></button>
+            <button class="plain-icon" type="button" title="Gestionar" :disabled="filteredRows.length === 0" @click="showNoResultsAlert"><span class="material-icons">build</span></button>
+            <button class="plain-icon" type="button" title="Reprocesar" :disabled="filteredRows.length === 0" @click="showNoResultsAlert"><span class="material-icons">assignment_return</span></button>
+            <button class="plain-icon" type="button" title="Actualizar" @click="handleSearch"><span class="material-icons">refresh</span></button>
+            <button class="plain-icon" type="button" title="Configurar columnas" @click="showColumnConfig = !showColumnConfig"><span class="material-icons">visibility</span></button>
           </div>
 
           <div class="footer-pagination">
             <button class="page-icon" type="button" :disabled="currentPage === 1" @click="currentPage = 1"><span class="material-icons">first_page</span></button>
             <button class="page-icon" type="button" :disabled="currentPage === 1" @click="currentPage > 1 && currentPage--"><span class="material-icons">chevron_left</span></button>
-            <span>Página</span>
-            <input class="page-input" v-model.number="currentPage" type="number" min="1" :max="totalPages || 1" @change="normalizePage" />
-            <span>de {{ totalPages || 0 }}</span>
+            <span>Página</span><input class="page-input" v-model.number="currentPage" type="number" min="1" :max="totalPages || 1" @change="normalizePage" /><span>de {{ totalPages || 0 }}</span>
             <button class="page-icon" type="button" :disabled="currentPage >= totalPages" @click="currentPage < totalPages && currentPage++"><span class="material-icons">chevron_right</span></button>
             <button class="page-icon" type="button" :disabled="currentPage >= totalPages" @click="currentPage = totalPages || 1"><span class="material-icons">last_page</span></button>
-            <select class="page-size" v-model.number="itemsPerPage" @change="currentPage = 1">
-              <option :value="100">100</option>
-              <option :value="50">50</option>
-              <option :value="10">10</option>
-            </select>
+            <select class="page-size" v-model.number="itemsPerPage" @change="currentPage = 1"><option :value="100">100</option><option :value="50">50</option><option :value="10">10</option></select>
           </div>
 
-          <div class="footer-count">
-            <span v-if="filteredRows.length">Mostrando {{ fromRow }} - {{ toRow }} de {{ filteredRows.length }}</span>
-            <span v-else>No hay resultados</span>
-          </div>
+          <div class="footer-count"><span v-if="filteredRows.length">Mostrando {{ fromRow }} - {{ toRow }} de {{ filteredRows.length }}</span><span v-else>No hay resultados</span></div>
         </div>
       </div>
     </section>
 
     <div v-if="showAlert" class="pretty-modal-backdrop">
       <div class="pretty-alert">
-        <div class="pretty-alert-header">
-          <div class="pretty-alert-title"><span class="material-icons">info</span> Alerta</div>
-          <button type="button" class="pretty-close" @click="showAlert = false">×</button>
-        </div>
-        <div class="pretty-alert-body">
-          <div class="pretty-alert-icon"><span class="material-icons">search_off</span></div>
-          <div>
-            <h3>No se encontraron resultados</h3>
-            <p>No existen gestiones con error para los filtros ingresados.</p>
-          </div>
-        </div>
-        <div class="pretty-alert-actions">
-          <button type="button" class="btn-cyan-outline" @click="showAlert = false">CERRAR</button>
-        </div>
+        <div class="pretty-alert-header"><div class="pretty-alert-title"><span class="material-icons">info</span> Alerta</div><button type="button" class="pretty-close" @click="showAlert = false">×</button></div>
+        <div class="pretty-alert-body"><div class="pretty-alert-icon"><span class="material-icons">search_off</span></div><div><h3>No se encontraron resultados</h3><p>No existen gestiones con error para los filtros ingresados.</p></div></div>
+        <div class="pretty-alert-actions"><button type="button" class="btn-cyan-outline" @click="showAlert = false">CERRAR</button></div>
       </div>
     </div>
   </div>
@@ -196,27 +100,18 @@
 <script setup>
 import { computed, reactive, ref, watch } from 'vue'
 import { buildCsv, downloadCsv } from '../../utils/csv.js'
+import { searchErroresGestion } from '../../services/materialesGestionesService.js'
 
 const filtersOpen = ref(true)
 const resultsOpen = ref(true)
 const showAlert = ref(false)
 const showColumnConfig = ref(false)
+const isLoading = ref(false)
 const currentPage = ref(1)
 const itemsPerPage = ref(100)
 const rows = ref([])
 
-const emptyFilters = () => ({
-  region: '',
-  subRegion: '',
-  centro: '',
-  almacen: '',
-  nroOt: '',
-  codigoMaterial: '',
-  nroSerie: '',
-  fechaDesde: '',
-  fechaHasta: ''
-})
-
+const emptyFilters = () => ({ region: '', subRegion: '', centro: '', almacen: '', nroOt: '', codigoMaterial: '', nroSerie: '', fechaDesde: '', fechaHasta: '' })
 const filters = reactive(emptyFilters())
 
 const columns = reactive([
@@ -242,18 +137,21 @@ const columns = reactive([
 ])
 
 const columnFilters = reactive(Object.fromEntries(columns.map((column) => [column.field, ''])))
-
-const mockRows = []
-
 const visibleColumns = computed(() => columns.filter((column) => column.visible))
 const normalize = (value) => String(value || '').toLowerCase()
 
-const handleSearch = () => {
+const handleSearch = async () => {
   filtersOpen.value = false
   resultsOpen.value = true
-  rows.value = mockRows
   currentPage.value = 1
-  showAlert.value = true
+  isLoading.value = true
+
+  try {
+    rows.value = await searchErroresGestion({ ...filters })
+    showAlert.value = rows.value.length === 0
+  } finally {
+    isLoading.value = false
+  }
 }
 
 const clearFilters = () => {
@@ -317,6 +215,7 @@ watch(totalPages, (pages) => {
 .btn-cyan, .btn-cyan-outline { border-radius: 18px; padding: 8px 18px; font-size: 14px; cursor: pointer; }
 .btn-cyan { background: #00a9bd; border: 1px solid #00a9bd; color: #fff; }
 .btn-cyan-outline { background: #fff; border: 1px solid #00a9bd; color: #00a9bd; }
+.btn-cyan:disabled { opacity: 0.65; cursor: not-allowed; }
 .grid-content { position: relative; padding: 10px 10px 0; }
 .column-config-menu { position: absolute; left: 18px; bottom: 52px; z-index: 20; width: min(520px, calc(100vw - 60px)); max-height: 330px; overflow: auto; background: #fff; border: 1px solid #cfd8dc; box-shadow: 0 8px 22px rgba(0,0,0,0.18); border-radius: 4px; padding: 14px; display: grid; grid-template-columns: repeat(2, minmax(180px, 1fr)); gap: 9px; }
 .column-config-menu label { display: flex; align-items: center; gap: 8px; font-size: 12px; cursor: pointer; color: #37474f; }
