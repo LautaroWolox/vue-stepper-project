@@ -22,18 +22,15 @@
 </template>
 
 <script setup>
+import { buildCsv, downloadCsv } from '../../utils/csv.js'
+
 const props = defineProps(['selectedData', 'columns'])
 
 const exportCSV = () => {
   if (!props.selectedData.length) return
-  const headers = props.columns.join(',') + '\n'
-  const rows = props.selectedData.map(obj => props.columns.map(col => obj[col]).join(',')).join('\n')
-  const csvContent = "data:text/csv;charset=utf-8," + headers + rows
-  const link = document.createElement("a")
-  link.setAttribute("href", encodeURI(csvContent))
-  link.setAttribute("download", "exportacion_grilla.csv")
-  document.body.appendChild(link)
-  link.click()
-  document.body.removeChild(link)
+
+  const rows = props.selectedData.map((obj) => props.columns.map((col) => obj[col]))
+  const csvContent = buildCsv(props.columns, rows)
+  downloadCsv('exportacion_grilla.csv', csvContent)
 }
 </script>
