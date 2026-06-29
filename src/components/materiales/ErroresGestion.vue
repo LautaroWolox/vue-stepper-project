@@ -8,75 +8,21 @@
 
       <div v-show="filtersOpen" class="fm-panel-content filters-content">
         <div class="filters-row">
-          <div class="fm-field">
-            <label>Region</label>
-            <select v-model="filters.region" class="form-control">
-              <option value="">None selected</option>
-              <option value="AMBA">AMBA</option>
-              <option value="CAPITAL">CAPITAL</option>
-              <option value="INTERIOR">INTERIOR</option>
-            </select>
-          </div>
-
-          <div class="fm-field">
-            <label>Sub Region</label>
-            <select v-model="filters.subRegion" class="form-control">
-              <option value="">None selected</option>
-              <option value="CABA">CABA</option>
-              <option value="GBA NORTE">GBA NORTE</option>
-              <option value="GBA SUR">GBA SUR</option>
-              <option value="LA PLATA">LA PLATA</option>
-            </select>
-          </div>
-
-          <div class="fm-field">
-            <label>Centro Logístico</label>
-            <select v-model="filters.centro" class="form-control">
-              <option value="">None selected</option>
-              <option value="PNT1">PNT1</option>
-              <option value="PNL1">PNL1</option>
-              <option value="OC15">OC15</option>
-            </select>
-          </div>
-
-          <div class="fm-field">
-            <label>Almacen</label>
-            <select v-model="filters.almacen" class="form-control">
-              <option value="">None selected</option>
-              <option value="OC15">OC15</option>
-              <option value="OC01">OC01</option>
-              <option value="A-0">A-0</option>
-            </select>
-          </div>
+          <div class="fm-field"><label>Region</label><select v-model="filters.region" class="form-control"><option value="">None selected</option><option value="AMBA">AMBA</option><option value="CAPITAL">CAPITAL</option><option value="INTERIOR">INTERIOR</option></select></div>
+          <div class="fm-field"><label>Sub Region</label><select v-model="filters.subRegion" class="form-control"><option value="">None selected</option><option value="CABA">CABA</option><option value="GBA NORTE">GBA NORTE</option><option value="GBA SUR">GBA SUR</option><option value="LA PLATA">LA PLATA</option></select></div>
+          <div class="fm-field"><label>Centro Logístico</label><select v-model="filters.centro" class="form-control"><option value="">None selected</option><option value="PNT1">PNT1</option><option value="PNL1">PNL1</option><option value="OC15">OC15</option></select></div>
+          <div class="fm-field"><label>Almacen</label><select v-model="filters.almacen" class="form-control"><option value="">None selected</option><option value="OC15">OC15</option><option value="OC01">OC01</option><option value="A-0">A-0</option></select></div>
         </div>
 
         <div class="filters-row second-row">
-          <div class="fm-field">
-            <label>Nro. Ot</label>
-            <input v-model.trim="filters.nroOt" class="form-control" />
-          </div>
-
-          <div class="fm-field">
-            <label>Código Material</label>
-            <input v-model.trim="filters.codigoMaterial" class="form-control" />
-          </div>
-
-          <div class="fm-field">
-            <label>Nro Serie</label>
-            <input v-model.trim="filters.nroSerie" class="form-control" />
-          </div>
-
-          <div class="fm-field">
-            <label>Fecha Ult Mod Desde</label>
-            <input v-model="filters.fechaDesde" type="text" class="form-control" />
-          </div>
+          <div class="fm-field"><label>Nro. Ot</label><input v-model.trim="filters.nroOt" class="form-control" /></div>
+          <div class="fm-field"><label>Código Material</label><input v-model.trim="filters.codigoMaterial" class="form-control" /></div>
+          <div class="fm-field"><label>Nro Serie</label><input v-model.trim="filters.nroSerie" class="form-control" /></div>
+          <div class="fm-field"><label>Fecha Ult Mod Desde</label><input v-model="filters.fechaDesde" type="text" class="form-control" /></div>
         </div>
 
         <div class="filters-row third-row">
-          <div class="fm-field">
-            <label>Fecha Ult Mod Hasta</label>
-            <input v-model="filters.fechaHasta" type="text" class="form-control" :disabled="!filters.fechaDesde" />
-          </div>
+          <div class="fm-field"><label>Fecha Ult Mod Hasta</label><input v-model="filters.fechaHasta" type="text" class="form-control" :disabled="!filters.fechaDesde" /></div>
         </div>
 
         <div class="filters-actions">
@@ -94,161 +40,79 @@
 
       <div v-show="resultsOpen" class="fm-panel-content grid-content">
         <div v-if="showColumnConfig" class="column-config-menu">
-          <label v-for="column in columns" :key="column.field">
-            <input type="checkbox" class="custom-checkbox" v-model="column.visible" />
-            {{ column.label }}
-          </label>
+          <label v-for="column in columns" :key="column.field"><input type="checkbox" class="custom-checkbox" v-model="column.visible" /> {{ column.label }}</label>
         </div>
 
         <div class="error-table-wrap">
           <table class="error-grid">
             <thead>
-              <tr>
-                <th
-                  v-for="column in visibleColumns"
-                  :key="column.field"
-                  class="resizable-th"
-                  :style="{ width: column.width, minWidth: column.minWidth }"
-                >
-                  <div class="resize-header">{{ column.label }}</div>
-                </th>
-              </tr>
-              <tr class="filter-row">
-                <th
-                  v-for="column in visibleColumns"
-                  :key="`filter-${column.field}`"
-                  :style="{ width: column.width, minWidth: column.minWidth }"
-                >
-                  <div class="col-filter">
-                    <span class="filter-symbol">{{ column.field === 'materialValidado' ? '^' : '~' }}</span>
-                    <input
-                      v-model="columnFilters[column.field]"
-                      class="col-filter-input"
-                      @input="currentPage = 1"
-                    />
-                    <button type="button" class="clear-filter-btn" @click="clearColumnFilter(column.field)">x</button>
-                  </div>
-                </th>
-              </tr>
+              <tr><th v-for="column in visibleColumns" :key="column.field" class="resizable-th" :style="{ width: column.width, minWidth: column.minWidth }"><div class="resize-header">{{ column.label }}</div></th></tr>
+              <tr class="filter-row"><th v-for="column in visibleColumns" :key="`filter-${column.field}`" :style="{ width: column.width, minWidth: column.minWidth }"><div class="col-filter"><span class="filter-symbol">{{ column.field === 'materialValidado' ? '^' : '~' }}</span><input v-model="columnFilters[column.field]" class="col-filter-input" @input="currentPage = 1" /><button type="button" class="clear-filter-btn" @click="clearColumnFilter(column.field)">x</button></div></th></tr>
             </thead>
             <tbody>
               <tr v-for="row in paginatedRows" :key="row.id">
-                <td
-                  v-for="column in visibleColumns"
-                  :key="`${row.id}-${column.field}`"
-                  :title="row[column.field]"
-                >
+                <td v-for="column in visibleColumns" :key="`${row.id}-${column.field}`" :title="row[column.field]">
                   <span v-if="column.field === 'nroOt'" class="ot-link">{{ row[column.field] }}</span>
-                  <span v-else-if="column.field === 'estadoFm'" class="estado-badge" :class="estadoClass(row[column.field])">
-                    {{ row[column.field] }}
-                  </span>
+                  <span v-else-if="column.field === 'estadoFm'" class="estado-badge" :class="estadoClass(row[column.field])">{{ row[column.field] }}</span>
                   <span v-else>{{ row[column.field] }}</span>
                 </td>
               </tr>
-              <tr v-if="paginatedRows.length === 0">
-                <td :colspan="visibleColumns.length" class="empty-cell"></td>
-              </tr>
+              <tr v-if="paginatedRows.length === 0"><td :colspan="visibleColumns.length" class="empty-cell"></td></tr>
             </tbody>
           </table>
         </div>
 
         <div class="error-grid-footer">
           <div class="footer-icons">
-            <button class="plain-icon" type="button" title="Descargar" :disabled="filteredRows.length === 0" @click="exportRows">
-              <span class="material-icons">file_download</span>
-            </button>
-            <button class="plain-icon" type="button" title="Gestionar" :disabled="filteredRows.length === 0" @click="showNoResultsAlert">
-              <span class="material-icons">build</span>
-            </button>
-            <button class="plain-icon" type="button" title="Reprocesar" :disabled="filteredRows.length === 0" @click="showNoResultsAlert">
-              <span class="material-icons">assignment_return</span>
-            </button>
-            <button class="plain-icon" type="button" title="Actualizar" @click="handleSearch">
-              <span class="material-icons">refresh</span>
-            </button>
-            <button class="plain-icon" type="button" title="Configurar columnas" @click="showColumnConfig = !showColumnConfig">
-              <span class="material-icons">visibility</span>
-            </button>
+            <button class="plain-icon" type="button" title="Exportar a Excel" :disabled="filteredRows.length === 0" @click="openExportDialog"><span class="material-icons">file_download</span></button>
+            <button class="plain-icon" type="button" title="Gestionar" :disabled="filteredRows.length === 0" @click="showNoResultsAlert"><span class="material-icons">build</span></button>
+            <button class="plain-icon" type="button" title="Reprocesar" :disabled="filteredRows.length === 0" @click="showNoResultsAlert"><span class="material-icons">assignment_return</span></button>
+            <button class="plain-icon" type="button" title="Actualizar" @click="handleSearch"><span class="material-icons">refresh</span></button>
+            <button class="plain-icon" type="button" title="Configurar columnas" @click="showColumnConfig = !showColumnConfig"><span class="material-icons">visibility</span></button>
           </div>
 
           <div class="footer-pagination">
-            <button class="page-icon" type="button" :disabled="currentPage === 1" @click="currentPage = 1">
-              <span class="material-icons">first_page</span>
-            </button>
-            <button class="page-icon" type="button" :disabled="currentPage === 1" @click="currentPage > 1 && currentPage--">
-              <span class="material-icons">chevron_left</span>
-            </button>
-            <span>Página</span>
-            <input class="page-input" v-model.number="currentPage" type="number" min="1" :max="totalPages || 1" @change="normalizePage" />
-            <span>de {{ totalPages || 0 }}</span>
-            <button class="page-icon" type="button" :disabled="currentPage >= totalPages" @click="currentPage < totalPages && currentPage++">
-              <span class="material-icons">chevron_right</span>
-            </button>
-            <button class="page-icon" type="button" :disabled="currentPage >= totalPages" @click="currentPage = totalPages || 1">
-              <span class="material-icons">last_page</span>
-            </button>
-            <select class="page-size" v-model.number="itemsPerPage" @change="currentPage = 1">
-              <option :value="10">10</option>
-              <option :value="50">50</option>
-              <option :value="100">100</option>
-            </select>
+            <button class="page-icon" type="button" :disabled="currentPage === 1" @click="currentPage = 1"><span class="material-icons">first_page</span></button>
+            <button class="page-icon" type="button" :disabled="currentPage === 1" @click="currentPage > 1 && currentPage--"><span class="material-icons">chevron_left</span></button>
+            <span>Página</span><input class="page-input" v-model.number="currentPage" type="number" min="1" :max="totalPages || 1" @change="normalizePage" /><span>de {{ totalPages || 0 }}</span>
+            <button class="page-icon" type="button" :disabled="currentPage >= totalPages" @click="currentPage < totalPages && currentPage++"><span class="material-icons">chevron_right</span></button>
+            <button class="page-icon" type="button" :disabled="currentPage >= totalPages" @click="currentPage = totalPages || 1"><span class="material-icons">last_page</span></button>
+            <select class="page-size" v-model.number="itemsPerPage" @change="currentPage = 1"><option :value="10">10</option><option :value="50">50</option><option :value="100">100</option></select>
           </div>
 
-          <div class="footer-count">
-            <span v-if="filteredRows.length">Mostrando {{ fromRow }} - {{ toRow }} de {{ filteredRows.length }}</span>
-            <span v-else>No hay resultados</span>
-          </div>
+          <div class="footer-count"><span v-if="filteredRows.length">Mostrando {{ fromRow }} - {{ toRow }} de {{ filteredRows.length }}</span><span v-else>No hay resultados</span></div>
         </div>
       </div>
     </section>
 
-    <div v-if="showAlert" class="pretty-modal-backdrop">
-      <div class="pretty-alert">
-        <div class="pretty-alert-header">
-          <div class="pretty-alert-title"><span class="material-icons">info</span> Alerta</div>
-          <button type="button" class="pretty-close" @click="showAlert = false">×</button>
-        </div>
-        <div class="pretty-alert-body">
-          <div class="pretty-alert-icon"><span class="material-icons">search_off</span></div>
-          <div>
-            <h3>No se encontraron resultados</h3>
-            <p>No existen gestiones con error para los filtros ingresados.</p>
-          </div>
-        </div>
-        <div class="pretty-alert-actions">
-          <button type="button" class="btn-cyan-outline" @click="showAlert = false">CERRAR</button>
-        </div>
-      </div>
-    </div>
+    <div v-if="showAlert" class="pretty-modal-backdrop"><div class="pretty-alert"><div class="pretty-alert-header"><div class="pretty-alert-title"><span class="material-icons">info</span> Alerta</div><button type="button" class="pretty-close" @click="showAlert = false">×</button></div><div class="pretty-alert-body"><div class="pretty-alert-icon"><span class="material-icons">search_off</span></div><div><h3>No se encontraron resultados</h3><p>No existen gestiones con error para los filtros ingresados.</p></div></div><div class="pretty-alert-actions"><button type="button" class="btn-cyan-outline" @click="showAlert = false">CERRAR</button></div></div></div>
+
+    <ExportExcelDialog
+      :show="showExportDialog"
+      description="Elegí si querés exportar toda la grilla o solo lo visible, y si querés todos los campos o solamente los campos con datos."
+      @close="showExportDialog = false"
+      @confirm="confirmExportExcel"
+    />
   </div>
 </template>
 
 <script setup>
 import { computed, reactive, ref, watch } from 'vue'
-import { buildCsv, downloadCsv } from '../../utils/csv.js'
+import ExportExcelDialog from '../shared/ExportExcelDialog.vue'
+import { downloadExcel } from '../../utils/excelExport.js'
 import { searchErroresGestion } from '../../services/materialesGestionesService.js'
 
 const filtersOpen = ref(true)
 const resultsOpen = ref(true)
 const showAlert = ref(false)
 const showColumnConfig = ref(false)
+const showExportDialog = ref(false)
 const isLoading = ref(false)
 const currentPage = ref(1)
 const itemsPerPage = ref(10)
 const rows = ref([])
 
-const emptyFilters = () => ({
-  region: '',
-  subRegion: '',
-  centro: '',
-  almacen: '',
-  nroOt: '',
-  codigoMaterial: '',
-  nroSerie: '',
-  fechaDesde: '',
-  fechaHasta: ''
-})
-
+const emptyFilters = () => ({ region: '', subRegion: '', centro: '', almacen: '', nroOt: '', codigoMaterial: '', nroSerie: '', fechaDesde: '', fechaHasta: '' })
 const filters = reactive(emptyFilters())
 
 const columns = reactive([
@@ -276,74 +140,21 @@ const columns = reactive([
 const columnFilters = reactive(Object.fromEntries(columns.map((column) => [column.field, ''])))
 const visibleColumns = computed(() => columns.filter((column) => column.visible))
 const normalize = (value) => String(value || '').toLowerCase()
+const estadoClass = (estado) => { const value = normalize(estado); if (value.includes('error')) return 'estado-error'; if (value.includes('rechazado')) return 'estado-rechazado'; if (value.includes('validado')) return 'estado-validado'; if (value.includes('pendiente')) return 'estado-pendiente'; return 'estado-default' }
 
-const estadoClass = (estado) => {
-  const value = normalize(estado)
-  if (value.includes('error')) return 'estado-error'
-  if (value.includes('rechazado')) return 'estado-rechazado'
-  if (value.includes('validado')) return 'estado-validado'
-  if (value.includes('pendiente')) return 'estado-pendiente'
-  return 'estado-default'
-}
-
-const handleSearch = async () => {
-  filtersOpen.value = false
-  resultsOpen.value = true
-  currentPage.value = 1
-  isLoading.value = true
-
-  try {
-    rows.value = await searchErroresGestion({ ...filters })
-    showAlert.value = rows.value.length === 0
-  } finally {
-    isLoading.value = false
-  }
-}
-
-const clearFilters = () => {
-  Object.assign(filters, emptyFilters())
-  Object.keys(columnFilters).forEach((field) => { columnFilters[field] = '' })
-  rows.value = []
-  currentPage.value = 1
-  filtersOpen.value = true
-  resultsOpen.value = true
-  showColumnConfig.value = false
-}
-
-const showNoResultsAlert = () => {
-  if (!filteredRows.value.length) showAlert.value = true
-}
-
-const clearColumnFilter = (field) => {
-  columnFilters[field] = ''
-  currentPage.value = 1
-}
-
-const filteredRows = computed(() => rows.value.filter((row) => visibleColumns.value.every((column) => {
-  const filter = normalize(columnFilters[column.field])
-  return !filter || normalize(row[column.field]).includes(filter)
-})))
-
+const handleSearch = async () => { filtersOpen.value = false; resultsOpen.value = true; currentPage.value = 1; isLoading.value = true; try { rows.value = await searchErroresGestion({ ...filters }); showAlert.value = rows.value.length === 0 } finally { isLoading.value = false } }
+const clearFilters = () => { Object.assign(filters, emptyFilters()); Object.keys(columnFilters).forEach((field) => { columnFilters[field] = '' }); rows.value = []; currentPage.value = 1; filtersOpen.value = true; resultsOpen.value = true; showColumnConfig.value = false }
+const showNoResultsAlert = () => { if (!filteredRows.value.length) showAlert.value = true }
+const clearColumnFilter = (field) => { columnFilters[field] = ''; currentPage.value = 1 }
+const filteredRows = computed(() => rows.value.filter((row) => visibleColumns.value.every((column) => { const filter = normalize(columnFilters[column.field]); return !filter || normalize(row[column.field]).includes(filter) })))
 const totalPages = computed(() => Math.ceil(filteredRows.value.length / itemsPerPage.value))
 const paginatedRows = computed(() => filteredRows.value.slice((currentPage.value - 1) * itemsPerPage.value, currentPage.value * itemsPerPage.value))
 const fromRow = computed(() => filteredRows.value.length ? ((currentPage.value - 1) * itemsPerPage.value) + 1 : 0)
 const toRow = computed(() => Math.min(currentPage.value * itemsPerPage.value, filteredRows.value.length))
-
-const normalizePage = () => {
-  if (!currentPage.value || currentPage.value < 1) currentPage.value = 1
-  if (totalPages.value && currentPage.value > totalPages.value) currentPage.value = totalPages.value
-}
-
-const exportRows = () => {
-  if (!filteredRows.value.length) return
-  const headers = visibleColumns.value.map((column) => column.label)
-  const csvRows = filteredRows.value.map((row) => visibleColumns.value.map((column) => row[column.field]))
-  downloadCsv('errores_gestion.csv', buildCsv(headers, csvRows))
-}
-
-watch(totalPages, (pages) => {
-  if (currentPage.value > pages) currentPage.value = pages || 1
-})
+const normalizePage = () => { if (!currentPage.value || currentPage.value < 1) currentPage.value = 1; if (totalPages.value && currentPage.value > totalPages.value) currentPage.value = totalPages.value }
+const openExportDialog = () => { if (filteredRows.value.length) showExportDialog.value = true }
+const confirmExportExcel = ({ scope, columnMode }) => { const exportRows = scope === 'visibleRows' ? paginatedRows.value : filteredRows.value; downloadExcel({ filename: 'errores_gestion.xls', title: 'Errores Gestion', columns: visibleColumns.value, rows: exportRows, mode: columnMode }); showExportDialog.value = false }
+watch(totalPages, (pages) => { if (currentPage.value > pages) currentPage.value = pages || 1 })
 </script>
 
 <style scoped>
@@ -410,19 +221,6 @@ watch(totalPages, (pages) => {
 .pretty-alert-body h3 { margin: 0 0 8px; color: #263238; font-size: 18px; }
 .pretty-alert-body p { margin: 0; color: #546e7a; line-height: 1.45; }
 .pretty-alert-actions { display: flex; justify-content: flex-end; padding: 16px 18px 18px; border-top: 1px solid #eceff1; }
-@media (max-width: 900px) {
-  .filters-row, .third-row { grid-template-columns: repeat(2, minmax(180px, 1fr)); }
-  .error-grid-footer { grid-template-columns: 1fr; justify-items: center; }
-  .footer-count { justify-self: center; }
-  .column-config-menu { grid-template-columns: 1fr; }
-}
-@media (max-width: 560px) {
-  .filters-row, .third-row { grid-template-columns: 1fr; padding: 12px; }
-  .filters-actions { flex-direction: column; padding: 12px; }
-  .btn-cyan, .btn-cyan-outline { width: 100%; }
-  .footer-pagination { flex-wrap: wrap; }
-  .pretty-alert-body { grid-template-columns: 1fr; text-align: center; }
-  .pretty-alert-icon { margin: 0 auto; }
-  .pretty-alert-actions { justify-content: center; }
-}
+@media (max-width: 900px) { .filters-row, .third-row { grid-template-columns: repeat(2, minmax(180px, 1fr)); } .error-grid-footer { grid-template-columns: 1fr; justify-items: center; } .footer-count { justify-self: center; } .column-config-menu { grid-template-columns: 1fr; } }
+@media (max-width: 560px) { .filters-row, .third-row { grid-template-columns: 1fr; padding: 12px; } .filters-actions { flex-direction: column; padding: 12px; } .btn-cyan, .btn-cyan-outline { width: 100%; } .footer-pagination { flex-wrap: wrap; } .pretty-alert-body { grid-template-columns: 1fr; text-align: center; } .pretty-alert-icon { margin: 0 auto; } .pretty-alert-actions { justify-content: center; } }
 </style>
