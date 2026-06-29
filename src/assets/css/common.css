@@ -121,3 +121,43 @@ button .material-icons,
 .fallidas-page .fallidas-grid tbody tr:hover td {
   background-image: linear-gradient(rgba(0, 188, 212, 0.055), rgba(0, 188, 212, 0.055)) !important;
 }
+
+/* Registro OTs Fallidas: checkbox seleccionado e incluir en color turquesa */
+.fallidas-page input[type="checkbox"] {
+  accent-color: #00a9bd !important;
+  cursor: pointer !important;
+}
+
+.fallidas-page input[type="checkbox"]:checked {
+  outline: 2px solid #00bcd4 !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 3px rgba(0, 188, 212, 0.16) !important;
+}
+
+.fallidas-page input[type="checkbox"]:focus-visible {
+  outline: 2px solid #00bcd4 !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 3px rgba(0, 188, 212, 0.18) !important;
+}
+
+.fallidas-page input[type="checkbox"]:disabled {
+  cursor: not-allowed !important;
+  opacity: 0.45 !important;
+}
+
+.fallidas-page .include-icon,
+.fallidas-page .include-icon .material-icons {
+  color: #00a9bd !important;
+}
+
+.fallidas-page .include-icon:hover:not(:disabled),
+.fallidas-page .include-icon:hover:not(:disabled) .material-icons {
+  color: #008fa1 !important;
+  transform: scale(1.08) !important;
+}
+
+.fallidas-page .include-icon:disabled,
+.fallidas-page .include-icon:disabled .material-icons {
+  color: #b0bec5 !important;
+  opacity: 0.55 !important;
+}
