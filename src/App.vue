@@ -26,4 +26,5 @@ const { isAuthenticated } = useAuth()
 @import './assets/css/step-three.css';
 @import './assets/css/materiales.css';
 @import './assets/css/certificacion.css';
+@import './assets/css/registro-ot-fallidas-tuning.css';
 </style>
