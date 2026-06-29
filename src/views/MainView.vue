@@ -40,9 +40,11 @@ const loadModule = (action) => {
 
 <style scoped>
 .welcome-fm-screen {
-  min-height: calc(100vh - 95px);
+  width: 100%;
+  min-height: calc(100vh - 90px);
   display: flex;
   align-items: center;
   justify-content: center;
+  margin: 0 auto;
 }
 </style>
