@@ -35,7 +35,7 @@
           </table>
         </div>
         <div class="ot-grid-footer">
-          <div class="footer-icons"><button type="button" class="plain-icon" title="Descargar" :disabled="filteredRows.length === 0" @click="exportRows"><span class="material-icons">file_download</span></button><button type="button" class="plain-icon" title="Gestionar" :disabled="filteredRows.length === 0" @click="showNoResultsAlert"><span class="material-icons">build</span></button><button type="button" class="plain-icon" title="Configurar" @click="showNoResultsAlert"><span class="material-icons">settings</span></button></div>
+          <div class="footer-icons"><button type="button" class="plain-icon" title="Exportar a Excel" :disabled="filteredRows.length === 0" @click="openExportDialog"><span class="material-icons">file_download</span></button><button type="button" class="plain-icon" title="Gestionar" :disabled="filteredRows.length === 0" @click="showNoResultsAlert"><span class="material-icons">build</span></button><button type="button" class="plain-icon" title="Configurar" @click="showNoResultsAlert"><span class="material-icons">settings</span></button></div>
           <div class="footer-pagination"><button class="page-icon" type="button" :disabled="currentPage === 1" @click="currentPage = 1"><span class="material-icons">first_page</span></button><button class="page-icon" type="button" :disabled="currentPage === 1" @click="currentPage > 1 && currentPage--"><span class="material-icons">chevron_left</span></button><span>Página</span><input class="page-input" v-model.number="currentPage" type="number" min="1" :max="totalPages || 1" @change="normalizePage" /><span>de {{ totalPages || 0 }}</span><button class="page-icon" type="button" :disabled="currentPage >= totalPages" @click="currentPage < totalPages && currentPage++"><span class="material-icons">chevron_right</span></button><button class="page-icon" type="button" :disabled="currentPage >= totalPages" @click="currentPage = totalPages || 1"><span class="material-icons">last_page</span></button><select class="page-size" v-model.number="itemsPerPage" @change="currentPage = 1"><option :value="100">100</option><option :value="50">50</option><option :value="10">10</option></select></div>
           <div class="footer-count"><span v-if="filteredRows.length">Mostrando {{ fromRow }} - {{ toRow }} de {{ filteredRows.length }}</span><span v-else>No hay resultados</span></div>
         </div>
@@ -43,17 +43,21 @@
     </section>
 
     <div v-if="showAlert" class="pretty-modal-backdrop"><div class="pretty-alert"><div class="pretty-alert-header"><div class="pretty-alert-title"><span class="material-icons">info</span> Alerta</div><button type="button" class="pretty-close" @click="showAlert = false">×</button></div><div class="pretty-alert-body"><div class="pretty-alert-icon"><span class="material-icons">search_off</span></div><div><h3>No se encontraron resultados</h3><p>La búsqueda no devolvió OTs pendientes de gestión de materiales para los filtros ingresados.</p></div></div><div class="pretty-alert-actions"><button type="button" class="btn-cyan-outline" @click="showAlert = false">CERRAR</button></div></div></div>
+
+    <ExportExcelDialog :show="showExportDialog" description="Elegí qué OTs y qué campos querés exportar a Excel." @close="showExportDialog = false" @confirm="confirmExportExcel" />
   </div>
 </template>
 
 <script setup>
 import { computed, reactive, ref, watch } from 'vue'
-import { buildCsv, downloadCsv } from '../../utils/csv.js'
+import ExportExcelDialog from '../shared/ExportExcelDialog.vue'
+import { downloadExcel } from '../../utils/excelExport.js'
 import { searchOtsPendientesGestion } from '../../services/materialesGestionesService.js'
 
 const filtersOpen = ref(true)
 const resultsOpen = ref(true)
 const showAlert = ref(false)
+const showExportDialog = ref(false)
 const todosTecnicos = ref(false)
 const isLoading = ref(false)
 const currentPage = ref(1)
@@ -79,12 +83,7 @@ const handleSearch = async () => {
   resultsOpen.value = true
   currentPage.value = 1
   isLoading.value = true
-  try {
-    rows.value = await searchOtsPendientesGestion({ ...filters, tecnico: todosTecnicos.value ? '' : filters.tecnico })
-    showAlert.value = rows.value.length === 0
-  } finally {
-    isLoading.value = false
-  }
+  try { rows.value = await searchOtsPendientesGestion({ ...filters, tecnico: todosTecnicos.value ? '' : filters.tecnico }); showAlert.value = rows.value.length === 0 } finally { isLoading.value = false }
 }
 
 const clearFilters = () => { Object.assign(filters, emptyFilters()); todosTecnicos.value = false; clearValidation(); rows.value = []; currentPage.value = 1; filtersOpen.value = true; resultsOpen.value = true; Object.keys(columnFilters).forEach((field) => { columnFilters[field] = '' }) }
@@ -96,7 +95,8 @@ const paginatedRows = computed(() => filteredRows.value.slice((currentPage.value
 const fromRow = computed(() => filteredRows.value.length ? ((currentPage.value - 1) * itemsPerPage.value) + 1 : 0)
 const toRow = computed(() => Math.min(currentPage.value * itemsPerPage.value, filteredRows.value.length))
 const normalizePage = () => { if (!currentPage.value || currentPage.value < 1) currentPage.value = 1; if (totalPages.value && currentPage.value > totalPages.value) currentPage.value = totalPages.value }
-const exportRows = () => { if (!filteredRows.value.length) return; const headers = columns.map((column) => column.label); const csvRows = filteredRows.value.map((row) => columns.map((column) => row[column.field])); downloadCsv('ots_pendientes_gestion_materiales.csv', buildCsv(headers, csvRows)) }
+const openExportDialog = () => { if (filteredRows.value.length) showExportDialog.value = true }
+const confirmExportExcel = ({ scope, columnMode }) => { const exportRows = scope === 'visibleRows' ? paginatedRows.value : filteredRows.value; downloadExcel({ filename: 'ots_pendientes_gestion_materiales.xls', title: 'OTs Pendientes Gestion Materiales', columns, rows: exportRows, mode: columnMode }); showExportDialog.value = false }
 watch(totalPages, (pages) => { if (currentPage.value > pages) currentPage.value = pages || 1 })
 </script>
 
