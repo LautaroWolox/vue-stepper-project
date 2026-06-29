@@ -77,17 +77,26 @@ button .material-icons,
 .fallidas-page .fallidas-grid {
   border-collapse: separate !important;
   border-spacing: 0 !important;
+  table-layout: auto !important;
 }
 
 .fallidas-page .fallidas-grid th,
 .fallidas-page .fallidas-grid td {
   border-right: 1px solid #aebdc7 !important;
   border-bottom: 1px solid #aebdc7 !important;
+  min-width: 84px !important;
+}
+
+.fallidas-page .fallidas-grid th {
+  resize: horizontal !important;
+  overflow: auto !important;
+  max-width: 360px !important;
 }
 
 .fallidas-page .fallidas-grid th:first-child,
 .fallidas-page .fallidas-grid td:first-child {
   border-left: 1px solid #aebdc7 !important;
+  min-width: 40px !important;
 }
 
 .fallidas-page .fallidas-grid thead tr:first-child th {
@@ -122,27 +131,75 @@ button .material-icons,
   background-image: linear-gradient(rgba(0, 188, 212, 0.055), rgba(0, 188, 212, 0.055)) !important;
 }
 
-/* Registro OTs Fallidas: checkbox seleccionado e incluir en color turquesa */
+/* Registro OTs Fallidas: checkbox custom turquesa, fila incluida turquesa y filtros compactos */
 .fallidas-page input[type="checkbox"] {
-  accent-color: #00a9bd !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  width: 14px !important;
+  height: 14px !important;
+  min-width: 14px !important;
+  margin: 0 !important;
+  border: 1px solid #9fb0ba !important;
+  border-radius: 2px !important;
+  background: #ffffff !important;
   cursor: pointer !important;
+  position: relative !important;
+  outline: none !important;
+  box-shadow: none !important;
+  vertical-align: middle !important;
 }
 
 .fallidas-page input[type="checkbox"]:checked {
-  outline: 2px solid #00bcd4 !important;
-  outline-offset: 2px !important;
-  box-shadow: 0 0 0 3px rgba(0, 188, 212, 0.16) !important;
+  border-color: #00bcd4 !important;
+  background: #00bcd4 !important;
+  outline: 2px solid rgba(0, 188, 212, 0.38) !important;
+  outline-offset: 1px !important;
+  box-shadow: 0 0 0 2px rgba(0, 188, 212, 0.14) !important;
 }
 
+.fallidas-page input[type="checkbox"]:checked::after {
+  content: '' !important;
+  position: absolute !important;
+  left: 4px !important;
+  top: 1px !important;
+  width: 4px !important;
+  height: 8px !important;
+  border: solid #ffffff !important;
+  border-width: 0 2px 2px 0 !important;
+  transform: rotate(45deg) !important;
+}
+
+.fallidas-page input[type="checkbox"]:focus,
 .fallidas-page input[type="checkbox"]:focus-visible {
-  outline: 2px solid #00bcd4 !important;
-  outline-offset: 2px !important;
-  box-shadow: 0 0 0 3px rgba(0, 188, 212, 0.18) !important;
+  outline: 2px solid rgba(0, 188, 212, 0.38) !important;
+  outline-offset: 1px !important;
 }
 
 .fallidas-page input[type="checkbox"]:disabled {
   cursor: not-allowed !important;
   opacity: 0.45 !important;
+  background: #f1f3f4 !important;
+}
+
+.fallidas-page .filters-grid label:nth-child(6) select,
+.fallidas-page .filters-grid label:nth-child(7) select {
+  max-width: 230px !important;
+  height: 26px !important;
+  font-size: 12px !important;
+}
+
+.fallidas-page .fallidas-grid tbody tr.recovered td,
+.fallidas-page .fallidas-grid tbody tr.recovered:hover td {
+  background-color: #d7fbff !important;
+  background-image: none !important;
+  color: #005c66 !important;
+}
+
+.fallidas-page .fallidas-grid tbody tr.selected td,
+.fallidas-page .fallidas-grid tbody tr.selected:hover td {
+  background-color: #c8f5fb !important;
+  background-image: none !important;
+  color: #004b55 !important;
 }
 
 .fallidas-page .include-icon,
