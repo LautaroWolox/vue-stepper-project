@@ -69,7 +69,7 @@ const menuList = ref([
     submenus: [
       { id: 101, label: 'WorkAround', action: 'none' },
       { id: 102, label: 'Gestión de Reglas', mobileExpanded: false, children: [{ id: 1021, label: 'Consultar Reglas', action: 'none' }, { id: 1022, label: 'Monitoreo y Ejecución de Reglas', action: 'none' }] },
-      { id: 103, label: 'Gestión de Actas', mobileExpanded: false, children: [{ id: 1031, label: 'Consultar Actas', action: 'none' }, { id: 1032, label: 'Consultar Notas de Crédito', action: 'none' }, { id: 1033, label: 'Consultar Notas de Débito', action: 'none' }] },
+      { id: 103, label: 'Gestión de Actas', mobileExpanded: false, children: [{ id: 1031, label: 'Consultar Actas', action: 'consultar-actas' }, { id: 1032, label: 'Consultar Notas de Crédito', action: 'none' }, { id: 1033, label: 'Consultar Notas de Débito', action: 'none' }] },
       { id: 104, label: 'Parametrizaciones', mobileExpanded: false, children: [{ id: 1041, label: 'Configuración Jobtype-Contrato', action: 'config-jobtype' }, { id: 1042, label: 'Configuración CMO-Actividad', action: 'config-cmo' }] },
       { id: 105, label: 'Registro OTs Fallidas', action: 'none' },
       { id: 106, label: 'Búsqueda de OTs', action: 'none' }
