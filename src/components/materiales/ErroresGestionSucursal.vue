@@ -57,10 +57,12 @@
           <table class="error-grid">
             <thead>
               <tr>
-                <th v-for="column in columns" :key="column.field" :style="{ width: column.width }">{{ column.label }}</th>
+                <th v-for="column in columns" :key="column.field" class="resizable-th" :style="{ width: column.width, minWidth: column.minWidth }">
+                  <div class="resize-header">{{ column.label }}</div>
+                </th>
               </tr>
               <tr class="filter-row">
-                <th v-for="column in columns" :key="`filter-${column.field}`">
+                <th v-for="column in columns" :key="`filter-${column.field}`" :style="{ width: column.width, minWidth: column.minWidth }">
                   <div class="col-filter">
                     <span>~</span>
                     <input class="col-filter-input" v-model="columnFilters[column.field]" @input="currentPage = 1" />
@@ -73,20 +75,20 @@
               <tr
                 v-for="row in paginatedRows"
                 :key="row.id"
-                :class="{ selected: selectedRow?.id === row.id }"
                 @click="selectedRow = row"
+                @dblclick="openGestionPopup"
               >
-                <td>{{ row.nroSistema }}</td>
-                <td>{{ row.nroSerie }}</td>
-                <td>{{ row.fechaDescarga }}</td>
-                <td>{{ row.operadorDescarga }}</td>
-                <td>{{ row.operadorUltMod }}</td>
-                <td>{{ row.fechaUltMod }}</td>
-                <td>{{ row.pais }}</td>
-                <td>{{ row.codigoPostal }}</td>
-                <td>{{ row.centro }}</td>
-                <td>{{ row.almacen }}</td>
-                <td>{{ row.descripcionError }}</td>
+                <td :title="row.nroSistema">{{ row.nroSistema }}</td>
+                <td :title="row.nroSerie">{{ row.nroSerie }}</td>
+                <td :title="row.fechaDescarga">{{ row.fechaDescarga }}</td>
+                <td :title="row.operadorDescarga">{{ row.operadorDescarga }}</td>
+                <td :title="row.operadorUltMod">{{ row.operadorUltMod }}</td>
+                <td :title="row.fechaUltMod">{{ row.fechaUltMod }}</td>
+                <td :title="row.pais">{{ row.pais }}</td>
+                <td :title="row.codigoPostal">{{ row.codigoPostal }}</td>
+                <td :title="row.centro">{{ row.centro }}</td>
+                <td :title="row.almacen">{{ row.almacen }}</td>
+                <td :title="row.descripcionError">{{ row.descripcionError }}</td>
               </tr>
 
               <tr v-if="paginatedRows.length === 0">
@@ -101,7 +103,7 @@
             <button class="plain-icon" type="button" title="Descargar" @click="exportRows" :disabled="filteredRows.length === 0">
               <span class="material-icons">file_download</span>
             </button>
-            <button class="plain-icon" type="button" title="Gestionar" @click="openGestionPopup">
+            <button class="plain-icon" type="button" title="Gestionar" @click="openGestionPopup" :disabled="filteredRows.length === 0">
               <span class="material-icons">build</span>
             </button>
           </div>
@@ -114,7 +116,7 @@
               <span class="material-icons">chevron_left</span>
             </button>
             <span>Página</span>
-            <input class="page-input" type="number" min="1" :max="totalPages || 1" v-model.number="currentPage" />
+            <input class="page-input" type="number" min="1" :max="totalPages || 1" v-model.number="currentPage" @change="normalizePage" />
             <span>de {{ totalPages || 1 }}</span>
             <button class="page-icon" type="button" :disabled="currentPage >= totalPages" @click="nextPage">
               <span class="material-icons">chevron_right</span>
@@ -123,9 +125,10 @@
               <span class="material-icons">last_page</span>
             </button>
             <select class="page-size" v-model.number="itemsPerPage" @change="currentPage = 1">
-              <option :value="50">50</option>
-              <option :value="100">100</option>
-              <option :value="500">500</option>
+              <option :value="10">10 v</option>
+              <option :value="50">50 v</option>
+              <option :value="100">100 v</option>
+              <option :value="500">500 v</option>
             </select>
           </div>
 
@@ -158,7 +161,7 @@ const gridOpen = ref(true)
 const showGestionPopup = ref(false)
 const selectedRow = ref(null)
 const currentPage = ref(1)
-const itemsPerPage = ref(100)
+const itemsPerPage = ref(10)
 const popupPosition = reactive({ x: 80, y: 160 })
 
 const filters = reactive({
@@ -170,24 +173,23 @@ const filters = reactive({
 })
 
 const columns = [
-  { field: 'nroSistema', label: 'NRO. SISTEMA', width: '170px' },
-  { field: 'nroSerie', label: 'NRO. SERIE', width: '170px' },
-  { field: 'fechaDescarga', label: 'FECHA DESCARGA', width: '170px' },
-  { field: 'operadorDescarga', label: 'OPERADOR DESCARGA', width: '280px' },
-  { field: 'operadorUltMod', label: 'OPERADOR ULT MOD', width: '280px' },
-  { field: 'fechaUltMod', label: 'FECHA ULT MOD', width: '170px' },
-  { field: 'pais', label: 'PAIS', width: '90px' },
-  { field: 'codigoPostal', label: 'CODIGO POSTAL', width: '130px' },
-  { field: 'centro', label: 'CENTRO', width: '110px' },
-  { field: 'almacen', label: 'ALMACEN', width: '90px' },
-  { field: 'descripcionError', label: 'DESCRIPCION ERROR', width: '360px' }
+  { field: 'nroSistema', label: 'NRO. SISTEMA', width: '170px', minWidth: '130px' },
+  { field: 'nroSerie', label: 'NRO. SERIE', width: '170px', minWidth: '130px' },
+  { field: 'fechaDescarga', label: 'FECHA DESCARGA', width: '170px', minWidth: '140px' },
+  { field: 'operadorDescarga', label: 'OPERADOR DESCARGA', width: '280px', minWidth: '180px' },
+  { field: 'operadorUltMod', label: 'OPERADOR ULT MOD', width: '280px', minWidth: '180px' },
+  { field: 'fechaUltMod', label: 'FECHA ULT MOD', width: '170px', minWidth: '140px' },
+  { field: 'pais', label: 'PAIS', width: '90px', minWidth: '70px' },
+  { field: 'codigoPostal', label: 'CODIGO POSTAL', width: '130px', minWidth: '110px' },
+  { field: 'centro', label: 'CENTRO', width: '110px', minWidth: '90px' },
+  { field: 'almacen', label: 'ALMACEN', width: '90px', minWidth: '70px' },
+  { field: 'descripcionError', label: 'DESCRIPCION ERROR', width: '360px', minWidth: '260px' }
 ]
 
 const columnFilters = reactive(Object.fromEntries(columns.map((column) => [column.field, ''])))
 
-const sourceRows = [
+const baseRows = [
   {
-    id: 1,
     nroSistema: 'JOP68807891',
     nroSerie: '01728308147',
     fechaDescarga: '19/06/2026 17:18:51',
@@ -201,7 +203,6 @@ const sourceRows = [
     descripcionError: 'No existen equivalencia de material recupero para'
   },
   {
-    id: 2,
     nroSistema: 'JOP68807890',
     nroSerie: '1936ADB10LT09200',
     fechaDescarga: '19/06/2026 17:18:51',
@@ -215,7 +216,6 @@ const sourceRows = [
     descripcionError: 'No existen equivalencia de material recupero para'
   },
   {
-    id: 3,
     nroSistema: 'JOP101450834',
     nroSerie: '319118033316',
     fechaDescarga: '17/06/2026 15:30:56',
@@ -229,7 +229,6 @@ const sourceRows = [
     descripcionError: 'Posting only possible in periods 2026/05 and 2026/04 in company code P001'
   },
   {
-    id: 4,
     nroSistema: 'JOP68807858',
     nroSerie: '48575443C4B1689F',
     fechaDescarga: '10/06/2026 14:58:03',
@@ -243,7 +242,6 @@ const sourceRows = [
     descripcionError: 'No existe el material 000000001000102890 en el centro PNT1'
   },
   {
-    id: 5,
     nroSistema: 'JOP68807850',
     nroSerie: '318016011562',
     fechaDescarga: '10/06/2026 08:28:59',
@@ -257,6 +255,18 @@ const sourceRows = [
     descripcionError: 'No existe el material 00000000110100337 en el centro PNT1'
   }
 ]
+
+const sourceRows = Array.from({ length: 60 }, (_, index) => {
+  const base = baseRows[index % baseRows.length]
+  const suffix = String(index + 1).padStart(2, '0')
+
+  return {
+    ...base,
+    id: index + 1,
+    nroSistema: `${base.nroSistema.slice(0, -2)}${suffix}`,
+    nroSerie: index < baseRows.length ? base.nroSerie : `${base.nroSerie}${suffix}`
+  }
+})
 
 const gridRows = ref([])
 
@@ -273,7 +283,7 @@ const searchRows = () => {
     )
   })
 
-  selectedRow.value = gridRows.value[0] || null
+  selectedRow.value = null
   currentPage.value = 1
   filtersOpen.value = false
 }
@@ -316,6 +326,11 @@ const paginatedRows = computed(() => {
 const fromRow = computed(() => filteredRows.value.length ? ((currentPage.value - 1) * itemsPerPage.value) + 1 : 0)
 const toRow = computed(() => Math.min(currentPage.value * itemsPerPage.value, filteredRows.value.length))
 
+const normalizePage = () => {
+  if (!currentPage.value || currentPage.value < 1) currentPage.value = 1
+  if (totalPages.value && currentPage.value > totalPages.value) currentPage.value = totalPages.value
+}
+
 const prevPage = () => {
   if (currentPage.value > 1) currentPage.value--
 }
@@ -334,13 +349,16 @@ const exportRows = () => {
 }
 
 const openGestionPopup = () => {
-  if (!selectedRow.value) {
-    alert('Seleccione una gestión con error para gestionar.')
+  const rowToManage = selectedRow.value || paginatedRows.value[0]
+
+  if (!rowToManage) {
+    alert('No hay gestiones con error para gestionar.')
     return
   }
 
-  popupPosition.x = Math.min(80, Math.max(8, window.innerWidth - 960))
-  popupPosition.y = Math.min(180, Math.max(8, window.innerHeight - 360))
+  selectedRow.value = rowToManage
+  popupPosition.x = 80
+  popupPosition.y = 160
   showGestionPopup.value = true
 }
 
@@ -476,8 +494,8 @@ watch(totalPages, (pages) => {
 }
 
 .error-grid {
-  width: 100%;
-  min-width: 1850px;
+  width: max-content;
+  min-width: 100%;
   border-collapse: collapse;
   table-layout: fixed;
 }
@@ -500,6 +518,17 @@ watch(totalPages, (pages) => {
   font-weight: 500;
 }
 
+.resizable-th {
+  resize: horizontal;
+  overflow: auto;
+}
+
+.resize-header {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .error-grid tbody tr {
   cursor: pointer;
 }
@@ -508,9 +537,8 @@ watch(totalPages, (pages) => {
   background: #f8f8f8;
 }
 
-.error-grid tbody tr.selected,
-.error-grid tbody tr.selected:nth-child(even) {
-  background: #86ddec;
+.error-grid tbody tr:hover {
+  background: #e9f8fb;
 }
 
 .filter-row th {
@@ -566,7 +594,8 @@ watch(totalPages, (pages) => {
 .footer-icons {
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: flex-start;
+  gap: 12px;
 }
 
 .plain-icon,
@@ -608,18 +637,20 @@ watch(totalPages, (pages) => {
   justify-content: center;
   gap: 8px;
   font-size: 13px;
+  white-space: nowrap;
 }
 
 .page-input {
-  width: 38px;
+  width: 40px;
   height: 26px;
-  border: 0;
+  border: 1px solid #d8d8d8;
+  border-radius: 3px;
   text-align: center;
   font-weight: 700;
 }
 
 .page-size {
-  height: 26px;
+  height: 28px;
   border: 1px solid #d8d8d8;
   border-radius: 3px;
 }
@@ -627,6 +658,7 @@ watch(totalPages, (pages) => {
 .footer-count {
   justify-self: end;
   font-size: 13px;
+  white-space: nowrap;
 }
 
 @media (max-width: 1200px) {
@@ -658,6 +690,12 @@ watch(totalPages, (pages) => {
   .error-grid-footer {
     grid-template-columns: 1fr;
     justify-items: center;
+  }
+
+  .footer-icons,
+  .footer-pagination {
+    justify-content: center;
+    flex-wrap: wrap;
   }
 
   .footer-count {
