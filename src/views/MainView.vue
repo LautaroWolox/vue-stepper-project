@@ -17,6 +17,7 @@
       <ConsultarActas v-if="activeModule === 'consultar-actas'" />
       <ConsultarNotaCredito v-if="activeModule === 'consultar-nota-credito'" />
       <ConsultarNotaDebito v-if="activeModule === 'consultar-nota-debito'" />
+      <RegistroOtFallidas v-if="activeModule === 'registro-ots-fallidas'" />
     </div>
   </div>
 </template>
@@ -35,6 +36,7 @@ import ConfigCmoActividad from '../components/certificacion/ConfigCmoActividad.v
 import ConsultarActas from '../components/certificacion/ConsultarActas.vue'
 import ConsultarNotaCredito from '../components/certificacion/ConsultarNotaCredito.vue'
 import ConsultarNotaDebito from '../components/certificacion/ConsultarNotaDebito.vue'
+import RegistroOtFallidas from '../components/certificacion/RegistroOtFallidas.vue'
 
 const activeModule = ref('none')
 
