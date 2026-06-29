@@ -1,92 +1,80 @@
 <template>
   <div>
-    <div class="soft-accordion">
-      <div class="soft-accordion-header" @click="openFilters = !openFilters">
-        <span><span class="material-icons" style="vertical-align: middle;">filter_alt</span> FILTROS DE BÚSQUEDA - {{ title }}</span>
-        <span class="material-icons">{{ openFilters ? 'remove' : 'add' }}</span>
-      </div>
-      
-      <div class="soft-accordion-content" v-show="openFilters">
-        <div class="form-grid">
-          <div class="form-group">
-            <label>Región *</label>
-            <select class="form-control" :class="{'input-error': errorRegion}" v-model="form.region">
-              <option value=""></option>
-              <option value="AMBA">AMBA</option>
-              <option value="CEN">Centro</option>
-              <option value="NOR">Norte</option>
-            </select>
-            <span class="error-text" v-if="errorRegion">Debe seleccionar una Región para buscar.</span>
-          </div>
-          <div class="form-group"><label>Sub Región</label><select class="form-control" v-model="form.subRegion"><option value=""></option><option value="CABA">CABA</option><option value="GBA">GBA</option></select></div>
-          <div class="form-group"><label>Centro Logístico</label><select class="form-control" v-model="form.centro"><option value=""></option><option value="CL1">Logística Norte</option></select></div>
-          <div class="form-group"><label>Almacén</label><select class="form-control" v-model="form.almacen"><option value=""></option><option value="A1">Almacén Principal</option></select></div>
-          <div class="form-group"><label>Técnico</label><input type="text" class="form-control" v-model="form.tecnico" placeholder="Buscar técnico..."></div>
-          <div class="form-group"><label>Nro. OT</label><input type="text" class="form-control" v-model="form.ot" placeholder="Ej: 12345"></div>
-          <div class="form-group"><label>Fecha Ult. Modif. Desde</label><input type="date" class="form-control" v-model="form.fechaDesde"></div>
-          <div class="form-group"><label>Fecha Ult. Modif. Hasta</label><input type="date" class="form-control" v-model="form.fechaHasta" :disabled="!form.fechaDesde"></div>
-        </div>
-        
-        <div style="text-align: center; margin-top: 10px;">
-          <button class="btn" @click="handleSearch" style="margin-right: 10px;"><span class="material-icons btn-icon">search</span> BUSCAR</button>
-          <button class="btn btn-danger" @click="resetForm"><span class="material-icons btn-icon">clear_all</span> LIMPIAR</button>
-        </div>
-      </div>
+    <MaterialesFilters :title="title" @search="handleSearch" @reset="resetState" />
+
+    <div v-if="isLoading" class="main-loader-container">
+      <svg class="svg-coder" viewBox="0 0 200 150" xmlns="http://www.w3.org/2000/svg">
+        <rect x="10" y="120" width="180" height="8" fill="#B0BEC5" rx="4"/>
+        <rect x="55" y="95" width="10" height="25" fill="#78909C"/>
+        <rect x="40" y="115" width="40" height="5" fill="#607D8B" rx="2"/>
+        <rect x="20" y="35" width="80" height="60" fill="#263238" rx="5"/>
+        <rect x="25" y="40" width="70" height="45" fill="#00BCD4" class="screen-glow" rx="2"/>
+        <g class="code-lines">
+          <rect x="30" y="45" width="40" height="3" fill="#ffffff" class="code-line" style="animation-delay: 0s;"/>
+          <rect x="30" y="52" width="50" height="3" fill="#ffffff" class="code-line" style="animation-delay: 0.2s;"/>
+          <rect x="30" y="59" width="30" height="3" fill="#ffffff" class="code-line" style="animation-delay: 0.4s;"/>
+          <rect x="30" y="66" width="45" height="3" fill="#ffffff" class="code-line" style="animation-delay: 0.6s;"/>
+        </g>
+        <rect x="85" y="116" width="40" height="4" fill="#455A64" transform="skewX(-20)"/>
+        <path d="M120,120 Q130,70 150,70 Q170,70 180,120 Z" fill="#0097A7"/>
+        <circle cx="150" cy="50" r="18" fill="#FFB74D"/>
+        <path d="M132,45 Q150,30 168,45" stroke="#3E2723" stroke-width="6" fill="none" stroke-linecap="round"/>
+        <rect x="135" y="46" width="8" height="12" fill="#37474F" rx="3"/>
+        <path class="arm-left" d="M160,85 Q130,95 105,115" stroke="#00838F" stroke-width="10" fill="none" stroke-linecap="round"/>
+        <path class="arm-right" d="M140,85 Q115,100 90,115" stroke="#00BCD4" stroke-width="10" fill="none" stroke-linecap="round"/>
+      </svg>
+      <span style="margin-top: 15px;">Buscando materiales...</span>
     </div>
 
-    <div class="soft-accordion" v-if="hasSearched">
+    <div v-if="operationError" style="margin: 15px 0; padding: 12px; border-radius: 6px; background: #ffebee; color: #c62828; border: 1px solid #ffcdd2;">
+      {{ operationError }}
+    </div>
+
+    <div class="soft-accordion" v-if="hasSearched && !isLoading">
       <div class="soft-accordion-header" @click="openResults = !openResults">
         <span style="text-transform: uppercase;"><span class="material-icons" style="vertical-align: middle;">list_alt</span> GESTIÓN EN LOTE - {{ title }}</span>
         <span class="material-icons">{{ openResults ? 'remove' : 'add' }}</span>
       </div>
-      
+
       <div class="soft-accordion-content" v-show="openResults">
-        <div class="stepper-header" style="margin-bottom: 15px;">
-          <div :class="['step-indicator', { active: currentStep === 1 }]"><span class="material-icons">touch_app</span> 1. Selección</div>
-          <div :class="['step-indicator', { active: currentStep === 2 }]"><span class="material-icons">fact_check</span> 2. Revisión</div>
-          <div :class="['step-indicator', { active: currentStep === 3 }]"><span class="material-icons">import_export</span> 3. Exportación</div>
-        </div>
+        <MaterialesStepperHeader :current-step="currentStep" />
 
         <div v-show="currentStep === 1">
-          <AdvancedGrid :data="mockData" :columns="gridColumns" v-model="selectedRows" @update:visibleCols="updateVisibleCols" @edit-ot="openEditPopup" @add-material="triggerRominaError" />
-          <div style="text-align: right; margin-top: 20px;"><button class="btn" @click="currentStep = 2" :disabled="selectedRows.length === 0">Siguiente a Revisión <span class="material-icons btn-icon">arrow_forward</span></button></div>
-        </div>
-
-        <div v-if="currentStep === 2">
-          <h3 style="color: #00838f;">Revisión de Gestión</h3>
-          <div style="display: flex; gap: 20px; flex-wrap: wrap;">
-            <div style="flex: 1; min-width: 300px; background: #f8f9fa; padding: 20px; border-radius: 8px; border: 1px solid #cfd8dc;">
-              <h4 style="margin-top: 0; color: #455a64;">Para Exportación</h4>
-              <p style="font-size: 24px; font-weight: bold; color: #00bcd4; margin: 10px 0;">{{ selectedRows.length }}</p>
-              <button class="btn btn-danger" style="padding: 2px 8px; font-size: 11px;" @click="openExportDetailPopup($event)">Ver Detalle</button>
-            </div>
-            <div style="flex: 1; min-width: 300px; background: #f0fbfc; padding: 20px; border-radius: 8px; border: 1px solid #b2ebf2;">
-              <h4 style="margin-top: 0; color: #00838f;">OTs Modificadas</h4>
-              <p style="font-size: 24px; font-weight: bold; color: #00bcd4; margin: 10px 0;">{{ modifiedOts.length }}</p>
-              <ul style="padding-left: 20px; font-size: 13px;">
-                <li v-for="(mod, index) in modifiedOts" :key="index" style="margin-bottom: 8px;">OT: <strong>{{ mod.ot.nroot }}</strong> <button class="btn btn-danger" style="padding: 2px 8px; font-size: 11px; margin-left: 10px;" @click="openModPopup($event, mod)">Ver Detalle</button></li>
-              </ul>
-              <p v-if="modifiedOts.length === 0" style="font-size: 13px; color: #90a4ae;">No se han validado cambios.</p>
-            </div>
-          </div>
-          <div style="margin-top: 25px; display: flex; justify-content: space-between;">
-            <button class="btn" @click="currentStep = 1"><span class="material-icons btn-icon">arrow_back</span> Atrás</button>
-            <button class="btn" @click="currentStep = 3">Siguiente a Exportación <span class="material-icons btn-icon">arrow_forward</span></button>
+          <AdvancedGrid
+            :data="gridData"
+            :columns="gridColumns"
+            v-model="selectedRows"
+            @update:visibleCols="updateVisibleCols"
+            @edit-ot="openEditPopup"
+            @add-material="triggerRominaError"
+          />
+          <div style="text-align: right; margin-top: 20px;">
+            <button class="btn" @click="currentStep = 2" :disabled="selectedRows.length === 0">
+              Siguiente a Revisión <span class="material-icons btn-icon">arrow_forward</span>
+            </button>
           </div>
         </div>
 
-        <div v-if="currentStep === 3">
-          <h3 style="color: #00838f;"><span class="material-icons">file_download</span> Finalizar y Exportar</h3>
-          <p>Se exportarán las <strong>{{ currentVisibleCols.length }}</strong> columnas visibles de los <strong>{{ selectedRows.length }}</strong> registros.</p>
-          <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: space-between;">
-            <button class="btn" @click="currentStep = 2"><span class="material-icons btn-icon">arrow_back</span> Atrás</button>
-            <button class="btn" style="background: linear-gradient(135deg, #4caf50, #2e7d32);" @click="exportExcel"><span class="material-icons btn-icon">table_view</span> Descargar CSV</button>
-          </div>
-        </div>
+        <MaterialesReview
+          v-if="currentStep === 2"
+          :selected-rows="selectedRows"
+          :modified-ots="modifiedOts"
+          @back="currentStep = 1"
+          @next="currentStep = 3"
+          @view-export-detail="openExportDetailPopup"
+          @view-mod-detail="openModPopup"
+        />
+
+        <MaterialesExport
+          v-if="currentStep === 3"
+          :selected-rows="selectedRows"
+          :current-visible-cols="currentVisibleCols"
+          @back="currentStep = 2"
+          @export="exportCsv"
+        />
       </div>
     </div>
 
-    <!-- Todos los Popups y Ventanas -->
     <FloatingPopup :show="popup.show" :position="popup.pos" :otData="popup.data" @accept="handleSaveOt" @cancel="popup.show = false" />
     <ModifiedPopup :show="modPopup.show" :position="modPopup.pos" :data="modPopup.data" @close="modPopup.show = false" />
     <ExportDetailPopup :show="exportPopup.show" :position="exportPopup.pos" :data="exportPopup.data" @close="exportPopup.show = false" />
@@ -95,42 +83,141 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
+import { reactive, ref, watch } from 'vue'
 import AdvancedGrid from './AdvancedGrid.vue'
+import MaterialesFilters from './MaterialesFilters.vue'
+import MaterialesStepperHeader from './MaterialesStepperHeader.vue'
+import MaterialesReview from './MaterialesReview.vue'
+import MaterialesExport from './MaterialesExport.vue'
 import FloatingPopup from '../popup/FloatingPopup.vue'
 import ModifiedPopup from '../popup/ModifiedPopup.vue'
 import ExportDetailPopup from '../popup/ExportDetailPopup.vue'
 import ErrorModal from '../modal/ErrorModal.vue'
+import { getMaterialesColumns, searchMateriales } from '../../services/materialesService.js'
+import { buildCsv, downloadCsv } from '../../utils/csv.js'
 
-const props = defineProps(['title', 'type'])
+const props = defineProps({
+  title: {
+    type: String,
+    required: true
+  },
+  type: {
+    type: String,
+    default: 'OT'
+  }
+})
 
-const openFilters = ref(true); const openResults = ref(true); const hasSearched = ref(false); const currentStep = ref(1)
-const form = reactive({ region: '', subRegion: '', centro: '', almacen: '', tecnico: '', ot: '', fechaDesde: '', fechaHasta: '' })
-const errorRegion = ref(false); const selectedRows = ref([]); const currentVisibleCols = ref([]); const modifiedOts = ref([]) 
+const openResults = ref(true)
+const hasSearched = ref(false)
+const isLoading = ref(false)
+const operationError = ref('')
+const currentStep = ref(1)
+const selectedRows = ref([])
+const currentVisibleCols = ref([])
+const modifiedOts = ref([])
+const gridData = ref([])
+const gridColumns = ref(getMaterialesColumns(props.type))
+const showError = ref(false)
+
 const popup = reactive({ show: false, pos: { x: 0, y: 0 }, data: null })
 const modPopup = reactive({ show: false, pos: { x: 0, y: 0 }, data: null })
 const exportPopup = reactive({ show: false, pos: { x: 0, y: 0 }, data: [] })
-const showError = ref(false)
 
-const triggerRominaError = () => { showError.value = true }
-
-const handleSearch = () => { errorRegion.value = false; if (!form.region) { errorRegion.value = true; return }; hasSearched.value = true; openFilters.value = false; currentStep.value = 1 }
-const resetForm = () => { Object.keys(form).forEach(k => form[k] = ''); errorRegion.value = false; hasSearched.value = false; selectedRows.value = []; modifiedOts.value = [] }
-const openEditPopup = (event, row) => { popup.pos.x = event.clientX + 10; popup.pos.y = event.clientY + 10; if (popup.pos.x + 550 > window.innerWidth) popup.pos.x = window.innerWidth - 560; if (popup.pos.y + 400 > window.innerHeight) popup.pos.y = window.innerHeight - 420; popup.data = row; popup.show = true }
-const handleSaveOt = (modifiedData) => { modifiedOts.value.push(modifiedData); popup.show = false }
-const openModPopup = (event, modData) => { modPopup.pos.x = event.clientX + 10; modPopup.pos.y = event.clientY + 10; if (modPopup.pos.x + 450 > window.innerWidth) modPopup.pos.x = window.innerWidth - 460; if (modPopup.pos.y + 300 > window.innerHeight) modPopup.pos.y = window.innerHeight - 320; modPopup.data = modData; modPopup.show = true }
-const openExportDetailPopup = (event) => { exportPopup.pos.x = event.clientX + 10; exportPopup.pos.y = event.clientY + 10; if (exportPopup.pos.x + 500 > window.innerWidth) exportPopup.pos.x = window.innerWidth - 510; if (exportPopup.pos.y + 400 > window.innerHeight) exportPopup.pos.y = window.innerHeight - 420; exportPopup.data = selectedRows.value; exportPopup.show = true }
-const updateVisibleCols = (cols) => { currentVisibleCols.value = cols }
-
-const exportExcel = () => {
-  if (!selectedRows.value.length || !currentVisibleCols.value.length) return
-  const headers = currentVisibleCols.value.map(c => c.label).join(',') + '\n'
-  const rows = selectedRows.value.map(row => currentVisibleCols.value.map(col => row[col.field]).join(',')).join('\n')
-  const csvContent = "data:text/csv;charset=utf-8," + headers + rows
-  const link = document.createElement("a"); link.setAttribute("href", encodeURI(csvContent)); link.setAttribute("download", `Export_${props.type}.csv`)
-  document.body.appendChild(link); link.click(); document.body.removeChild(link)
+const resetState = () => {
+  openResults.value = true
+  hasSearched.value = false
+  isLoading.value = false
+  operationError.value = ''
+  currentStep.value = 1
+  selectedRows.value = []
+  currentVisibleCols.value = []
+  modifiedOts.value = []
+  gridData.value = []
+  gridColumns.value = getMaterialesColumns(props.type)
 }
 
-const gridColumns = ref(props.type === 'OT' ? [ { field: 'nroot', label: 'NRO. OT', visible: true }, { field: 'estadoOt', label: 'ESTADO OT', visible: true }, { field: 'fechaMod', label: 'FECHA ULT. MOD', visible: true }, { field: 'tecnico', label: 'TÉCNICO', visible: true }, { field: 'almacen', label: 'ALMACÉN', visible: true }, { field: 'direccion', label: 'DIRECCIÓN', visible: true }, { field: 'codTarea', label: 'COD TAREA', visible: true } ] : [ { field: 'nroot', label: 'NRO OT', visible: true }, { field: 'estadoFm', label: 'ESTADO FM', visible: true }, { field: 'codMaterial', label: 'COD MATER', visible: true }, { field: 'nombreMat', label: 'NOMBRE M.', visible: true }, { field: 'cantidad', label: 'CANTIDAD', visible: true }, { field: 'almacen', label: 'ALMACÉN', visible: true }, { field: 'fechaDesc', label: 'FECHA DES', visible: true } ])
-const mockData = ref(Array.from({ length: 45 }).map((_, i) => ({ id: i, nroot: `OT-${1000 + i}`, estadoOt: i % 2 === 0 ? 'PENDIENTE' : 'CERRADO', estadoFm: 'ACTIVO', fechaMod: `2026-06-${(i%28)+1}`.padStart(2, '0'), tecnico: `Técnico ${i%5}`, almacen: `A-${i%3}`, direccion: `Calle ${i} Nro ${i*10}`, codTarea: `TSK-${i}`, codMaterial: `MAT-00${i}`, nombreMat: `Cable Coaxial RG${i}`, cantidad: i * 5, fechaDesc: `2026-06-15` })))
+const handleSearch = async (filters) => {
+  isLoading.value = true
+  operationError.value = ''
+  selectedRows.value = []
+  modifiedOts.value = []
+  currentStep.value = 1
+  gridColumns.value = getMaterialesColumns(props.type)
+
+  try {
+    gridData.value = await searchMateriales(props.type, filters)
+    hasSearched.value = true
+    openResults.value = true
+  } catch (error) {
+    hasSearched.value = false
+    operationError.value = error.message || 'No se pudo realizar la búsqueda.'
+  } finally {
+    isLoading.value = false
+  }
+}
+
+const triggerRominaError = () => {
+  showError.value = true
+}
+
+const openEditPopup = (event, row) => {
+  popup.pos.x = event.clientX + 10
+  popup.pos.y = event.clientY + 10
+
+  if (popup.pos.x + 550 > window.innerWidth) popup.pos.x = window.innerWidth - 560
+  if (popup.pos.y + 400 > window.innerHeight) popup.pos.y = window.innerHeight - 420
+
+  popup.data = row
+  popup.show = true
+}
+
+const handleSaveOt = (modifiedData) => {
+  const existingIndex = modifiedOts.value.findIndex((item) => item.ot?.id === modifiedData.ot?.id)
+
+  if (existingIndex >= 0) {
+    modifiedOts.value.splice(existingIndex, 1, modifiedData)
+  } else {
+    modifiedOts.value.push(modifiedData)
+  }
+
+  popup.show = false
+}
+
+const openModPopup = (event, modData) => {
+  modPopup.pos.x = event.clientX + 10
+  modPopup.pos.y = event.clientY + 10
+
+  if (modPopup.pos.x + 450 > window.innerWidth) modPopup.pos.x = window.innerWidth - 460
+  if (modPopup.pos.y + 300 > window.innerHeight) modPopup.pos.y = window.innerHeight - 320
+
+  modPopup.data = modData
+  modPopup.show = true
+}
+
+const openExportDetailPopup = (event) => {
+  exportPopup.pos.x = event.clientX + 10
+  exportPopup.pos.y = event.clientY + 10
+
+  if (exportPopup.pos.x + 500 > window.innerWidth) exportPopup.pos.x = window.innerWidth - 510
+  if (exportPopup.pos.y + 400 > window.innerHeight) exportPopup.pos.y = window.innerHeight - 420
+
+  exportPopup.data = selectedRows.value
+  exportPopup.show = true
+}
+
+const updateVisibleCols = (cols) => {
+  currentVisibleCols.value = cols
+}
+
+const exportCsv = () => {
+  if (!selectedRows.value.length || !currentVisibleCols.value.length) return
+
+  const headers = currentVisibleCols.value.map((column) => column.label)
+  const rows = selectedRows.value.map((row) => currentVisibleCols.value.map((column) => row[column.field]))
+  const csvContent = buildCsv(headers, rows)
+
+  downloadCsv(`Export_${props.type}.csv`, csvContent)
+}
+
+watch(() => props.type, resetState)
 </script>
