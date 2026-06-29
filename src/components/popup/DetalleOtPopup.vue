@@ -9,7 +9,9 @@
       <div class="popup-header ot-popup-header" @mousedown="startDrag">
         <div class="popup-title ot-popup-title">{{ displayOtNumber }}</div>
         <div class="popup-controls">
-          <span class="material-icons popup-control" @click.stop="toggleExpand">{{ isExpanded ? 'fullscreen_exit' : 'fullscreen' }}</span>
+          <span class="material-icons popup-control" @click.stop="toggleExpand">
+            {{ isExpanded ? 'fullscreen_exit' : 'fullscreen' }}
+          </span>
           <span class="material-icons popup-control close-control" @click="$emit('close')">close</span>
         </div>
       </div>
@@ -45,7 +47,7 @@
           <label>Tarea</label>
           <input type="text" class="form-control" :value="otInfo.tarea" disabled />
         </div>
-        <div class="form-group">
+        <div class="form-group domicilio-field">
           <label>Domicilio</label>
           <input type="text" class="form-control" :value="otInfo.domicilio" disabled />
         </div>
@@ -75,7 +77,7 @@
         <div v-show="activeTab === 'actividades'">
           <h4 class="section-title">Actividades Originales</h4>
           <div class="ot-table-wrap compact-table">
-            <table class="ot-detail-grid">
+            <table class="ot-detail-grid actividades-grid">
               <thead>
                 <tr>
                   <th>COD ACTIVIDAD</th>
@@ -96,7 +98,7 @@
               </tbody>
             </table>
           </div>
-          <GridPagination :page="1" :total-pages="1" />
+          <PaginationBar :page="1" :total-pages="1" />
         </div>
 
         <div v-show="activeTab === 'base'">
@@ -105,7 +107,7 @@
             <button type="button" class="btn-cyan" @click="consultarBase">CONSULTAR BASE INSTALADA</button>
           </div>
           <div class="ot-table-wrap compact-table">
-            <table class="ot-detail-grid">
+            <table class="ot-detail-grid base-grid">
               <thead>
                 <tr>
                   <th>BASE INSTALADA</th>
@@ -125,20 +127,22 @@
               </tbody>
             </table>
           </div>
-          <GridPagination v-if="baseData.length > 0" v-model:page="basePage" :total-pages="totalBasePages" />
+          <PaginationBar v-if="baseData.length > 0" v-model:page="basePage" :total-pages="totalBasePages" />
         </div>
 
         <div v-show="activeTab === 'historial'">
           <div class="section-header">
             <h4 class="section-title">Historial del domicilio</h4>
-            <button type="button" class="btn-cyan-outline export-history-btn" @click="simulateLoad('Exportando historial completo...')">EXPORTAR HISTORIAL COMPLETO</button>
+            <button type="button" class="btn-cyan-outline export-history-btn" @click="simulateLoad('Exportando historial completo...')">
+              EXPORTAR HISTORIAL COMPLETO
+            </button>
           </div>
 
           <div class="ot-table-wrap historial-table-wrap">
             <table class="ot-detail-grid historial-grid">
               <thead>
                 <tr>
-                  <th class="expand-col"></th>
+                  <th class="detalle-col">DETALLE</th>
                   <th>NRO OT</th>
                   <th>FECHA CREACION OT</th>
                   <th>FECHA CIERRE</th>
@@ -150,9 +154,9 @@
               </thead>
               <tbody>
                 <template v-for="hist in paginatedHistorial" :key="hist.ot">
-                  <tr>
-                    <td class="expand-col">
-                      <button type="button" class="expand-row-btn" @click="toggleHistorialRow(hist.ot)">
+                  <tr :class="{ 'historial-row-open': isHistorialExpanded(hist.ot) }">
+                    <td class="detalle-col detalle-cell">
+                      <button type="button" class="expand-row-btn" @click="toggleHistorialRow(hist.ot)" :title="isHistorialExpanded(hist.ot) ? 'Ocultar detalle' : 'Ver detalle'">
                         <span class="material-icons">{{ isHistorialExpanded(hist.ot) ? 'arrow_drop_down' : 'arrow_right' }}</span>
                       </button>
                     </td>
@@ -202,7 +206,7 @@
               </tbody>
             </table>
           </div>
-          <GridPagination v-model:page="histPage" :total-pages="totalHistPages" />
+          <PaginationBar v-model:page="histPage" :total-pages="totalHistPages" />
         </div>
 
         <div v-show="activeTab === 'materiales'">
@@ -211,7 +215,7 @@
             <button type="button" class="btn-cyan" @click="consultarMateriales">CONSULTAR MATERIALES</button>
           </div>
           <div class="ot-table-wrap compact-table">
-            <table class="ot-detail-grid">
+            <table class="ot-detail-grid materiales-grid">
               <thead>
                 <tr>
                   <th>COD MATERIAL</th>
@@ -237,7 +241,7 @@
               </tbody>
             </table>
           </div>
-          <GridPagination v-if="materialesData.length > 0" v-model:page="matPage" :total-pages="totalMatPages" />
+          <PaginationBar v-if="materialesData.length > 0" v-model:page="matPage" :total-pages="totalMatPages" />
         </div>
 
         <div v-show="activeTab === 'siniestros'" class="siniestros-panel">
@@ -264,7 +268,9 @@
           <table class="ot-detail-grid resultantes-grid">
             <thead>
               <tr>
-                <th class="select-col"><input type="checkbox" v-model="selectAll" @change="toggleSelectAll" /></th>
+                <th class="select-col">
+                  <input type="checkbox" v-model="selectAll" @change="toggleSelectAll" />
+                </th>
                 <th>COD ACTIVIDAD</th>
                 <th>ACTIVIDAD</th>
                 <th>CANTIDAD</th>
@@ -281,7 +287,9 @@
             </thead>
             <tbody>
               <tr v-for="act in paginatedActResultantes" :key="act.id" :class="{ 'active-row': act.selected }">
-                <td class="select-col"><input type="checkbox" v-model="act.selected" @change="checkSelectAll" /></td>
+                <td class="select-col">
+                  <input type="checkbox" v-model="act.selected" @change="checkSelectAll" />
+                </td>
                 <td>{{ act.cod }}</td>
                 <td>{{ act.actividad }}</td>
                 <td>{{ act.cantidad }}</td>
@@ -308,7 +316,7 @@
               <span class="material-icons">delete</span>
             </button>
           </div>
-          <GridPagination v-model:page="actPage" :total-pages="totalActPages" />
+          <PaginationBar v-model:page="actPage" :total-pages="totalActPages" />
         </div>
       </section>
     </div>
@@ -321,50 +329,16 @@
 </template>
 
 <script setup>
-import { computed, defineComponent, h, onMounted, reactive, ref, watch } from 'vue'
+import { computed, onMounted, reactive, ref, watch } from 'vue'
 
 const props = defineProps({
   show: { type: Boolean, default: false },
   otNumber: { type: String, default: '' }
 })
 
-const emit = defineEmits(['close'])
+defineEmits(['close'])
 
-const GridPagination = defineComponent({
-  name: 'GridPagination',
-  props: {
-    page: { type: Number, default: 1 },
-    totalPages: { type: Number, default: 1 }
-  },
-  emits: ['update:page'],
-  setup(componentProps, { emit: componentEmit }) {
-    const setPage = (nextPage) => {
-      const lastPage = componentProps.totalPages || 1
-      const normalized = Math.min(Math.max(nextPage, 1), lastPage)
-      componentEmit('update:page', normalized)
-    }
-
-    return () => h('div', { class: 'modern-pagination detail-pagination' }, [
-      h('span', { class: ['material-icons', 'icon-nav', { disabled: componentProps.page === 1 }], onClick: () => setPage(1) }, 'first_page'),
-      h('span', { class: ['material-icons', 'icon-nav', { disabled: componentProps.page === 1 }], onClick: () => setPage(componentProps.page - 1) }, 'chevron_left'),
-      h('span', { class: 'page-text' }, [
-        'Página ',
-        h('input', {
-          value: componentProps.page,
-          min: 1,
-          max: componentProps.totalPages || 1,
-          type: 'number',
-          onInput: (event) => setPage(Number(event.target.value || 1))
-        }),
-        ` de ${componentProps.totalPages || 1}`
-      ]),
-      h('span', { class: ['material-icons', 'icon-nav', { disabled: componentProps.page >= componentProps.totalPages }], onClick: () => setPage(componentProps.page + 1) }, 'chevron_right'),
-      h('span', { class: ['material-icons', 'icon-nav', { disabled: componentProps.page >= componentProps.totalPages }], onClick: () => setPage(componentProps.totalPages || 1) }, 'last_page')
-    ])
-  }
-})
-
-const activeTab = ref('actividades')
+const activeTab = ref('historial')
 const pos = ref({ x: 20, y: 20 })
 const isExpanded = ref(false)
 const isDragging = ref(false)
@@ -381,11 +355,11 @@ let initialY = 0
 const displayOtNumber = computed(() => props.otNumber || 'M00966068')
 
 const otInfo = reactive({
-  tarea: 'DOM - ALTAS HFC',
-  domicilio: 'DE LUJAN NTRA SRA 1525',
-  claseOt: 'New Connect',
-  tecnicoCierre: '23TID240',
-  nroCliente: '8.10081755121E15'
+  tarea: 'DOM - SERVICE CON AFECTACION (FT)',
+  domicilio: 'TERRADA 5404 /PI 4 /DE/ 4',
+  claseOt: 'Trouble Call',
+  tecnicoCierre: '11CPD201',
+  nroCliente: '88000192'
 })
 
 const siniestro = reactive({
@@ -436,7 +410,7 @@ const paginatedActResultantes = computed(() => {
 })
 
 const makeHistorialActividades = (index) => ([
-  { codigo: '20050', actividad: 'CPE dañado - Falla fuente / No enciende', cantidad: '1', nroNcNd: index % 2 ? '' : `NC10${index}`, estadoNcNd: index % 2 ? '' : 'En Curso', estadoActividad: 'N' },
+  { codigo: '20050', actividad: 'CPE dañado - Falla fuente / No enciende', cantidad: '1', nroNcNd: index % 2 === 0 ? `NC10${index}` : '', estadoNcNd: index % 2 === 0 ? 'En Curso' : '', estadoActividad: 'N' },
   { codigo: '7982', actividad: 'Validar Niveles en D-Tec', cantidad: '1', nroNcNd: '', estadoNcNd: '', estadoActividad: 'N' },
   { codigo: 'AS0008', actividad: 'Encontrado bien', cantidad: '1', nroNcNd: '', estadoNcNd: '', estadoActividad: 'N' }
 ])
@@ -447,28 +421,30 @@ const loadMockData = () => {
     const baseOt = id === 1 ? displayOtNumber.value : `J0000000000000325${String(290 + id).padStart(3, '0')}`
     return {
       ot: baseOt,
-      creacion: id === 1 ? '10/06/2026 17:10:02' : `2024-09-${String(10 + (id % 18)).padStart(2, '0')} 12:15:01.0`,
-      cierre: id === 1 ? '13/06/2026 12:04:01' : `2024-09-${String(10 + (id % 18)).padStart(2, '0')} 12:19:21.0`,
-      acta: id === 1 ? 'A2732' : `A24${String(10 + id).padStart(2, '0')}`,
+      creacion: id === 1 ? '2024-09-27 12:15:01.0' : `2024-09-${String(10 + (id % 18)).padStart(2, '0')} 12:15:01.0`,
+      cierre: id === 1 ? '2024-09-27 12:19:21.0' : `2024-09-${String(10 + (id % 18)).padStart(2, '0')} 12:19:21.0`,
+      acta: id === 1 ? 'A2414' : `A24${String(10 + id).padStart(2, '0')}`,
       estado: id % 3 === 0 ? 'En Curso' : 'Certificada',
-      contra: id === 1 ? 'NET AND WORK S.A.' : 'ARY COMUNICACIONES S.A.',
+      contra: id === 1 ? 'ARY COMUNICACIONES S.A.' : 'NET AND WORK S.A.',
       red: id % 2 === 0 ? 'S' : 'N',
       actividades: makeHistorialActividades(id)
     }
   })
+
+  expandedHistorial.value = historialData.value.length ? [historialData.value[0].ot] : []
 
   actResultantes.value = Array.from({ length: 50 }, (_, index) => {
     const id = index + 1
     return {
       id,
       selected: index === 0,
-      cod: `7050${String(id).padStart(2, '0')}`,
+      cod: id === 1 ? '70501' : `7050${String(id).padStart(2, '0')}`,
       actividad: id === 1 ? 'ACOMETIDA SOLO INT...' : `ACTIVIDAD RESULTANTE ${id}`,
       cantidad: '1',
-      codCmo: `50214${String(90 + id)}`,
+      codCmo: id === 1 ? '5021495' : `50214${String(90 + id)}`,
       cmo: 'INST.D/ACOMETIDA HFC',
       regla: 'E3',
-      aplicada: `E3IX00001AR-7050${String(id).padStart(2, '0')}`,
+      aplicada: id === 1 ? 'E3IX00001AR-70501' : `E3IX00001AR-7050${String(id).padStart(2, '0')}`,
       comentario: '',
       motivo: 'APLICACION DE REGLAS',
       estado: 'S',
@@ -584,12 +560,12 @@ watch(() => props.show, (visible) => {
   if (!visible) return
   centerPopup()
   isExpanded.value = false
-  activeTab.value = 'actividades'
-  expandedHistorial.value = []
-  selectAll.value = false
+  activeTab.value = 'historial'
   histPage.value = 1
   actPage.value = 1
+  selectAll.value = false
   actResultantes.value.forEach((row) => { row.selected = false })
+  expandedHistorial.value = historialData.value.length ? [historialData.value[0].ot] : []
 })
 
 watch(paginatedActResultantes, checkSelectAll, { deep: true })
@@ -598,6 +574,36 @@ onMounted(() => {
   loadMockData()
   if (props.show) centerPopup()
 })
+</script>
+
+<script>
+export default {
+  components: {
+    PaginationBar: {
+      props: {
+        page: { type: Number, default: 1 },
+        totalPages: { type: Number, default: 1 }
+      },
+      emits: ['update:page'],
+      methods: {
+        setPage(page) {
+          const last = this.totalPages || 1
+          const next = Math.min(Math.max(page, 1), last)
+          this.$emit('update:page', next)
+        }
+      },
+      template: `
+        <div class="modern-pagination detail-pagination">
+          <span class="material-icons icon-nav" :class="{ disabled: page === 1 }" @click="setPage(1)">first_page</span>
+          <span class="material-icons icon-nav" :class="{ disabled: page === 1 }" @click="setPage(page - 1)">chevron_left</span>
+          <span>Página <input type="number" :value="page" min="1" :max="totalPages || 1" @input="setPage(Number($event.target.value || 1))"> de {{ totalPages || 1 }}</span>
+          <span class="material-icons icon-nav" :class="{ disabled: page >= totalPages }" @click="setPage(page + 1)">chevron_right</span>
+          <span class="material-icons icon-nav" :class="{ disabled: page >= totalPages }" @click="setPage(totalPages || 1)">last_page</span>
+        </div>
+      `
+    }
+  }
+}
 </script>
 
 <style scoped>
@@ -610,8 +616,8 @@ onMounted(() => {
 
 .ot-popup-header {
   background: #ffffff;
-  color: #00bcd4;
   border-bottom: 1px solid #eceff1;
+  color: #00bcd4;
 }
 
 .ot-popup-title {
@@ -643,14 +649,14 @@ onMounted(() => {
 }
 
 .ot-loader {
-  position: absolute;
-  inset: 0;
-  z-index: 1000;
+  align-items: center;
   background: rgba(255, 255, 255, 0.92);
   display: flex;
   flex-direction: column;
-  align-items: center;
+  inset: 0;
   justify-content: center;
+  position: absolute;
+  z-index: 1000;
 }
 
 .ot-loader .svg-coder {
@@ -668,14 +674,15 @@ onMounted(() => {
   border: 1px solid #eceff1;
   border-radius: 4px;
   display: grid;
-  grid-template-columns: 1.2fr 1.8fr 1.2fr 1.2fr 1.2fr;
   gap: 16px;
+  grid-template-columns: 1.2fr 1.8fr 1.2fr 1.2fr 1.2fr;
   margin-bottom: 12px;
   padding: 12px;
 }
 
 .form-group label {
   color: #263238;
+  display: block;
   font-size: 13px;
   font-weight: 800;
   margin-bottom: 6px;
@@ -698,12 +705,12 @@ onMounted(() => {
   background: transparent;
   border: 0;
   border-bottom: 3px solid transparent;
-  color: #546e7a;
+  color: #00a3b5;
   cursor: pointer;
   font-size: 14px;
-  font-weight: 800;
+  font-weight: 500;
   min-width: 160px;
-  padding: 14px 18px;
+  padding: 12px 18px;
   transition: 0.2s ease;
   white-space: nowrap;
 }
@@ -716,6 +723,7 @@ onMounted(() => {
 
 .ot-tab.active {
   border-bottom-color: #00bcd4;
+  color: #455a64;
 }
 
 .tab-panel,
@@ -743,8 +751,8 @@ onMounted(() => {
 .section-header {
   align-items: center;
   display: flex;
-  justify-content: space-between;
   gap: 12px;
+  justify-content: space-between;
   margin-bottom: 12px;
 }
 
@@ -759,12 +767,12 @@ onMounted(() => {
 }
 
 .historial-table-wrap {
-  max-height: 260px;
+  max-height: 285px;
 }
 
 .resultantes-table-wrap {
-  min-height: 120px;
   max-height: 220px;
+  min-height: 120px;
 }
 
 .ot-detail-grid {
@@ -798,10 +806,28 @@ onMounted(() => {
   font-size: 13px;
 }
 
-.historial-grid th:nth-child(1),
-.historial-grid td:nth-child(1) { width: 34px; min-width: 34px; max-width: 34px; }
+.actividades-grid,
+.base-grid,
+.materiales-grid {
+  min-width: 850px;
+}
+
+.historial-grid {
+  min-width: 1250px;
+}
+
+.detalle-col {
+  text-align: center !important;
+  width: 76px;
+  min-width: 76px;
+}
+
+.detalle-cell {
+  background: #ffffff !important;
+}
+
 .historial-grid th:nth-child(2),
-.historial-grid td:nth-child(2) { width: 190px; min-width: 190px; }
+.historial-grid td:nth-child(2) { width: 205px; min-width: 205px; }
 .historial-grid th:nth-child(3),
 .historial-grid td:nth-child(3) { width: 190px; min-width: 190px; }
 .historial-grid th:nth-child(4),
@@ -811,14 +837,9 @@ onMounted(() => {
 .historial-grid th:nth-child(6),
 .historial-grid td:nth-child(6) { width: 150px; min-width: 150px; }
 .historial-grid th:nth-child(7),
-.historial-grid td:nth-child(7) { width: 230px; min-width: 230px; }
+.historial-grid td:nth-child(7) { width: 250px; min-width: 250px; }
 .historial-grid th:nth-child(8),
 .historial-grid td:nth-child(8) { width: 95px; min-width: 95px; }
-
-.expand-col,
-.select-col {
-  text-align: center !important;
-}
 
 .expand-row-btn {
   appearance: none;
@@ -831,7 +852,12 @@ onMounted(() => {
 
 .expand-row-btn .material-icons {
   color: #111;
-  font-size: 20px;
+  font-size: 23px;
+  line-height: 1;
+}
+
+.historial-row-open td {
+  background: #ffffff;
 }
 
 .ot-link-cell {
@@ -846,12 +872,12 @@ onMounted(() => {
 .subgrid-toggle-cell {
   text-align: center !important;
   vertical-align: top;
-  width: 34px;
+  width: 76px;
 }
 
 .subgrid-open-icon {
   color: #111;
-  font-size: 18px;
+  font-size: 19px;
   margin-top: 24px;
 }
 
@@ -860,13 +886,13 @@ onMounted(() => {
 }
 
 .subgrid-scroll {
+  max-height: 165px;
   overflow: auto;
-  max-height: 150px;
 }
 
 .historial-subgrid {
   border-collapse: collapse;
-  min-width: 780px;
+  min-width: 760px;
   width: 100%;
 }
 
@@ -881,6 +907,7 @@ onMounted(() => {
 
 .historial-subgrid th {
   background: #f5f5f5;
+  color: #555;
   font-weight: 800;
 }
 
@@ -895,7 +922,7 @@ onMounted(() => {
   padding: 8px 5px 0;
 }
 
-.detail-pagination :deep(input) {
+.detail-pagination input {
   border: 1px solid #cfd8dc;
   border-radius: 4px;
   height: 28px;
@@ -953,6 +980,11 @@ onMounted(() => {
   background: #d9f6fb !important;
   color: #007985;
   font-weight: 800;
+}
+
+.select-col {
+  text-align: center !important;
+  width: 48px;
 }
 
 .resultantes-footer {
