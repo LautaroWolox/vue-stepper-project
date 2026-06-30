@@ -8,8 +8,12 @@
           <button type="button" class="fm-dialog-close" @click="$emit('close')">×</button>
         </div>
         <div class="fm-dialog-body">
-          <div class="fm-dialog-icon fm-dialog-icon-warning">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
+          <div class="fm-dialog-icon" :class="iconClass">
+            <svg v-if="type === 'success'" viewBox="0 0 24 24" aria-hidden="true">
+              <circle class="success-circle" cx="12" cy="12" r="9"></circle>
+              <path class="success-check" d="M7.8 12.4 10.7 15.2 16.5 8.9"></path>
+            </svg>
+            <svg v-else viewBox="0 0 24 24" aria-hidden="true">
               <path class="warning-triangle" d="M12 3.5 22 20.5H2L12 3.5Z"></path>
               <path class="warning-mark" d="M12 8.4v6.1"></path>
               <circle class="warning-dot" cx="12" cy="17.3" r="1"></circle>
@@ -26,18 +30,20 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import FmTypingLoader from './FmTypingLoader.vue'
 
 const props = defineProps({
   show: { type: Boolean, default: false },
   title: { type: String, default: 'Alerta' },
-  message: { type: String, default: '' }
+  message: { type: String, default: '' },
+  type: { type: String, default: 'warning' }
 })
 
 defineEmits(['close'])
 
 const loading = ref(false)
+const iconClass = computed(() => props.type === 'success' ? 'fm-dialog-icon-success' : 'fm-dialog-icon-warning')
 let timer = null
 
 watch(() => props.show, (value) => {
@@ -118,9 +124,12 @@ watch(() => props.show, (value) => {
   justify-content: center;
 }
 
-.fm-dialog-icon-warning svg {
+.fm-dialog-icon svg {
   width: 42px;
   height: 42px;
+}
+
+.fm-dialog-icon-warning svg {
   filter: drop-shadow(0 3px 5px rgba(198, 40, 40, .22));
 }
 
@@ -140,6 +149,24 @@ watch(() => props.show, (value) => {
 
 .warning-dot {
   fill: #d32f2f;
+}
+
+.fm-dialog-icon-success svg {
+  filter: drop-shadow(0 3px 5px rgba(46, 125, 50, .20));
+}
+
+.success-circle {
+  fill: #e8f5e9;
+  stroke: #2e7d32;
+  stroke-width: 1.8;
+}
+
+.success-check {
+  fill: none;
+  stroke: #2e7d32;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .fm-dialog-actions {
