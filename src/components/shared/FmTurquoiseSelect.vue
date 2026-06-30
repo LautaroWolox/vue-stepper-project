@@ -11,7 +11,7 @@
         :key="String(option.value)"
         type="button"
         class="fm-turquoise-select__option"
-        :class="{ selected: option.value === modelValue }"
+        :class="{ selected: hasRealSelectedValue && option.value === modelValue }"
         @click="selectOption(option.value)"
       >
         {{ option.label }}
@@ -44,9 +44,11 @@ const normalizedOptions = computed(() => props.options.map((option) => {
   return { value: option, label: String(option ?? '') }
 }))
 
+const hasRealSelectedValue = computed(() => props.modelValue !== '' && props.modelValue !== null && props.modelValue !== undefined)
+
 const selectedLabel = computed(() => {
   const selected = normalizedOptions.value.find((option) => option.value === props.modelValue)
-  if (selected) return selected.label
+  if (selected && hasRealSelectedValue.value) return selected.label
   return props.placeholder
 })
 
@@ -101,7 +103,7 @@ onBeforeUnmount(() => document.removeEventListener('mousedown', handleDocumentCl
 .fm-turquoise-select.open .fm-turquoise-select__button,
 .fm-turquoise-select__button:focus-visible {
   border-color: #00bcd4;
-  box-shadow: 0 0 0 2px rgba(0, 188, 212, .18);
+  box-shadow: 0 0 0 2px rgba(0, 188, 212, .14);
 }
 
 .fm-turquoise-select__label {
@@ -146,7 +148,11 @@ onBeforeUnmount(() => document.removeEventListener('mousedown', handleDocumentCl
   line-height: 1.25;
 }
 
-.fm-turquoise-select__option:hover,
+.fm-turquoise-select__option:hover {
+  background: #e0f7fa;
+  color: #006f7f;
+}
+
 .fm-turquoise-select__option.selected {
   background: #00a9bd;
   color: #ffffff;
