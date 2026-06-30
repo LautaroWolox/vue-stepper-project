@@ -26,12 +26,12 @@
       <div v-if="isLoading" class="main-loader-container"><svg class="svg-coder" viewBox="0 0 200 150" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="120" width="180" height="8" fill="#B0BEC5" rx="4"/><rect x="20" y="35" width="80" height="60" fill="#263238" rx="5"/><rect x="25" y="40" width="70" height="45" fill="#00BCD4" rx="2"/></svg><span>Recuperando Notas de Debito...</span></div>
       <section class="fm-panel" v-if="hasSearched && !isLoading"><div class="fm-panel-header" @click="openResults = !openResults"><span>NOTAS DE DEBITO</span><span class="material-icons">{{ openResults ? 'remove' : 'add' }}</span></div><div class="fm-panel-content results-content" v-show="openResults"><NotasGrid :data="gridData" file-name="notas_debito.xls" @open-nota="openDetalleNota" /></div></section>
     </div>
-    <DetalleNotaCreditoView v-if="currentView === 'detail'" :nota="selectedNota" tipo-nota="debito" @volver="currentView = 'search'" />
+    <DetalleNotaCreditoView v-if="currentView === 'detail'" :nota="selectedNota" tipo-nota="debito" @volver="volverDesdeDetalle" />
   </div>
 </template>
 
 <script setup>
-import { reactive, ref } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
 import NotasGrid from './notas/NotasGrid.vue'
 import DetalleNotaCreditoView from './notas/DetalleNotaCreditoView.vue'
 import { searchNotasDebito } from '../../services/certificacionService.js'
@@ -51,7 +51,36 @@ const emptyForm = () => ({ provincia: 'BUENOS AIRES', contratista: '', sociedad:
 const form = reactive(emptyForm())
 const resetForm = () => { Object.assign(form, emptyForm()); hasSearched.value = false; isLoading.value = false; gridData.value = []; currentView.value = 'search'; selectedNota.value = null; openFilters.value = true; openResults.value = true }
 const handleSearch = async () => { openFilters.value = false; hasSearched.value = true; isLoading.value = true; try { gridData.value = await searchNotasDebito({ ...form }) } finally { isLoading.value = false } }
-const openDetalleNota = (notaRow) => { selectedNota.value = notaRow; currentView.value = 'detail' }
+const makeStorageKey = row => `fm-detalle-nota-debito-${row?.nro_nota || Date.now()}`
+const openDetalleNota = notaRow => {
+  const key = makeStorageKey(notaRow)
+  localStorage.setItem(key, JSON.stringify(notaRow))
+  const url = new URL(window.location.href)
+  url.searchParams.set('module', 'consultar-nota-debito')
+  url.searchParams.set('detalleNota', '1')
+  url.searchParams.set('tipoNota', 'debito')
+  url.searchParams.set('notaKey', key)
+  url.searchParams.set('nota', notaRow?.nro_nota || '')
+  window.open(`${url.pathname}${url.search}${url.hash}`, '_blank', 'noopener,noreferrer')
+}
+const openDetalleFromUrl = () => {
+  const params = new URLSearchParams(window.location.search)
+  if (params.get('detalleNota') !== '1') return
+  const key = params.get('notaKey')
+  if (!key) return
+  const saved = localStorage.getItem(key)
+  if (!saved) return
+  selectedNota.value = JSON.parse(saved)
+  currentView.value = 'detail'
+  openFilters.value = false
+  openResults.value = false
+  hasSearched.value = false
+}
+const volverDesdeDetalle = () => {
+  if (new URLSearchParams(window.location.search).get('detalleNota') === '1') window.close()
+  else currentView.value = 'search'
+}
+onMounted(openDetalleFromUrl)
 </script>
 
 <style scoped>
