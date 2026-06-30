@@ -24,7 +24,7 @@ const menuList = ref([
     { id: 7, label: 'Errores de Gestión', action: 'errores-gestion' },
     { id: 8, label: 'Registro de OTs Fallidas', action: 'registro-ots-fallidas' },
     { id: 6, label: 'Materiales Descargados', action: 'materiales-descargados' },
-    { id: 9, label: 'Validación OT de Redes', action: 'none' }
+    { id: 9, label: 'Validación OT de Redes', action: 'validacion-ot-redes' }
   ] },
   { title: 'Certificación Contratista', submenus: [
     { id: 101, label: 'WorkAround', action: 'none' },
