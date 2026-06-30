@@ -8,6 +8,7 @@
       <GestionMaterialesOt v-if="activeModule === 'materiales-ot'" />
       <ErroresGestion v-if="activeModule === 'errores-gestion'" />
       <GestionMateriales v-if="activeModule === 'materiales-descargados'" title="Materiales Descargados" type="DESC" />
+      <ValidacionOtRedes v-if="activeModule === 'validacion-ot-redes'" />
       <ConfigJobtype v-if="activeModule === 'config-jobtype'" />
       <ConfigCmoActividad v-if="activeModule === 'config-cmo'" />
       <ConsultarActas v-if="activeModule === 'consultar-actas'" />
@@ -29,6 +30,7 @@ import ErroresGestionSucursal from '../components/materiales/ErroresGestionSucur
 import GestionMaterialesOt from '../components/materiales/GestionMaterialesOt.vue'
 import ErroresGestion from '../components/materiales/ErroresGestion.vue'
 import GestionMateriales from '../components/materiales/GestionMateriales.vue'
+import ValidacionOtRedes from '../components/materiales/ValidacionOtRedes.vue'
 import ConfigJobtype from '../components/certificacion/ConfigJobtype.vue'
 import ConfigCmoActividad from '../components/certificacion/ConfigCmoActividad.vue'
 import ConsultarActas from '../components/certificacion/ConsultarActas.vue'
@@ -38,23 +40,13 @@ import RegistroOtFallidas from '../components/certificacion/RegistroOtFallidas.v
 import BusquedaOrdenesTrabajo from '../components/certificacion/BusquedaOts.vue'
 import ReporteSas from '../components/reportes/ReporteSas.vue'
 
-const allowedModules = new Set(['search-classic', 'errores-gestion-sucursal', 'materiales-ot', 'errores-gestion', 'materiales-descargados', 'config-jobtype', 'config-cmo', 'consultar-actas', 'consultar-nota-credito', 'consultar-nota-debito', 'registro-ots-fallidas', 'busqueda-ots', 'reporte-sas'])
+const allowedModules = new Set(['search-classic', 'errores-gestion-sucursal', 'materiales-ot', 'errores-gestion', 'materiales-descargados', 'validacion-ot-redes', 'config-jobtype', 'config-cmo', 'consultar-actas', 'consultar-nota-credito', 'consultar-nota-debito', 'registro-ots-fallidas', 'busqueda-ots', 'reporte-sas'])
 const getInitialModule = () => {
   const moduleFromUrl = new URLSearchParams(window.location.search).get('module')
   return allowedModules.has(moduleFromUrl) ? moduleFromUrl : 'none'
 }
 const activeModule = ref(getInitialModule())
-const loadModule = (action) => {
-  activeModule.value = action
-  const url = new URL(window.location.href)
-  url.searchParams.delete('detalleNota')
-  url.searchParams.delete('tipoNota')
-  url.searchParams.delete('notaKey')
-  url.searchParams.delete('nota')
-  if (action && action !== 'none') url.searchParams.set('module', action)
-  else url.searchParams.delete('module')
-  window.history.replaceState({}, '', `${url.pathname}${url.search}${url.hash}`)
-}
+const loadModule = (action) => { activeModule.value = action }
 </script>
 
 <style scoped>
