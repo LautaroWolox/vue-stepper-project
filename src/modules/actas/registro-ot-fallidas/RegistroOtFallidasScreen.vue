@@ -86,7 +86,7 @@
       </div>
     </div>
 
-    <FmAlertDialog :show="state.alert.show" :title="state.alert.title" :message="state.alert.message" @close="state.alert.show = false" />
+    <FmAlertDialog :show="state.alert.show" :title="state.alert.title" :message="state.alert.message" :type="state.alert.type" @close="state.alert.show = false" />
   </div>
 </template>
 
