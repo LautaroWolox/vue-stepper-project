@@ -320,7 +320,7 @@ onBeforeUnmount(() => {
 
 .sas-accordion-header {
   width: 100%;
-  min-height: 30px;
+  min-height: 28px;
   border: 0;
   border-bottom: 1px solid #d8d8d8;
   background: #f7f7f7;
@@ -328,15 +328,15 @@ onBeforeUnmount(() => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 10px;
+  padding: 0 9px;
   text-align: left;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   cursor: pointer;
 }
 
 .sas-toggle {
-  font-size: 22px;
+  font-size: 20px;
   line-height: 1;
   font-weight: 400;
 }
@@ -347,11 +347,11 @@ onBeforeUnmount(() => {
 }
 
 .sas-grid-toolbar {
-  min-height: 42px;
+  min-height: 36px;
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  padding: 7px 10px;
+  padding: 5px 9px;
   border-bottom: 1px solid #d8d8d8;
   background: #fbfdfe;
 }
@@ -362,16 +362,16 @@ onBeforeUnmount(() => {
 }
 
 .sas-toolbar-btn {
-  min-height: 30px;
+  min-height: 27px;
   border: 1px solid #00a9bd;
-  border-radius: 18px;
+  border-radius: 16px;
   background: #ffffff;
   color: #008fa1;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 5px 14px;
-  font-size: 13px;
+  gap: 5px;
+  padding: 4px 12px;
+  font-size: 12px;
   font-weight: 400;
   cursor: pointer;
   transition: background-color .18s ease, color .18s ease, box-shadow .18s ease;
@@ -384,7 +384,7 @@ onBeforeUnmount(() => {
 }
 
 .sas-toolbar-btn .material-icons {
-  font-size: 17px;
+  font-size: 15px;
 }
 
 .sas-column-panel {
@@ -403,18 +403,18 @@ onBeforeUnmount(() => {
 }
 
 .sas-column-panel-header {
-  min-height: 38px;
+  min-height: 36px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 10px;
-  padding: 8px 10px;
+  padding: 7px 10px;
   border-bottom: 1px solid #e1e8ec;
   color: #263238;
 }
 
 .sas-column-panel-header strong {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
 }
 
@@ -423,9 +423,10 @@ onBeforeUnmount(() => {
   border-radius: 14px;
   background: #ffffff;
   color: #008fa1;
-  padding: 4px 10px;
+  padding: 3px 9px;
   cursor: pointer;
-  font-size: 12px;
+  font-size: 11px;
+  font-weight: 400;
 }
 
 .sas-column-panel-header button:hover {
@@ -436,18 +437,18 @@ onBeforeUnmount(() => {
 .sas-column-list {
   max-height: 315px;
   overflow-y: auto;
-  padding: 7px 0;
+  padding: 6px 0;
 }
 
 .sas-column-option {
-  min-height: 30px;
+  min-height: 28px;
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 6px 12px;
+  padding: 5px 12px;
   color: #263238;
   cursor: pointer;
-  font-size: 13px;
+  font-size: 12px;
 }
 
 .sas-column-option:hover {
@@ -456,8 +457,8 @@ onBeforeUnmount(() => {
 
 .sas-column-option input {
   appearance: none;
-  width: 14px;
-  height: 14px;
+  width: 13px;
+  height: 13px;
   border: 1px solid #9fb0ba;
   border-radius: 2px;
   background: #ffffff;
@@ -473,16 +474,16 @@ onBeforeUnmount(() => {
 .sas-column-option input:checked::after {
   content: '✓';
   position: absolute;
-  top: -4px;
+  top: -5px;
   left: 2px;
   color: #ffffff;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
 }
 
 .sas-grid-scroll {
   width: 100%;
-  height: calc(100vh - 230px);
+  height: calc(100vh - 220px);
   min-height: 430px;
   overflow: auto;
   border-bottom: 1px solid #d0d7de;
@@ -494,18 +495,19 @@ onBeforeUnmount(() => {
   border-collapse: collapse;
   table-layout: fixed;
   color: #263238;
-  font-size: 14px;
+  font-size: 12px;
 }
 
 .sas-grid th,
 .sas-grid td {
   border-right: 1px solid #c9d3da;
   border-bottom: 1px solid #dce3e8;
-  padding: 9px 10px;
+  padding: 7px 8px;
   text-align: left;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  line-height: 1.2;
 }
 
 .sas-grid thead th {
@@ -514,19 +516,20 @@ onBeforeUnmount(() => {
   background: #f4f7f9;
   color: #2c4050;
   font-weight: 600;
+  font-size: 11px;
 }
 
 .sas-header-row th {
   top: 0;
-  height: 38px;
+  height: 34px;
 }
 
 .sas-filter-row th {
-  top: 38px;
-  height: 38px;
+  top: 34px;
+  height: 34px;
   background: #ffffff;
   z-index: 6;
-  padding: 5px;
+  padding: 4px 5px;
 }
 
 .sas-sort-button {
@@ -538,7 +541,7 @@ onBeforeUnmount(() => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
+  gap: 6px;
   padding: 0;
   text-align: left;
   font: inherit;
@@ -553,9 +556,9 @@ onBeforeUnmount(() => {
   display: inline-flex;
   flex-direction: column;
   color: #aab8c0;
-  font-size: 9px;
-  line-height: 8px;
-  min-width: 10px;
+  font-size: 8px;
+  line-height: 7px;
+  min-width: 9px;
 }
 
 .sas-sort-icons .active {
@@ -579,18 +582,20 @@ onBeforeUnmount(() => {
 }
 
 .sas-filter-row .filter-prefix {
-  margin-right: 4px;
+  margin-right: 3px;
   color: #263238;
+  font-size: 11px;
 }
 
 .sas-filter-row input {
-  width: min(100%, calc(100% - 22px));
-  height: 25px;
-  min-width: 20px;
+  width: min(100%, calc(100% - 20px));
+  height: 22px;
+  min-width: 18px;
   border: 1px solid #c7d1d8;
   border-radius: 3px;
-  padding: 3px 6px;
+  padding: 2px 5px;
   outline: none;
+  font-size: 11px;
 }
 
 .sas-filter-row input:focus {
@@ -603,7 +608,8 @@ onBeforeUnmount(() => {
   background: transparent;
   font-weight: 700;
   cursor: pointer;
-  padding: 0 0 0 4px;
+  padding: 0 0 0 3px;
+  font-size: 11px;
 }
 
 .sas-grid tbody tr {
@@ -622,43 +628,52 @@ onBeforeUnmount(() => {
 
 .sas-empty {
   text-align: center;
-  padding: 24px !important;
+  padding: 22px !important;
   color: #607d8b;
+  font-size: 12px;
 }
 
 .sas-footer {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  gap: 10px;
-  padding: 7px 12px;
-  min-height: 44px;
+  gap: 8px;
+  padding: 5px 10px;
+  min-height: 38px;
   background: #ffffff;
+  font-size: 12px;
 }
 
 .sas-footer-left {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 7px;
+}
+
+.sas-icon-btn {
+  width: 26px;
+  height: 26px;
 }
 
 .sas-icon-btn .material-icons {
-  font-size: 18px;
+  font-size: 16px;
 }
 
 .sas-pagination {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 6px;
+  font-size: 12px;
 }
 
 .sas-pagination input {
-  width: 46px;
-  height: 26px;
+  width: 42px;
+  height: 24px;
   text-align: center;
   border: 1px solid #c7d1d8;
   border-radius: 4px;
+  font-size: 12px;
 }
 
 .page-nav {
@@ -666,7 +681,8 @@ onBeforeUnmount(() => {
   background: transparent;
   color: #263238;
   cursor: pointer;
-  padding: 2px 4px;
+  padding: 1px 3px;
+  font-size: 12px;
 }
 
 .page-nav:disabled {
@@ -675,11 +691,15 @@ onBeforeUnmount(() => {
 }
 
 .sas-page-size {
-  width: 64px;
+  width: 60px;
+  font-size: 12px;
 }
 
 .sas-count {
   justify-self: end;
+  font-size: 12px;
+  font-weight: 400;
+  color: #263238;
 }
 
 @media (max-width: 900px) {
