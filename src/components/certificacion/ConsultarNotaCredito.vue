@@ -8,35 +8,30 @@
       <div v-if="isLoading" class="main-loader-container"><svg class="svg-coder" viewBox="0 0 200 150" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="120" width="180" height="8" fill="#B0BEC5" rx="4"/><rect x="55" y="95" width="10" height="25" fill="#78909C"/><rect x="40" y="115" width="40" height="5" fill="#607D8B" rx="2"/><rect x="20" y="35" width="80" height="60" fill="#263238" rx="5"/><rect x="25" y="40" width="70" height="45" fill="#00BCD4" class="screen-glow" rx="2"/></svg><span>Recuperando Notas de Crédito...</span></div>
       <section class="fm-panel" v-if="hasSearched && !isLoading"><div class="fm-panel-header" @click="openResults = !openResults"><span>NOTAS DE CREDITO</span><span class="material-icons">{{ openResults ? 'remove' : 'add' }}</span></div><div class="fm-panel-content results-content" v-show="openResults"><NotasGrid :data="gridData" file-name="notas_credito.xls" @open-nota="openDetalleNota" /></div></section>
     </div>
-    <DetalleNotaCreditoView v-if="currentView === 'detail'" :nota="selectedNota" tipo-nota="credito" @volver="currentView = 'search'" />
+    <DetalleNotaCreditoView v-if="currentView === 'detail'" :nota="selectedNota" tipo-nota="credito" @volver="volverDesdeDetalle" />
   </div>
 </template>
-
 <script setup>
-import { reactive, ref } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
 import NotasGrid from './notas/NotasGrid.vue'
 import DetalleNotaCreditoView from './notas/DetalleNotaCreditoView.vue'
 import { searchNotasCredito } from '../../services/certificacionService.js'
 import { provinciasCertificacion } from '../../mocks/certificacionMock.js'
-
-const currentView = ref('search')
-const selectedNota = ref(null)
-const openFilters = ref(true)
-const openResults = ref(true)
-const hasSearched = ref(false)
-const isLoading = ref(false)
-const gridData = ref([])
+const currentView = ref('search'), selectedNota = ref(null), openFilters = ref(true), openResults = ref(true), hasSearched = ref(false), isLoading = ref(false), gridData = ref([])
 const provincias = provinciasCertificacion
 const contratistas = ['NET AND WORK S.A.', 'GREENIN S.A.S.', 'BULLS', 'DUNKEL', 'ALL VISION S.A.', 'INTERCATV S.R.L.', 'ADOBE CONSTRUCCIONES', 'CONECTAR S.R.L.', 'DIGITAL OESTE S.R.L.', 'AYKO S.A.']
 const sociedades = ['Telecom Argentina S.A.', 'Núcleo S.A.', 'La Capital Cable S.A.', 'Bersabel S.A.']
 const tiposContrato = ['Eventos', 'WIRELESS', 'DTH', 'Eventos SMB', 'Siniestros']
 const emptyForm = () => ({ provincia: 'BUENOS AIRES', contratista: '', sociedad: '', tipo_contrato: '', anio: '', periodo: '', estado: '', nota_credito: '', nro_ot: '', acta_asociada: '' })
 const form = reactive(emptyForm())
-const resetForm = () => { Object.assign(form, emptyForm()); hasSearched.value = false; gridData.value = []; openFilters.value = true; openResults.value = true }
+const resetForm = () => { Object.assign(form, emptyForm()); hasSearched.value = false; gridData.value = []; selectedNota.value = null; currentView.value = 'search'; openFilters.value = true; openResults.value = true }
 const handleSearch = async () => { openFilters.value = false; hasSearched.value = true; isLoading.value = true; try { gridData.value = await searchNotasCredito({ ...form }) } finally { isLoading.value = false } }
-const openDetalleNota = (notaRow) => { selectedNota.value = notaRow; currentView.value = 'detail' }
+const makeStorageKey = row => `fm-detalle-nota-credito-${row?.nro_nota || Date.now()}`
+const openDetalleNota = notaRow => { const key = makeStorageKey(notaRow); localStorage.setItem(key, JSON.stringify(notaRow)); const url = new URL(window.location.href); url.searchParams.set('module', 'consultar-nota-credito'); url.searchParams.set('detalleNota', '1'); url.searchParams.set('tipoNota', 'credito'); url.searchParams.set('notaKey', key); url.searchParams.set('nota', notaRow?.nro_nota || ''); window.open(`${url.pathname}${url.search}${url.hash}`, '_blank', 'noopener,noreferrer') }
+const openDetalleFromUrl = () => { const params = new URLSearchParams(window.location.search); if (params.get('detalleNota') !== '1') return; const key = params.get('notaKey'); if (!key) return; const saved = localStorage.getItem(key); if (!saved) return; selectedNota.value = JSON.parse(saved); currentView.value = 'detail'; openFilters.value = false; openResults.value = false; hasSearched.value = false }
+const volverDesdeDetalle = () => { if (new URLSearchParams(window.location.search).get('detalleNota') === '1') window.close(); else currentView.value = 'search' }
+onMounted(openDetalleFromUrl)
 </script>
-
 <style scoped>
-.nota-credito-page { color: #111; font-size: 14px; }.fm-panel { border: 1px solid #d8d8d8; background: #fff; margin-bottom: 8px; }.fm-panel-header { height: 32px; display: flex; align-items: center; justify-content: space-between; padding: 0 10px; background: #f7f7f7; border-bottom: 1px solid #d8d8d8; cursor: pointer; }.fm-panel-header .material-icons { color: #666; font-size: 20px; }.filters-content { border-left: 4px solid #00bcd4; }.filters-row { display: grid; gap: 18px; padding: 12px 20px 14px; border-bottom: 1px solid #d8d8d8; }.first-row { grid-template-columns: repeat(4, minmax(190px, 1fr)); }.second-row { grid-template-columns: 140px minmax(220px, 1fr) minmax(220px, 1fr) 1fr; }.third-row { grid-template-columns: repeat(3, minmax(220px, 1fr)) 1fr; }.fm-field label { display: block; margin-bottom: 7px; font-weight: 700; font-size: 13px; }.form-control { width: 100%; height: 30px; border: 1px solid #bdbdbd; border-radius: 3px; padding: 4px 8px; background: #fff; }.filters-actions { display: flex; justify-content: center; gap: 8px; padding: 18px 0 22px; }.btn-cyan, .btn-cyan-outline { border-radius: 18px; padding: 8px 18px; font-size: 13px; cursor: pointer; }.btn-cyan { background: #00a9bd; border: 1px solid #00a9bd; color: #fff; }.btn-cyan-outline { background: #fff; border: 1px solid #00a9bd; color: #00a9bd; }.results-content { padding: 0; }.main-loader-container { min-height: 180px; display: flex; flex-direction: column; justify-content: center; align-items: center; color: #00838f; font-weight: 700; }.svg-coder { width: 130px; }@media (max-width: 980px) { .first-row, .second-row, .third-row { grid-template-columns: repeat(2, minmax(180px, 1fr)); } }@media (max-width: 560px) { .first-row, .second-row, .third-row { grid-template-columns: 1fr; padding: 12px; } .filters-actions { flex-direction: column; padding: 12px; } .btn-cyan, .btn-cyan-outline { width: 100%; } }
+.nota-credito-page{color:#111;font-size:14px}.fm-panel{border:1px solid #d8d8d8;background:#fff;margin-bottom:8px}.fm-panel-header{height:32px;display:flex;align-items:center;justify-content:space-between;padding:0 10px;background:#f7f7f7;border-bottom:1px solid #d8d8d8;cursor:pointer}.fm-panel-header .material-icons{color:#666;font-size:20px}.filters-content{border-left:4px solid #00bcd4}.filters-row{display:grid;gap:18px;padding:12px 20px 14px;border-bottom:1px solid #d8d8d8}.first-row{grid-template-columns:repeat(4,minmax(190px,1fr))}.second-row{grid-template-columns:140px minmax(220px,1fr) minmax(220px,1fr) 1fr}.third-row{grid-template-columns:repeat(3,minmax(220px,1fr)) 1fr}.fm-field label{display:block;margin-bottom:7px;font-weight:700;font-size:13px}.form-control{width:100%;height:30px;border:1px solid #bdbdbd;border-radius:3px;padding:4px 8px;background:#fff}.form-control:focus{outline:none;border-color:#00bcd4;box-shadow:0 0 0 2px rgba(0,188,212,.14)}.filters-actions{display:flex;justify-content:center;gap:8px;padding:18px 0 22px}.btn-cyan,.btn-cyan-outline{border-radius:18px;padding:8px 18px;font-size:13px;font-weight:400;cursor:pointer;transition:background-color .18s ease,border-color .18s ease,box-shadow .18s ease,color .18s ease}.btn-cyan{background:#00a9bd;border:1px solid #00a9bd;color:#fff}.btn-cyan:hover:not(:disabled){background:#008fa1;border-color:#008fa1;box-shadow:0 4px 10px rgba(0,143,161,.22)}.btn-cyan-outline{background:#fff;border:1px solid #00a9bd;color:#00a9bd}.btn-cyan-outline:hover{background:#e0f7fa;color:#006f7f;box-shadow:0 4px 10px rgba(0,143,161,.14)}.results-content{padding:0}.main-loader-container{min-height:180px;display:flex;flex-direction:column;justify-content:center;align-items:center;color:#00838f;font-weight:700}.svg-coder{width:130px}@media(max-width:980px){.first-row,.second-row,.third-row{grid-template-columns:repeat(2,minmax(180px,1fr))}}@media(max-width:560px){.first-row,.second-row,.third-row{grid-template-columns:1fr;padding:12px}.filters-actions{flex-direction:column;padding:12px}.btn-cyan,.btn-cyan-outline{width:100%}}
 </style>
