@@ -7,18 +7,24 @@
 
     <div v-show="open" class="fallidas-filter-panel">
       <div class="fallidas-filters-grid">
-        <label><span>Nro. OT</span><input v-model.trim="model.nroOt" /></label>
-        <label><span>Fecha Cierre OT Desde</span><input v-model.trim="model.fechaDesde" /></label>
-        <label><span>Fecha Cierre OT Hasta</span><input v-model.trim="model.fechaHasta" /></label>
+        <label><span>Nro. OT</span><input v-model.trim="model.nroOt" class="fallidas-input" /></label>
+        <label><span>Fecha Cierre OT Desde</span><input v-model.trim="model.fechaDesde" class="fallidas-input fallidas-date-input" type="datetime-local" /></label>
+        <label><span>Fecha Cierre OT Hasta</span><input v-model.trim="model.fechaHasta" class="fallidas-input fallidas-date-input" type="datetime-local" /></label>
         <label><span>Contratista</span><FmTurquoiseSelect v-model="model.contratista" :options="contratistaOptions" class="fallidas-filter-select" /></label>
-        <label><span>Descripcion Error</span><input v-model.trim="model.descripcionError" /></label>
+        <label><span>Descripcion Error</span><input v-model.trim="model.descripcionError" class="fallidas-input" /></label>
         <label><span>Excluida</span><FmTurquoiseSelect v-model="model.excluida" :options="excluidaOptions" class="fallidas-filter-select" /></label>
         <label><span>Pais</span><FmTurquoiseSelect v-model="model.pais" :options="paisOptions" class="fallidas-filter-select" /></label>
       </div>
 
       <div class="fallidas-center-actions">
-        <button class="fallidas-btn-primary" :disabled="loading" @click="$emit('search')">BUSCAR</button>
-        <button class="fallidas-btn-secondary" :disabled="loading" @click="$emit('clear')">LIMPIAR</button>
+        <button class="fallidas-btn-primary" :disabled="loading" @click="$emit('search')">
+          <span class="material-icons">search</span>
+          <span>BUSCAR</span>
+        </button>
+        <button class="fallidas-btn-secondary" :disabled="loading" @click="$emit('clear')">
+          <span class="material-icons">sort</span>
+          <span>LIMPIAR</span>
+        </button>
       </div>
     </div>
   </section>
