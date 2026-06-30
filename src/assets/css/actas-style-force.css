@@ -1,1 +1,1 @@
-.fallidas-page .grid-scroll{height:auto}
+.fallidas-page .grid-scroll{height:auto!important;min-height:190px!important;overflow-y:hidden!important}
