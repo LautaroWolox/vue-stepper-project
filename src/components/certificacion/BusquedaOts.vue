@@ -90,7 +90,7 @@
             <button class="ots-icon-btn" type="button" title="Limpiar filtros" @click="clearAllFilters">
               <span class="material-icons">close</span>
             </button>
-            <button class="ots-icon-btn" type="button" title="Buscar" @click="handleSearch">
+            <button class="ots-icon-btn" type="button" title="Buscar OTs externas" @click="openExternalOrdersPopup">
               <span class="material-icons">search</span>
             </button>
           </div>
@@ -113,17 +113,21 @@
         </div>
       </div>
     </div>
+
+    <BusquedaOtsExternasModal v-if="showExternalModal" :rows="externalRows" @close="showExternalModal = false" />
   </div>
 </template>
 
 <script setup>
 import { computed, onBeforeUnmount, reactive, ref, watch } from 'vue'
 import FmTurquoiseSelect from '../shared/FmTurquoiseSelect.vue'
+import BusquedaOtsExternasModal from './BusquedaOtsExternasModal.vue'
 import { downloadExcel } from '../../utils/excelExport.js'
 
 const openSearch = ref(true)
 const openResults = ref(true)
 const showFilters = ref(false)
+const showExternalModal = ref(false)
 const otInput = ref('')
 const selectedRow = ref(null)
 const currentPage = ref(1)
@@ -151,6 +155,7 @@ const sortState = reactive({ field: '', direction: '' })
 const columnWidths = reactive(Object.fromEntries(columns.map((column) => [column.field, column.width])))
 const minWidths = Object.fromEntries(columns.map((column) => [column.field, column.minWidth]))
 const gridData = ref([])
+const externalRows = ref([])
 
 const mockStatuses = ['CERRADA', 'EN CURSO', 'PENDIENTE', 'CANCELADA', 'FINALIZADA']
 const mockWfxStatuses = ['COMPLETED', 'ASSIGNED', 'PENDING', 'DISPATCHED', 'CLOSED']
@@ -213,6 +218,23 @@ const buildRowsFromInput = () => {
   }))
 }
 
+const buildExternalRowsFromInput = () => {
+  const requestedOts = parsedOtList.value
+  if (requestedOts.length === 0) return []
+
+  return requestedOts.map((ot, index) => ({
+    id: `externa-${ot}-${index}`,
+    nroOt: ot,
+    nroOtSfs: `SFS-${String(990000 + index).padStart(7, '0')}`,
+    statusOtWfx: mockWfxStatuses[(index + 1) % mockWfxStatuses.length],
+    fechaUltimaModificacionOt: `${String(12 + (index % 15)).padStart(2, '0')}/10/2022 ${String(9 + (index % 9)).padStart(2, '0')}:${String(15 + (index % 40)).padStart(2, '0')}`,
+    nroTech: mockTechs[(index + 2) % mockTechs.length],
+    nombreTech: mockNames[(index + 1) % mockNames.length],
+    codigoSolucion: ['SOL-EXT-001', 'SOL-EXT-004', 'SOL-EXT-009', 'SOL-EXT-013'][index % 4],
+    ubicacionOt: mockUbicaciones[(index + 3) % mockUbicaciones.length]
+  }))
+}
+
 const handleSearch = () => {
   gridData.value = buildRowsFromInput()
   selectedRow.value = null
@@ -223,9 +245,16 @@ const handleSearch = () => {
 const handleClear = () => {
   otInput.value = ''
   gridData.value = []
+  externalRows.value = []
+  showExternalModal.value = false
   selectedRow.value = null
   currentPage.value = 1
   clearAllFilters()
+}
+
+const openExternalOrdersPopup = () => {
+  externalRows.value = buildExternalRowsFromInput()
+  showExternalModal.value = true
 }
 
 const selectRow = (row) => {
