@@ -1,52 +1,52 @@
 <template>
-  <div>
-    <div class="table-responsive" style="border: none;">
-      <table class="advanced-grid" style="border-top: none;">
+  <div class="cmo-grid-wrapper">
+    <div class="cmo-grid-scroll">
+      <table class="cmo-grid">
+        <colgroup>
+          <col v-for="column in columns" :key="`col-${column.field}`" :style="columnStyle(column.field)" />
+        </colgroup>
         <thead>
-          <tr>
-            <th><div class="resizable-header">CODIGO_ACTIVIDAD</div></th>
-            <th><div class="resizable-header">DESC_ACTIVIDAD</div></th>
-            <th><div class="resizable-header">CODIGO_S4</div></th>
-            <th><div class="resizable-header">CMO</div></th>
-            <th><div class="resizable-header">USUARIO_MODIFICACION</div></th>
-            <th><div class="resizable-header">FECHA_MODIFICACION</div></th>
-            <th><div class="resizable-header">ACTIVO</div></th>
+          <tr class="cmo-header-row">
+            <th v-for="column in columns" :key="column.field" :style="columnStyle(column.field)">
+              <button class="cmo-sort-button" type="button" @click="toggleSort(column.field)">
+                <span>{{ column.label }}</span>
+                <span class="cmo-sort-icons">
+                  <span :class="{ active: sortState.field === column.field && sortState.direction === 'asc' }">▲</span>
+                  <span :class="{ active: sortState.field === column.field && sortState.direction === 'desc' }">▼</span>
+                </span>
+              </button>
+              <span class="cmo-resize-handle" title="Arrastrar para achicar o agrandar columna" @mousedown.stop.prevent="startColumnResize($event, column.field)" @dblclick.stop.prevent="resetColumnWidth(column.field)"></span>
+            </th>
           </tr>
-          <tr class="filter-row">
-            <th><input type="text" class="col-filter-input" v-model="filters.cod_act" placeholder="~"></th>
-            <th><input type="text" class="col-filter-input" v-model="filters.desc_act" placeholder="~"></th>
-            <th><input type="text" class="col-filter-input" v-model="filters.cod_s4" placeholder="~"></th>
-            <th><input type="text" class="col-filter-input" v-model="filters.cmo" placeholder="~"></th>
-            <th><input type="text" class="col-filter-input" v-model="filters.usu" placeholder="~"></th>
-            <th><input type="text" class="col-filter-input" v-model="filters.fecha" placeholder="~"></th>
-            <th><input type="text" class="col-filter-input" v-model="filters.activo" placeholder="~"></th>
+          <tr class="cmo-filter-row">
+            <th v-for="column in columns" :key="`filter-${column.field}`" :style="columnStyle(column.field)">
+              <span class="filter-prefix">~</span>
+              <input type="text" v-model="filters[column.field]" @input="currentPage = 1" @click.stop />
+              <button type="button" @click.stop="clearFilter(column.field)">x</button>
+            </th>
           </tr>
         </thead>
         <tbody>
-          <tr 
-            v-for="row in paginatedData" 
-            :key="row.id" 
+          <tr
+            v-for="row in paginatedData"
+            :key="row.id"
             :class="{ 'active-row': selectedRow?.id === row.id, 'disabled-row': row.disabled }"
             @click="selectRow(row)"
           >
-            <td>{{ row.cod_act }}</td>
-            <td>{{ row.desc_act }}</td>
-            <td>{{ row.cod_s4 }}</td>
-            <td>{{ row.cmo }}</td>
-            <td>{{ row.usu }}</td>
-            <td>{{ row.fecha }}</td>
-            <td>{{ row.activo }}</td>
+            <td v-for="column in columns" :key="`${row.id}-${column.field}`" :style="columnStyle(column.field)">
+              {{ row[column.field] }}
+            </td>
           </tr>
           <tr v-if="paginatedData.length === 0">
-            <td colspan="7" style="text-align: center; padding: 20px;">No hay resultados con estos filtros.</td>
+            <td :colspan="columns.length" class="cmo-empty">No hay resultados con estos filtros.</td>
           </tr>
         </tbody>
       </table>
     </div>
 
-    <div class="grid-footer">
+    <div class="grid-footer cmo-footer">
       <div class="grid-footer-left">
-        <button class="icon-btn" title="Exportar a CSV" @click="exportCSV">
+        <button class="icon-btn" title="Exportar Excel" @click="exportExcel">
           <span class="material-icons">file_download</span>
         </button>
         <button class="icon-btn" title="Desactivar" :disabled="!selectedRow" @click="deactivateRow">
@@ -60,89 +60,382 @@
         </button>
       </div>
 
-      <div class="modern-pagination">
-        <span class="material-icons icon-nav" :class="{ disabled: currentPage === 1 }" @click="currentPage = 1">first_page</span>
-        <span class="material-icons icon-nav" :class="{ disabled: currentPage === 1 }" @click="currentPage > 1 && currentPage--">chevron_left</span>
-        
-        <span>Página <input type="number" v-model.number="currentPage" min="1" :max="totalPages || 1"> de {{ totalPages || 1 }}</span>
-        
-        <span class="material-icons icon-nav" :class="{ disabled: currentPage >= totalPages }" @click="currentPage < totalPages && currentPage++">chevron_right</span>
-        <span class="material-icons icon-nav" :class="{ disabled: currentPage >= totalPages }" @click="currentPage = totalPages">last_page</span>
-        
-        <select class="form-control" style="width: auto; padding: 4px; margin-left: 10px;" v-model="itemsPerPage" @change="currentPage = 1">
-          <option :value="10">10 v</option>
-          <option :value="50">50 v</option>
-          <option :value="100">100 v</option>
-        </select>
+      <div class="modern-pagination cmo-pagination">
+        <button class="page-nav" type="button" :disabled="currentPage === 1" @click="currentPage = 1">|&lt;</button>
+        <button class="page-nav" type="button" :disabled="currentPage === 1" @click="currentPage > 1 && currentPage--">&lt;</button>
+        <span>Página <input type="number" v-model.number="currentPage" min="1" :max="totalPages || 1" @change="normalizePage"> de {{ totalPages || 1 }}</span>
+        <button class="page-nav" type="button" :disabled="currentPage >= totalPages" @click="currentPage < totalPages && currentPage++">&gt;</button>
+        <button class="page-nav" type="button" :disabled="currentPage >= totalPages" @click="currentPage = totalPages">&gt;|</button>
+        <FmTurquoiseSelect v-model="itemsPerPage" :options="itemsPerPageOptions" class="cmo-page-size" @change="currentPage = 1" />
+      </div>
 
-        <div style="margin-left: 10px;">
-          Mostrando {{ filteredData.length > 0 ? ((currentPage - 1) * itemsPerPage) + 1 : 0 }} - {{ Math.min(currentPage * itemsPerPage, filteredData.length) }} de {{ filteredData.length }}
-        </div>
+      <div class="cmo-count">
+        Mostrando {{ filteredData.length > 0 ? ((currentPage - 1) * itemsPerPage) + 1 : 0 }} - {{ Math.min(currentPage * itemsPerPage, filteredData.length) }} de {{ filteredData.length }}
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, reactive } from 'vue'
+import { computed, onBeforeUnmount, reactive, ref, watch } from 'vue'
+import FmTurquoiseSelect from '../shared/FmTurquoiseSelect.vue'
+import { downloadExcel } from '../../utils/excelExport.js'
 
 const props = defineProps(['data'])
 const emit = defineEmits(['edit-row', 'add-row'])
 
-const filters = reactive({ cod_act: '', desc_act: '', cod_s4: '', cmo: '', usu: '', fecha: '', activo: '' })
+const columns = [
+  { field: 'cod_act', label: 'CODIGO_ACTIVIDAD', width: 170, minWidth: 56 },
+  { field: 'desc_act', label: 'DESC_ACTIVIDAD', width: 360, minWidth: 80 },
+  { field: 'cod_s4', label: 'CODIGO_S4', width: 170, minWidth: 56 },
+  { field: 'cmo', label: 'CMO', width: 190, minWidth: 56 },
+  { field: 'usu', label: 'USUARIO_MODIFICACION', width: 190, minWidth: 70 },
+  { field: 'fecha', label: 'FECHA_MODIFICACION', width: 190, minWidth: 70 },
+  { field: 'activo', label: 'ACTIVO', width: 130, minWidth: 48 }
+]
+
+const filters = reactive(Object.fromEntries(columns.map((column) => [column.field, ''])))
 const selectedRow = ref(null)
 const currentPage = ref(1)
 const itemsPerPage = ref(10)
+const itemsPerPageOptions = [{ value: 10, label: '10' }, { value: 50, label: '50' }, { value: 100, label: '100' }]
+const sortState = reactive({ field: '', direction: '' })
+const columnWidths = reactive(Object.fromEntries(columns.map((column) => [column.field, column.width])))
+const minWidths = Object.fromEntries(columns.map((column) => [column.field, column.minWidth]))
 
-const selectRow = (row) => {
-  if (row.disabled) return // No permite seleccionar filas inactivas
-  selectedRow.value = selectedRow.value?.id === row.id ? null : row
-}
+const normalize = (value) => String(value ?? '').toLowerCase()
+const columnStyle = (field) => ({ width: `${columnWidths[field]}px`, minWidth: `${columnWidths[field]}px`, maxWidth: `${columnWidths[field]}px` })
 
-const deactivateRow = () => {
-  if (selectedRow.value) {
-    selectedRow.value.activo = 'N'
-    selectedRow.value.disabled = true
-    selectedRow.value.fecha = new Date().toLocaleString('es-AR')
-    selectedRow.value = null // Deseleccionar al desactivar
-  }
-}
+const filteredData = computed(() => props.data.filter(row => columns.every((column) => {
+  const filterVal = normalize(filters[column.field])
+  if (!filterVal) return true
+  return normalize(row[column.field]).includes(filterVal)
+})))
 
-const filteredData = computed(() => {
-  return props.data.filter(row => {
-    return Object.keys(filters).every(key => {
-      const filterVal = filters[key].toLowerCase()
-      if (!filterVal) return true
-      return String(row[key]).toLowerCase().includes(filterVal)
-    })
+const sortedData = computed(() => {
+  const list = [...filteredData.value]
+  if (!sortState.field || !sortState.direction) return list
+
+  return list.sort((a, b) => {
+    const result = String(a[sortState.field] ?? '').localeCompare(String(b[sortState.field] ?? ''), 'es', { numeric: true, sensitivity: 'base' })
+    return sortState.direction === 'asc' ? result : -result
   })
 })
 
-const totalPages = computed(() => Math.ceil(filteredData.value.length / itemsPerPage.value))
-const paginatedData = computed(() => {
-  return filteredData.value.slice((currentPage.value - 1) * itemsPerPage.value, (currentPage.value - 1) * itemsPerPage.value + itemsPerPage.value)
-})
+const totalPages = computed(() => Math.ceil(sortedData.value.length / itemsPerPage.value) || 1)
+const paginatedData = computed(() => sortedData.value.slice((currentPage.value - 1) * itemsPerPage.value, currentPage.value * itemsPerPage.value))
 
-const exportCSV = () => {
-  const dataToExport = filteredData.value.length ? filteredData.value : props.data
-  const headers = "CODIGO_ACTIVIDAD,DESC_ACTIVIDAD,CODIGO_S4,CMO,USUARIO MODIFICACION,FECHA_MODIFICACION,ACTIVO\n"
-  const rows = dataToExport.map(row => `${row.cod_act},${row.desc_act},${row.cod_s4},${row.cmo},${row.usu},${row.fecha},${row.activo}`).join('\n')
-  const link = document.createElement("a")
-  link.setAttribute("href", encodeURI("data:text/csv;charset=utf-8," + headers + rows))
-  link.setAttribute("download", "Configuracion_CMO_Actividad.csv")
-  document.body.appendChild(link)
-  link.click()
-  document.body.removeChild(link)
+watch(filteredData, () => normalizePage())
+watch(itemsPerPage, () => normalizePage())
+
+const normalizePage = () => {
+  if (!currentPage.value || currentPage.value < 1) currentPage.value = 1
+  if (currentPage.value > totalPages.value) currentPage.value = totalPages.value
 }
+
+const selectRow = (row) => {
+  if (row.disabled) return
+  selectedRow.value = selectedRow.value?.id === row.id ? null : row
+}
+
+const clearFilter = (field) => {
+  filters[field] = ''
+  currentPage.value = 1
+}
+
+const toggleSort = (field) => {
+  if (sortState.field !== field) {
+    sortState.field = field
+    sortState.direction = 'asc'
+  } else if (sortState.direction === 'asc') {
+    sortState.direction = 'desc'
+  } else {
+    sortState.field = ''
+    sortState.direction = ''
+  }
+  currentPage.value = 1
+}
+
+const deactivateRow = () => {
+  if (!selectedRow.value) return
+  selectedRow.value.activo = 'N'
+  selectedRow.value.disabled = true
+  selectedRow.value.fecha = new Date().toLocaleString('es-AR')
+  selectedRow.value = null
+}
+
+const exportExcel = () => {
+  if (!filteredData.value.length) return
+  downloadExcel({
+    filename: 'Configuracion_CMO_Actividad.xls',
+    title: 'Configuración CMO Actividad',
+    columns,
+    rows: filteredData.value
+  })
+}
+
+let resizingField = null
+let resizeStartX = 0
+let resizeStartWidth = 0
+
+const startColumnResize = (event, field) => {
+  resizingField = field
+  resizeStartX = event.clientX
+  resizeStartWidth = columnWidths[field]
+  document.body.classList.add('cmo-column-resizing')
+  document.addEventListener('mousemove', resizeColumn)
+  document.addEventListener('mouseup', stopColumnResize)
+}
+
+const resizeColumn = (event) => {
+  if (!resizingField) return
+  const nextWidth = resizeStartWidth + event.clientX - resizeStartX
+  columnWidths[resizingField] = Math.max(minWidths[resizingField] || 48, nextWidth)
+}
+
+const stopColumnResize = () => {
+  resizingField = null
+  document.body.classList.remove('cmo-column-resizing')
+  document.removeEventListener('mousemove', resizeColumn)
+  document.removeEventListener('mouseup', stopColumnResize)
+}
+
+const resetColumnWidth = (field) => {
+  const original = columns.find((column) => column.field === field)
+  columnWidths[field] = original?.width || 120
+}
+
+onBeforeUnmount(() => stopColumnResize())
 </script>
 
 <style scoped>
-.disabled-row {
-  background-color: #f5f5f5 !important;
-  color: #9e9e9e !important;
-  cursor: not-allowed !important;
+.cmo-grid-wrapper {
+  width: 100%;
+  background: #ffffff;
 }
-.disabled-row td {
-  color: #9e9e9e !important;
+
+.cmo-grid-scroll {
+  width: 100%;
+  max-height: 448px;
+  overflow: auto;
+  border: 1px solid #d0d7de;
+  border-top: 0;
+}
+
+.cmo-grid {
+  width: max-content;
+  min-width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+  color: #263238;
+  font-size: 14px;
+}
+
+.cmo-grid th,
+.cmo-grid td {
+  border-right: 1px solid #c9d3da;
+  border-bottom: 1px solid #dce3e8;
+  padding: 9px 10px;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cmo-grid thead th {
+  position: sticky;
+  z-index: 7;
+  background: #f4f7f9;
+  color: #2c4050;
+  font-weight: 600;
+}
+
+.cmo-header-row th {
+  top: 0;
+  height: 38px;
+}
+
+.cmo-filter-row th {
+  top: 38px;
+  height: 38px;
+  background: #ffffff;
+  z-index: 6;
+  padding: 5px;
+}
+
+.cmo-sort-button {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 0;
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+}
+
+.cmo-sort-button:hover {
+  color: #008fa1;
+}
+
+.cmo-sort-icons {
+  display: inline-flex;
+  flex-direction: column;
+  color: #aab8c0;
+  font-size: 9px;
+  line-height: 8px;
+  min-width: 10px;
+}
+
+.cmo-sort-icons .active {
+  color: #00a9bd;
+}
+
+.cmo-resize-handle {
+  position: absolute;
+  top: 0;
+  right: -4px;
+  width: 9px;
+  height: 100%;
+  cursor: col-resize;
+  z-index: 12;
+  border-right: 2px solid transparent;
+}
+
+.cmo-resize-handle:hover {
+  background: rgba(0, 188, 212, .12);
+  border-right-color: #00bcd4;
+}
+
+.cmo-filter-row .filter-prefix {
+  margin-right: 4px;
+  color: #263238;
+}
+
+.cmo-filter-row input {
+  width: min(100%, calc(100% - 22px));
+  height: 25px;
+  min-width: 20px;
+  border: 1px solid #c7d1d8;
+  border-radius: 3px;
+  padding: 3px 6px;
+  outline: none;
+}
+
+.cmo-filter-row input:focus {
+  border-color: #00bcd4;
+  box-shadow: 0 0 0 2px rgba(0, 188, 212, .14);
+}
+
+.cmo-filter-row button {
+  border: 0;
+  background: transparent;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0 0 0 4px;
+}
+
+.cmo-grid tbody tr {
+  cursor: pointer;
+  transition: background-color .15s ease;
+}
+
+.cmo-grid tbody tr:hover td {
+  background: #edfafd;
+}
+
+.cmo-grid tbody tr.active-row td {
+  background: #9eeff7;
+  color: #003f47;
+}
+
+.cmo-grid tbody tr.disabled-row {
+  cursor: not-allowed;
+}
+
+.cmo-grid tbody tr.disabled-row td {
+  background: #eeeeee;
+  color: #9e9e9e;
+}
+
+.cmo-grid tbody tr.disabled-row:hover td {
+  background: #eeeeee;
+}
+
+.cmo-empty {
+  text-align: center;
+  padding: 24px !important;
+  color: #607d8b;
+}
+
+.cmo-footer {
+  border: 1px solid #d0d7de;
+  border-top: 0;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 12px;
+  min-height: 44px;
+}
+
+.cmo-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.cmo-pagination input {
+  width: 46px;
+  height: 26px;
+  text-align: center;
+  border: 1px solid #c7d1d8;
+  border-radius: 4px;
+}
+
+.page-nav {
+  border: 0;
+  background: transparent;
+  color: #263238;
+  cursor: pointer;
+  padding: 2px 4px;
+}
+
+.page-nav:disabled {
+  opacity: .35;
+  cursor: not-allowed;
+}
+
+.cmo-page-size {
+  width: 64px;
+}
+
+.cmo-count {
+  justify-self: end;
+}
+
+@media (max-width: 900px) {
+  .cmo-footer {
+    grid-template-columns: 1fr;
+    justify-items: center;
+  }
+
+  .cmo-count {
+    justify-self: center;
+  }
+}
+</style>
+
+<style>
+body.cmo-column-resizing,
+body.cmo-column-resizing * {
+  cursor: col-resize !important;
+  user-select: none !important;
 }
 </style>
