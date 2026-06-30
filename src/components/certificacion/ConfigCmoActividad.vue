@@ -1,12 +1,12 @@
 <template>
-  <div>
-    <div class="soft-accordion">
-      <div class="soft-accordion-header" @click="openFilters = !openFilters">
-        <span><span class="material-icons">filter_alt</span> FILTROS DE BÚSQUEDA</span>
-        <span class="material-icons">{{ openFilters ? 'remove' : 'add' }}</span>
-      </div>
-      <div class="soft-accordion-content" v-show="openFilters" style="text-align: center; padding: 30px;">
-        <button class="btn" style="border-radius: 20px; padding: 10px 40px; background: #00bcd4; font-size: 14px;" @click="handleSearch">
+  <div class="cmo-page">
+    <div class="soft-accordion cmo-accordion">
+      <button class="soft-accordion-header cmo-accordion-header" type="button" @click="openFilters = !openFilters">
+        <span>FILTROS DE BÚSQUEDA</span>
+        <span class="cmo-toggle">{{ openFilters ? '−' : '+' }}</span>
+      </button>
+      <div class="soft-accordion-content cmo-filter-content" v-show="openFilters">
+        <button class="cmo-search-btn" type="button" @click="handleSearch">
           BUSCAR
         </button>
       </div>
@@ -33,33 +33,33 @@
         <path class="arm-left" d="M160,85 Q130,95 105,115" stroke="#00838F" stroke-width="10" fill="none" stroke-linecap="round"/>
         <path class="arm-right" d="M140,85 Q115,100 90,115" stroke="#00BCD4" stroke-width="10" fill="none" stroke-linecap="round"/>
       </svg>
-      <span style="margin-top: 15px;">{{ loadingMsg }}</span>
+      <span class="cmo-loading-text">{{ loadingMsg }}</span>
     </div>
 
-    <div class="soft-accordion" v-if="hasSearched && !isLoading">
-      <div class="soft-accordion-header" @click="openResults = !openResults">
-        <span><span class="material-icons">list</span> RELACIONES CMO-ACTIVIDAD</span>
-        <span class="material-icons">{{ openResults ? 'remove' : 'add' }}</span>
-      </div>
-      <div class="soft-accordion-content" v-show="openResults" style="padding: 0;">
-        <GridCmoActividad 
-          :data="gridData" 
+    <div class="soft-accordion cmo-accordion" v-if="hasSearched && !isLoading">
+      <button class="soft-accordion-header cmo-accordion-header" type="button" @click="openResults = !openResults">
+        <span>RELACIONES CMO-ACTIVIDAD</span>
+        <span class="cmo-toggle">{{ openResults ? '−' : '+' }}</span>
+      </button>
+      <div class="soft-accordion-content cmo-grid-content" v-show="openResults">
+        <GridCmoActividad
+          :data="gridData"
           @edit-row="openEdit"
           @add-row="openAlta"
         />
       </div>
     </div>
 
-    <EditCmoPopup 
-      :show="showEditPopup" 
-      :data="selectedForEdit" 
+    <EditCmoPopup
+      :show="showEditPopup"
+      :data="selectedForEdit"
       :position="popupPos"
       @close="showEditPopup = false"
       @update="handleUpdate"
     />
 
-    <AltaCmoPopup 
-      :show="showAltaPopup" 
+    <AltaCmoPopup
+      :show="showAltaPopup"
       :position="popupPos"
       @close="showAltaPopup = false"
       @add-relations="handleNewRelations"
@@ -83,8 +83,51 @@ const showEditPopup = ref(false)
 const showAltaPopup = ref(false)
 const selectedForEdit = ref(null)
 const popupPos = ref({ x: 0, y: 0 })
-
 const gridData = ref([])
+
+const baseCmoRows = [
+  { cod_act: 'WS9035', desc_act: 'Instalar DECO secundario Flow en cte activo', cod_s4: '0000001', cmo: 'NO HAY CMO', usu: 'FieldManager', fecha: '22/07/2025 11:09', activo: 'S', disabled: false },
+  { cod_act: 'WS8035', desc_act: 'Se instaló DECO secundario Flow en cte activo', cod_s4: '0000001', cmo: 'NO HAY CMO', usu: 'FieldManager', fecha: '07/05/2025 10:27', activo: 'N', disabled: true },
+  { cod_act: 'WS8035', desc_act: 'Se instaló DECO secundario Flow en cte activo', cod_s4: '0000001', cmo: 'NO HAY CMO', usu: 'FieldManager', fecha: '02/07/2025 22:27', activo: 'S', disabled: false },
+  { cod_act: 'WS800122', desc_act: 'Se instaló DECO secundario Full IP', cod_s4: '0000001', cmo: 'NO HAY CMO', usu: 'FieldManager', fecha: '18/10/2024 12:08', activo: 'S', disabled: false },
+  { cod_act: 'WS800018', desc_act: 'Se instaló DECO Full IP', cod_s4: '0000001', cmo: 'NO HAY CMO', usu: 'FieldManager', fecha: '18/10/2024 12:08', activo: 'S', disabled: false },
+  { cod_act: 'WS7995', desc_act: 'Se instaló DECO secundario Flow', cod_s4: '0000001', cmo: 'NO HAY CMO', usu: 'FieldManager', fecha: '07/05/2025 10:27', activo: 'N', disabled: true },
+  { cod_act: 'WS7995', desc_act: 'Se instaló DECO secundario Flow', cod_s4: '0000001', cmo: 'NO HAY CMO', usu: 'FieldManager', fecha: '02/07/2025 22:27', activo: 'S', disabled: false },
+  { cod_act: 'WS7835', desc_act: 'Instalar DECO Flow en cte activo', cod_s4: '0000001', cmo: 'NO HAY CMO', usu: 'FieldManager', fecha: '22/07/2025 11:09', activo: 'S', disabled: false },
+  { cod_act: 'WS7795', desc_act: 'Instalar DECO Flow - Venta sin int', cod_s4: '0000001', cmo: 'NO HAY CMO', usu: 'FieldManager', fecha: '22/07/2025 11:09', activo: 'S', disabled: false },
+  { cod_act: 'WR9035', desc_act: 'Retirar DECO secundario Flow con baja de Cte', cod_s4: '0000001', cmo: 'NO HAY CMO', usu: 'FieldManager', fecha: '22/07/2025 11:09', activo: 'S', disabled: false },
+  { cod_act: 'WR8035', desc_act: 'Se retiró DECO secundario Flow con baja de cte', cod_s4: '0000001', cmo: 'NO HAY CMO', usu: 'FieldManager', fecha: '07/05/2025 10:27', activo: 'N', disabled: true },
+  { cod_act: 'WR8035', desc_act: 'Se retiró DECO secundario Flow con baja de cte', cod_s4: '0000001', cmo: 'NO HAY CMO', usu: 'FieldManager', fecha: '02/07/2025 22:27', activo: 'S', disabled: false },
+  { cod_act: 'WR800122', desc_act: 'Se retiró DECO secundario Full IP', cod_s4: '0000001', cmo: 'NO HAY CMO', usu: 'FieldManager', fecha: '18/10/2024 12:08', activo: 'S', disabled: false },
+  { cod_act: 'WR800018', desc_act: 'Se retiró DECO Full IP', cod_s4: '0000001', cmo: 'NO HAY CMO', usu: 'FieldManager', fecha: '18/10/2024 12:08', activo: 'S', disabled: false },
+  { cod_act: 'WR7995', desc_act: 'Se retiró DECO secundario Flow', cod_s4: '0000001', cmo: 'NO HAY CMO', usu: 'FieldManager', fecha: '07/05/2025 10:27', activo: 'N', disabled: true },
+  { cod_act: 'WR7995', desc_act: 'Se retiró DECO secundario Flow', cod_s4: '0000001', cmo: 'NO HAY CMO', usu: 'FieldManager', fecha: '02/07/2025 22:27', activo: 'S', disabled: false },
+  { cod_act: 'WR7835', desc_act: 'Retirar DECO Flow con baja de Cte', cod_s4: '0000001', cmo: 'NO HAY CMO', usu: 'FieldManager', fecha: '22/07/2025 11:09', activo: 'S', disabled: false },
+  { cod_act: 'WM9035', desc_act: 'Modificar a DECO secundario Flow', cod_s4: '0000001', cmo: 'NO HAY CMO', usu: 'FieldManager', fecha: '22/07/2025 11:09', activo: 'S', disabled: false },
+  { cod_act: 'WM8035', desc_act: 'Se modificó a DECO secundario Flow', cod_s4: '0000001', cmo: 'NO HAY CMO', usu: 'FieldManager', fecha: '07/05/2025 10:27', activo: 'N', disabled: true },
+  { cod_act: 'WM8035', desc_act: 'Se modificó a DECO secundario Flow', cod_s4: '0000001', cmo: 'NO HAY CMO', usu: 'FieldManager', fecha: '02/07/2025 22:27', activo: 'S', disabled: false },
+  { cod_act: 'WM800122', desc_act: 'Se modificó a DECO secundario Full IP', cod_s4: '0000001', cmo: 'NO HAY CMO', usu: 'FieldManager', fecha: '18/10/2024 12:08', activo: 'S', disabled: false },
+  { cod_act: 'WM800018', desc_act: 'Se modificó a DECO Full IP', cod_s4: '0000001', cmo: 'NO HAY CMO', usu: 'FieldManager', fecha: '18/10/2024 12:08', activo: 'S', disabled: false },
+  { cod_act: 'WC9035', desc_act: 'Cambiar DECO secundario Flow', cod_s4: '0000001', cmo: 'NO HAY CMO', usu: 'FieldManager', fecha: '22/07/2025 11:09', activo: 'S', disabled: false },
+  { cod_act: 'WC8035', desc_act: 'Se cambió DECO secundario Flow', cod_s4: '0000001', cmo: 'NO HAY CMO', usu: 'FieldManager', fecha: '07/05/2025 10:27', activo: 'N', disabled: true },
+  { cod_act: 'WCLTE', desc_act: 'Instalar Cablemodem LTE', cod_s4: '0000002', cmo: 'INST.D/CABLEMODEM LTE', usu: 'z002456', fecha: '19/06/2026 17:30', activo: 'S', disabled: false }
+]
+
+const buildCmoRows = () => Array.from({ length: 100 }, (_, index) => {
+  const base = baseCmoRows[index % baseCmoRows.length]
+  const generated = index >= baseCmoRows.length
+  return {
+    id: index + 1,
+    cod_act: generated ? `${base.cod_act}${String(index + 1).padStart(2, '0')}`.slice(0, 9) : base.cod_act,
+    desc_act: base.desc_act,
+    cod_s4: index % 11 === 0 ? '5021497' : base.cod_s4,
+    cmo: index % 11 === 0 ? 'INST.D/ACOMETIDA HFC' : base.cmo,
+    usu: index % 7 === 0 ? 'z002456' : base.usu,
+    fecha: base.fecha,
+    activo: index % 9 === 1 ? 'N' : base.activo,
+    disabled: index % 9 === 1 ? true : base.disabled
+  }
+})
 
 const handleSearch = () => {
   openFilters.value = false
@@ -93,42 +136,42 @@ const handleSearch = () => {
   loadingMsg.value = 'Buscando configuraciones CMO-Actividad en el servidor...'
 
   setTimeout(() => {
-    // 100 Registros reales del CSV que proveíste
-    gridData.value = [{"id": 1, "cod_act": "WS9035", "desc_act": "Instalar DECO secundario Flow en cte activo", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "FieldManager", "fecha": "22/07/2025 11:09", "activo": "S", "disabled": false}, {"id": 2, "cod_act": "WS8035", "desc_act": "Se instaló DECO secundario Flow en cte activo", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "FieldManager", "fecha": "07/05/2025 10:27", "activo": "N", "disabled": true}, {"id": 3, "cod_act": "WS8035", "desc_act": "Se instaló DECO secundario Flow en cte activo", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "FieldManager", "fecha": "02/07/2025 22:27", "activo": "S", "disabled": false}, {"id": 4, "cod_act": "WS800122", "desc_act": "Se instaló DECO secundario Full IP", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "FieldManager", "fecha": "18/10/2024 12:08", "activo": "S", "disabled": false}, {"id": 5, "cod_act": "WS800018", "desc_act": "Se instaló DECO Full IP", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "FieldManager", "fecha": "18/10/2024 12:08", "activo": "S", "disabled": false}, {"id": 6, "cod_act": "WS7995", "desc_act": "Se instaló DECO secundario Flow", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "FieldManager", "fecha": "07/05/2025 10:27", "activo": "N", "disabled": true}, {"id": 7, "cod_act": "WS7995", "desc_act": "Se instaló DECO secundario Flow", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "FieldManager", "fecha": "02/07/2025 22:27", "activo": "S", "disabled": false}, {"id": 8, "cod_act": "WS7835", "desc_act": "Instalar DECO Flow en cte activo", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "FieldManager", "fecha": "22/07/2025 11:09", "activo": "S", "disabled": false}, {"id": 9, "cod_act": "WS7795", "desc_act": "Instalar DECO Flow - Venta sin int", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "FieldManager", "fecha": "22/07/2025 11:09", "activo": "S", "disabled": false}, {"id": 10, "cod_act": "WR9035", "desc_act": "Retirar DECO secundario Flow con baja de Cte", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "FieldManager", "fecha": "22/07/2025 11:09", "activo": "S", "disabled": false}, {"id": 11, "cod_act": "WR8035", "desc_act": "Se retiró DECO secundario Flow con baja de cte", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "FieldManager", "fecha": "07/05/2025 10:27", "activo": "N", "disabled": true}, {"id": 12, "cod_act": "WR8035", "desc_act": "Se retiró DECO secundario Flow con baja de cte", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "FieldManager", "fecha": "02/07/2025 22:27", "activo": "S", "disabled": false}, {"id": 13, "cod_act": "WR800122", "desc_act": "Se retiró DECO secundario Full IP", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "FieldManager", "fecha": "18/10/2024 12:08", "activo": "S", "disabled": false}, {"id": 14, "cod_act": "WR800018", "desc_act": "Se retiró DECO Full IP", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "FieldManager", "fecha": "18/10/2024 12:08", "activo": "S", "disabled": false}, {"id": 15, "cod_act": "WR7995", "desc_act": "Se retiró DECO secundario Flow", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "FieldManager", "fecha": "07/05/2025 10:27", "activo": "N", "disabled": true}, {"id": 16, "cod_act": "WR7995", "desc_act": "Se retiró DECO secundario Flow", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "FieldManager", "fecha": "02/07/2025 22:27", "activo": "S", "disabled": false}, {"id": 17, "cod_act": "WR7835", "desc_act": "Retirar DECO Flow con baja de Cte", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "FieldManager", "fecha": "22/07/2025 11:09", "activo": "S", "disabled": false}, {"id": 18, "cod_act": "WM9035", "desc_act": "Modificar a DECO secundario Flow", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "FieldManager", "fecha": "22/07/2025 11:09", "activo": "S", "disabled": false}, {"id": 19, "cod": "WM8035", "desc_act": "Se modificó a DECO secundario Flow", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "FieldManager", "fecha": "07/05/2025 10:27", "activo": "N", "disabled": true}, {"id": 20, "cod_act": "WM8035", "desc_act": "Se modificó a DECO secundario Flow", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "FieldManager", "fecha": "02/07/2025 22:27", "activo": "S", "disabled": false}, {"id": 21, "cod_act": "WM800122", "desc_act": "Se modificó a DECO secundario Full IP", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "FieldManager", "fecha": "18/10/2024 12:08", "activo": "S", "disabled": false}, {"id": 22, "cod_act": "WM800018", "desc_act": "Se modificó a DECO Full IP", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "FieldManager", "fecha": "18/10/2024 12:08", "activo": "S", "disabled": false}, {"id": 23, "cod_act": "WM7995", "desc_act": "Se modificó a DECO secundario Flow", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "FieldManager", "fecha": "07/05/2025 10:27", "activo": "N", "disabled": true}, {"id": 24, "cod_act": "WM7995", "desc_act": "Se modificó a DECO secundario Flow", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "FieldManager", "fecha": "02/07/2025 22:27", "activo": "S", "disabled": false}, {"id": 25, "cod_act": "WM7835", "desc_act": "Modificar a DECO Flow", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "FieldManager", "fecha": "22/07/2025 11:09", "activo": "S", "disabled": false}, {"id": 26, "cod_act": "WC9035", "desc_act": "Cambiar DECO secundario Flow", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "FieldManager", "fecha": "22/07/2025 11:09", "activo": "S", "disabled": false}, {"id": 27, "cod_act": "WC8035", "desc_act": "Se cambió DECO secundario Flow", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "FieldManager", "fecha": "07/05/2025 10:27", "activo": "N", "disabled": true}, {"id": 28, "cod_act": "WC8035", "desc_act": "Se cambió DECO secundario Flow", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "FieldManager", "fecha": "02/07/2025 22:27", "activo": "S", "disabled": false}, {"id": 29, "cod_act": "WC800122", "desc_act": "Se cambió DECO secundario Full IP", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "FieldManager", "fecha": "18/10/2024 12:08", "activo": "S", "disabled": false}, {"id": 30, "cod_act": "WC800018", "desc_act": "Se cambió DECO Full IP", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "FieldManager", "fecha": "18/10/2024 12:08", "activo": "S", "disabled": false}, {"id": 31, "cod_act": "WC7995", "desc_act": "Se cambió DECO secundario Flow", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "FieldManager", "fecha": "07/05/2025 10:27", "activo": "N", "disabled": true}, {"id": 32, "cod_act": "WC7995", "desc_act": "Se cambió DECO secundario Flow", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "FieldManager", "fecha": "02/07/2025 22:27", "activo": "S", "disabled": false}, {"id": 33, "cod_act": "WC7835", "desc_act": "Cambiar DECO Flow", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "FieldManager", "fecha": "22/07/2025 11:09", "activo": "S", "disabled": false}, {"id": 34, "cod_act": "W044", "desc_act": "Habilitar línea en Central e interconectar en Df", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "FieldManager", "fecha": "22/07/2025 11:09", "activo": "S", "disabled": false}, {"id": 35, "cod_act": "W020", "desc_act": "Acometer con ADSL Linea / Extensión", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "FieldManager", "fecha": "22/07/2025 11:09", "activo": "S", "disabled": false}, {"id": 36, "cod_act": "W010", "desc_act": "Instalar Modem ADSL", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "FieldManager", "fecha": "22/07/2025 11:09", "activo": "S", "disabled": false}, {"id": 37, "cod_act": "U9048", "desc_act": "RETIRO DE DECO / MODEM ADICIONAL CON DEUDA - EMPRESA - P/I", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "FieldManager", "fecha": "22/07/2025 11:09", "activo": "S", "disabled": false}, {"id": 38, "cod_act": "U9046", "desc_act": "RETIRO DE DECO / MODEM ADICIONAL - P/I", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "FieldManager", "fecha": "22/07/2025 11:09", "activo": "S", "disabled": false}, {"id": 39, "cod_act": "U9044", "desc_act": "MUDANZA DE SERVICIO EMPRESA C/ EQUIPOS - P/I", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "FieldManager", "fecha": "22/07/2025 11:09", "activo": "S", "disabled": false}, {"id": 40, "cod_act": "U9042", "desc_act": "MUDANZA DE SERVICIO C/ EQUIPOS - P/I", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "FieldManager", "fecha": "22/07/2025 11:09", "activo": "S", "disabled": false}, {"id": 41, "cod_act": "U9040", "desc_act": "CAMBIO DE DECO / MODEM - EMPRESA - P/I", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "FieldManager", "fecha": "22/07/2025 11:09", "activo": "S", "disabled": false}, {"id": 42, "cod_act": "U9038", "desc_act": "CAMBIO DE DECO / MODEM - P/I", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "FieldManager", "fecha": "22/07/2025 11:09", "activo": "S", "disabled": false}, {"id": 43, "cod_act": "U9036", "desc_act": "AGREGADO DE DECO / MODEM - EMPRESA - P/I", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "FieldManager", "fecha": "22/07/2025 11:09", "activo": "S", "disabled": false}, {"id": 44, "cod_act": "U9034", "desc_act": "AGREGADO DE DECO / MODEM - P/I", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "FieldManager", "fecha": "22/07/2025 11:09", "activo": "S", "disabled": false}, {"id": 45, "cod_act": "U9032", "desc_act": "SERVICIO TECNICO - EMPRESA - P/I", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "FieldManager", "fecha": "22/07/2025 11:09", "activo": "S", "disabled": false}, {"id": 46, "cod_act": "U9030", "desc_act": "SERVICIO TECNICO FIBERTEL - P/I", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "FieldManager", "fecha": "22/07/2025 11:09", "activo": "S", "disabled": false}, {"id": 47, "cod_act": "U9028", "desc_act": "SERVICIO TECNICO CABLEVISION - P/I", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "FieldManager", "fecha": "22/07/2025 11:09", "activo": "S", "disabled": false}, {"id": 48, "cod_act": "U9026", "desc_act": "RECONEXION CON DEUDA - EMPRESA - P/I", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "FieldManager", "fecha": "22/07/2025 11:09", "activo": "S", "disabled": false}, {"id": 49, "cod_act": "U9024", "desc_act": "RECONEXION - EMPRESA - P/I", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "FieldManager", "fecha": "22/07/2025 11:09", "activo": "S", "disabled": false}, {"id": 50, "cod_act": "U9022", "desc_act": "RECONEXION CON DEUDA - P/I", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "FieldManager", "fecha": "22/07/2025 11:09", "activo": "S", "disabled": false}, {"id": 51, "cod_act": "U9020", "desc_act": "RECONEXION - P/I", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "FieldManager", "fecha": "22/07/2025 11:09", "activo": "S", "disabled": false}, {"id": 52, "cod_act": "U9018", "desc_act": "RETIRO DE EQUIPO EN DOMICILIO CON DEUDA - EMPRESA - P/I", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "FieldManager", "fecha": "22/07/2025 11:09", "activo": "S", "disabled": false}, {"id": 53, "cod_act": "U9016", "desc_act": "RETIRO DE EQUIPO EN DOMICILIO - EMPRESA - P/I", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "FieldManager", "fecha": "22/07/2025 11:09", "activo": "S", "disabled": false}, {"id": 54, "cod_act": "U9014", "desc_act": "RETIRO DE EQUIPOS EN DOMICILIO CON DEUDA - P/I", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "FieldManager", "fecha": "22/07/2025 11:09", "activo": "S", "disabled": false}, {"id": 55, "cod_act": "U9012", "desc_act": "RETIRO DE EQUIPOS EN DOMICILIO - P/I", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "FieldManager", "fecha": "22/07/2025 11:09", "activo": "S", "disabled": false}, {"id": 56, "cod_act": "U9010", "desc_act": "CORTE DESDE EL POSTE POR DEUDA - EMPRESA - P/I", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "FieldManager", "fecha": "22/07/2025 11:09", "activo": "S", "disabled": false}, {"id": 57, "cod_act": "U9008", "desc_act": "CORTE DESDE EL POSTE - EMPRESA - P/I", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "FieldManager", "fecha": "22/07/2025 11:09", "activo": "S", "disabled": false}, {"id": 58, "cod_act": "U9006", "desc_act": "CORTE DESDE EL POSTE POR DEUDA - P/I", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "FieldManager", "fecha": "22/07/2025 11:09", "activo": "S", "disabled": false}, {"id": 59, "cod_act": "U9004", "desc_act": "CORTE DESDE EL POSTE - P/I", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "FieldManager", "fecha": "22/07/2025 11:09", "activo": "S", "disabled": false}, {"id": 60, "cod_act": "U9002", "desc_act": "INSTALACION - EMPRESA - P/I", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "FieldManager", "fecha": "22/07/2025 11:09", "activo": "S", "disabled": false}, {"id": 61, "cod_act": "U9000", "desc_act": "INSTALACION - P/I", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "FieldManager", "fecha": "22/07/2025 11:09", "activo": "S", "disabled": false}, {"id": 62, "cod_act": "TX09", "desc_act": "RESERVAR PUERTOS", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "Field Manager", "fecha": "14/07/2022 00:32", "activo": "S", "disabled": false}, {"id": 63, "cod_act": "TX08", "desc_act": "RECUPERAR ODF", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "Field Manager", "fecha": "14/07/2022 00:32", "activo": "S", "disabled": false}, {"id": 64, "cod_act": "TX07", "desc_act": "COLOCAR CAJA ODF", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "Field Manager", "fecha": "14/07/2022 00:32", "activo": "S", "disabled": false}, {"id": 65, "cod_act": "TX06", "desc_act": "PREPARAR TRONCAL OPTICO CABLE ALIMENTACION TX", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "Field Manager", "fecha": "14/07/2022 00:32", "activo": "S", "disabled": false}, {"id": 66, "cod_act": "TX05", "desc_act": "ILUMINAR RACK", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "Field Manager", "fecha": "14/07/2022 00:32", "activo": "S", "disabled": false}, {"id": 67, "cod_act": "TX04", "desc_act": "ARMAR MODULO PDU", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "Field Manager", "fecha": "14/07/2022 00:32", "activo": "S", "disabled": false}, {"id": 68, "cod_act": "TX03", "desc_act": "ARMAR BANDEJA FIBRA TX", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "Field Manager", "fecha": "14/07/2022 00:32", "activo": "S", "disabled": false}, {"id": 69, "cod_act": "TX02", "desc_act": "AMURAR RACK", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "Field Manager", "fecha": "14/07/2022 00:32", "activo": "S", "disabled": false}, {"id": 70, "cod_act": "TX01", "desc_act": "TENDIDO CABLE TX", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "Field Manager", "fecha": "14/07/2022 00:32", "activo": "S", "disabled": false}, {"id": 71, "cod_act": "TR09", "desc_act": "DESARMAR RACK", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "Field Manager", "fecha": "14/07/2022 00:32", "activo": "S", "disabled": false}, {"id": 72, "cod_act": "TR08", "desc_act": "RETIRAR EQUIPO ACCESO RACK", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "Field Manager", "fecha": "14/07/2022 00:32", "activo": "S", "disabled": false}, {"id": 73, "cod_act": "TR07", "desc_act": "RETIRAR BANDEJA TX", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "Field Manager", "fecha": "14/07/2022 00:32", "activo": "S", "disabled": false}, {"id": 74, "cod_act": "TR06", "desc_act": "RETIRAR MODULO PDU", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "Field Manager", "fecha": "14/07/2022 00:32", "activo": "S", "disabled": false}, {"id": 75, "cod_act": "TR05", "desc_act": "RETIRAR RECTIFICADOR", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "Field Manager", "fecha": "14/07/2022 00:32", "activo": "S", "disabled": false}, {"id": 76, "cod_act": "TR04", "desc_act": "DESENERGIZAR RACK", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "Field Manager", "fecha": "14/07/2022 00:32", "activo": "S", "disabled": false}, {"id": 77, "cod_act": "TR03", "desc_act": "LIBERAR PUERTOS BANDEJA FIBRA TX", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "Field Manager", "fecha": "14/07/2022 00:32", "activo": "S", "disabled": false}, {"id": 78, "cod_act": "TR02", "desc_act": "DESARMAR TENDIDO ALIMENTACION", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "Field Manager", "fecha": "14/07/2022 00:32", "activo": "S", "disabled": false}, {"id": 79, "cod_act": "TR01", "desc_act": "DESARMAR TENDIDO FO", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "Field Manager", "fecha": "14/07/2022 00:32", "activo": "S", "disabled": false}, {"id": 80, "cod_act": "TI11", "desc_act": "INSPECCION OBRAS EXTERNAS", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "Field Manager", "fecha": "14/07/2022 00:32", "activo": "S", "disabled": false}, {"id": 81, "cod_act": "TE39", "desc_act": "MANTENIMIENTO PREVENTIVO CAMARAS", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "Field Manager", "fecha": "14/07/2022 00:32", "activo": "S", "disabled": false}, {"id": 82, "cod_act": "TE38", "desc_act": "MANTENIMIENTO CORRECTIVO GRUPO ELECTROGENO", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "Field Manager", "fecha": "14/07/2022 00:32", "activo": "S", "disabled": false}, {"id": 83, "cod_act": "TE37", "desc_act": "REPARACION CALEFACCION", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "Field Manager", "fecha": "14/07/2022 00:32", "activo": "S", "disabled": false}, {"id": 84, "cod_act": "TE36", "desc_act": "REPARACION ALARMA INCENDIO", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "Field Manager", "fecha": "14/07/2022 00:32", "activo": "S", "disabled": false}, {"id": 85, "cod_act": "TE35", "desc_act": "CAMBIO EXTINTORES", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "Field Manager", "fecha": "14/07/2022 00:32", "activo": "S", "disabled": false}, {"id": 86, "cod_act": "TE34", "desc_act": "INSPECCION GRUPO ELECTROGENO FIJO", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "Field Manager", "fecha": "14/07/2022 00:32", "activo": "S", "disabled": false}, {"id": 87, "cod_act": "TE33", "desc_act": "INSPECCION EDILICIA EDIFICIOS P2", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "Field Manager", "fecha": "14/07/2022 00:32", "activo": "S", "disabled": false}, {"id": 88, "cod_act": "TE32", "desc_act": "INSPECCION EDILICIA EDIFICIOS P1", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "Field Manager", "fecha": "14/07/2022 00:32", "activo": "S", "disabled": false}, {"id": 89, "cod_act": "TE31", "desc_act": "TAREAS DE INFRAESTRUCTURA Y SERVICIOS GENERALES EDIFICIOS", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "Field Manager", "fecha": "14/07/2022 00:32", "activo": "S", "disabled": false}, {"id": 90, "cod_act": "TE30", "desc_act": "MANTENIMIENTO DE CABLEADO Y BANDEJAS EXISTENTES EDIFICIOS", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "Field Manager", "fecha": "14/07/2022 00:32", "activo": "S", "disabled": false}, {"id": 91, "cod_act": "TE29", "desc_act": "MANTENIMIENTO CORRECTIVO SISTEMAS DE BALIZAMIENTO", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "Field Manager", "fecha": "14/07/2022 00:32", "activo": "S", "disabled": false}, {"id": 92, "cod_act": "TE28", "desc_act": "VERIFICACION Y MEDICION DE ESTRUCTURAS - EDIFICIOS", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "Field Manager", "fecha": "14/07/2022 00:32", "activo": "S", "disabled": false}, {"id": 93, "cod_act": "TE27", "desc_act": "TAREAS DE CABLEADO Y BANDEJAS NUEVAS - EDIFICIOS", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "Field Manager", "fecha": "14/07/2022 00:32", "activo": "S", "disabled": false}, {"id": 94, "cod_act": "S8035", "desc_act": "Se desinstaló DECO secundario Flow en cte activo", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "FieldManager", "fecha": "07/05/2025 10:27", "activo": "N", "disabled": true}, {"id": 95, "cod_act": "S8035", "desc_act": "Se desinstaló DECO secundario Flow en cte activo", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "FieldManager", "fecha": "02/07/2025 22:27", "activo": "S", "disabled": false}, {"id": 96, "cod_act": "S7995", "desc_act": "Se desinstaló DECO secundario Flow", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "FieldManager", "fecha": "07/05/2025 10:27", "activo": "N", "disabled": true}, {"id": 97, "cod_act": "S7995", "desc_act": "Se desinstaló DECO secundario Flow", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "FieldManager", "fecha": "02/07/2025 22:27", "activo": "S", "disabled": false}, {"id": 98, "cod_act": "S000000", "desc_act": "RESETEO DE CAJA DE CALLE", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "Field Manager", "fecha": "22/07/2025 11:09", "activo": "S", "disabled": false}, {"id": 99, "cod_act": "RM01", "desc_act": "REPARACION / RECAMBIO CABLE CANAL DE MANGUERA DE COBRE", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "Field Manager", "fecha": "14/07/2022 00:32", "activo": "S", "disabled": false}, {"id": 100, "cod_act": "P101", "desc_act": "P101 INSTALACIÓN DE ACOMETIDA EXTENSIÓN HASTA 15 MTS", "cod_s4": "0000001", "cmo": "NO HAY CMO", "usu": "Field Manager", "fecha": "22/07/2025 11:09", "activo": "S", "disabled": false}]
+    gridData.value = buildCmoRows()
     isLoading.value = false
-  }, 1500)
+  }, 900)
 }
 
 const openEdit = (event, row) => {
   selectedForEdit.value = row
-  popupPos.value = { 
-    x: event.clientX > window.innerWidth - 450 ? window.innerWidth - 450 : event.clientX, 
-    y: event.clientY > window.innerHeight - 300 ? window.innerHeight - 300 : event.clientY 
+  popupPos.value = {
+    x: event.clientX > window.innerWidth - 450 ? window.innerWidth - 450 : event.clientX,
+    y: event.clientY > window.innerHeight - 300 ? window.innerHeight - 300 : event.clientY
   }
   showEditPopup.value = true
 }
 
 const openAlta = (event) => {
-  popupPos.value = { 
-    x: event.clientX > window.innerWidth - 800 ? window.innerWidth - 850 : event.clientX + 20, 
-    y: event.clientY > window.innerHeight - 500 ? window.innerHeight - 550 : event.clientY + 20 
+  popupPos.value = {
+    x: event.clientX > window.innerWidth - 800 ? window.innerWidth - 850 : event.clientX + 20,
+    y: event.clientY > window.innerHeight - 500 ? window.innerHeight - 550 : event.clientY + 20
   }
   showAltaPopup.value = true
 }
 
 const handleUpdate = (updatedRow) => {
   isLoading.value = true
-  loadingMsg.value = 'Actualizando CMO...'
-  
+  loadingMsg.value = 'Actualizando relación CMO-Actividad...'
+
   setTimeout(() => {
     const index = gridData.value.findIndex(item => item.id === updatedRow.id)
     if (index !== -1) {
       gridData.value[index].cmo = updatedRow.cmo
       gridData.value[index].fecha = new Date().toLocaleString('es-AR')
+      gridData.value[index].usu = 'admin_user'
     }
     showEditPopup.value = false
     isLoading.value = false
-  }, 1200)
+  }, 900)
 }
 
 const handleNewRelations = (newItems) => {
@@ -140,8 +183,8 @@ const handleNewRelations = (newItems) => {
       gridData.value.unshift({
         id: Date.now() + index,
         cod_act: item.actividad,
-        desc_act: `Descripción de ${item.actividad}`,
-        cod_s4: '0000001',
+        desc_act: item.descripcion || 'Descripción genérica',
+        cod_s4: item.cod_s4 || '0000001',
         cmo: item.cmo,
         usu: 'admin_user',
         fecha: new Date().toLocaleString('es-AR'),
@@ -151,6 +194,75 @@ const handleNewRelations = (newItems) => {
     })
     showAltaPopup.value = false
     isLoading.value = false
-  }, 1200)
+  }, 900)
 }
 </script>
+
+<style scoped>
+.cmo-page {
+  width: 100%;
+}
+
+.cmo-accordion {
+  border: 1px solid #d8d8d8;
+  background: #ffffff;
+  margin-bottom: 8px;
+}
+
+.cmo-accordion-header {
+  width: 100%;
+  min-height: 30px;
+  border: 0;
+  border-bottom: 1px solid #d8d8d8;
+  background: #f7f7f7;
+  color: #263238;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10px;
+  text-align: left;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.cmo-toggle {
+  font-size: 22px;
+  line-height: 1;
+  font-weight: 400;
+}
+
+.cmo-filter-content {
+  text-align: center;
+  padding: 26px 12px;
+  border-left: 4px solid #00bcd4;
+}
+
+.cmo-grid-content {
+  padding: 0;
+  border-left: 4px solid #00bcd4;
+}
+
+.cmo-search-btn {
+  min-width: 120px;
+  border: 1px solid #00a9bd;
+  border-radius: 20px;
+  background: #00a9bd;
+  color: #ffffff;
+  padding: 9px 34px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color .18s ease, border-color .18s ease, box-shadow .18s ease;
+}
+
+.cmo-search-btn:hover {
+  background: #008fa1;
+  border-color: #008fa1;
+  box-shadow: 0 4px 10px rgba(0, 143, 161, .22);
+}
+
+.cmo-loading-text {
+  margin-top: 15px;
+}
+</style>
