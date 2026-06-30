@@ -1,3 +1,13 @@
+.main-layout,
+.content-area {
+  overflow: visible !important;
+}
+
+.content-area {
+  position: relative;
+  z-index: 1;
+}
+
 .app-menu {
   background: #00a9bd;
   color: white;
@@ -8,7 +18,9 @@
   padding: 0 12px;
   box-shadow: 0 2px 5px rgba(0,0,0,0.22);
   position: relative;
-  z-index: 4000;
+  z-index: 999999;
+  overflow: visible !important;
+  isolation: isolate;
 }
 
 .animated-bar {
@@ -21,6 +33,7 @@
   background-size: 400% 100%;
   animation: gradientShift 8s ease infinite;
   pointer-events: none;
+  z-index: 2;
 }
 
 @keyframes gradientShift {
@@ -36,6 +49,9 @@
   flex: 1;
   min-width: 0;
   margin-bottom: 4px;
+  overflow: visible !important;
+  position: relative;
+  z-index: 10;
 }
 
 .menu-item {
@@ -51,10 +67,14 @@
   color: #ffffff;
   white-space: nowrap;
   transition: background-color .2s ease, color .2s ease;
+  overflow: visible !important;
+  z-index: 20;
 }
 
-.menu-item:hover {
+.menu-item:hover,
+.menu-item:focus-within {
   background: #008fa1;
+  z-index: 1000002;
 }
 
 .submenu {
@@ -62,16 +82,19 @@
   top: 100%;
   left: 0;
   background: #ffffff;
-  min-width: 230px;
+  min-width: 250px;
   display: none;
-  box-shadow: 0 10px 22px rgba(38,50,56,0.22);
+  box-shadow: 0 14px 30px rgba(38,50,56,0.24);
   border: 1px solid #d8e1e5;
   border-top: 4px solid #00a9bd;
   border-radius: 0 0 3px 3px;
-  overflow: visible;
+  overflow: visible !important;
+  z-index: 1000003;
+  pointer-events: auto;
 }
 
-.menu-item:hover .submenu {
+.menu-item:hover > .submenu,
+.menu-item:focus-within > .submenu {
   display: block;
   animation: fadeIn 0.16s ease;
 }
@@ -109,19 +132,23 @@
   font-size: 14px;
   font-weight: 400;
   transition: background-color .16s ease, color .16s ease, padding-left .16s ease;
+  overflow: visible !important;
 }
 
 .submenu-item:last-child {
   border-bottom: 0;
 }
 
-.submenu-item:hover {
+.submenu-item:hover,
+.submenu-item:focus-within {
   background: #e0f7fa;
   color: #008fa1;
   padding-left: 22px;
+  z-index: 1000004;
 }
 
-.submenu-item:hover > .material-icons {
+.submenu-item:hover > .material-icons,
+.submenu-item:focus-within > .material-icons {
   color: #008fa1 !important;
 }
 
@@ -130,16 +157,18 @@
   top: -4px;
   left: 100%;
   background: #ffffff;
-  min-width: 270px;
+  min-width: 280px;
   display: none;
-  box-shadow: 0 10px 22px rgba(38,50,56,0.22);
+  box-shadow: 0 14px 30px rgba(38,50,56,0.24);
   border: 1px solid #d8e1e5;
   border-top: 4px solid #00a9bd;
   border-radius: 0 0 3px 3px;
-  overflow: visible;
+  overflow: visible !important;
+  z-index: 1000005;
 }
 
-.submenu-item:hover .nested-submenu {
+.submenu-item:hover > .nested-submenu,
+.submenu-item:focus-within > .nested-submenu {
   display: block;
   animation: fadeIn 0.16s ease;
 }
@@ -177,10 +206,14 @@
   font-size: 14px;
   margin-bottom: 4px;
   white-space: nowrap;
+  overflow: visible !important;
+  z-index: 30;
 }
 
-.user-profile:hover {
+.user-profile:hover,
+.user-profile:focus-within {
   background: #008fa1;
+  z-index: 1000002;
 }
 
 .user-submenu {
@@ -190,13 +223,15 @@
   background: white;
   border: 1px solid #d8e1e5;
   border-top: 4px solid #00a9bd;
-  min-width: 160px;
+  min-width: 170px;
   display: none;
-  box-shadow: 0 8px 18px rgba(38,50,56,0.2);
+  box-shadow: 0 14px 30px rgba(38,50,56,0.24);
   border-radius: 0 0 3px 3px;
+  z-index: 1000003;
 }
 
-.user-profile:hover .user-submenu {
+.user-profile:hover .user-submenu,
+.user-profile:focus-within .user-submenu {
   display: block;
 }
 
@@ -220,6 +255,7 @@
   align-items: center;
   padding: 0 12px;
   margin-bottom: 4px;
+  z-index: 40;
 }
 
 @media (max-width: 1100px) {
@@ -236,8 +272,10 @@
     width: 100%;
     background: #00a9bd;
     max-height: 85vh;
-    overflow-y: auto;
+    overflow-y: auto !important;
+    overflow-x: visible !important;
     box-shadow: 0 10px 15px rgba(0,0,0,0.2);
+    z-index: 1000000;
   }
 
   .nav-items.is-open {
@@ -254,6 +292,7 @@
   .submenu {
     position: relative;
     width: 100%;
+    min-width: 100%;
     box-shadow: none;
     border-radius: 0;
     border: none;
@@ -266,6 +305,7 @@
     left: 0;
     top: 0;
     width: 100%;
+    min-width: 100%;
     box-shadow: none;
     border: none;
     border-left: 4px solid #00bcd4;
