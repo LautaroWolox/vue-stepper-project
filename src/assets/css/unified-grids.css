@@ -1,11 +1,11 @@
 /* =========================================================
    ESTILO ÚNICO PARA TODAS LAS GRILLAS MIGRADAS
    Formato base igual al utilizado en Notas de Crédito/Débito.
+   Registro OTs Fallidas tiene su ajuste específico en registro-ot-fallidas-tuning.css.
    ========================================================= */
 
 .fm-grid,
 .advanced-grid,
-.fallidas-grid,
 .historial-table,
 .subgrid-table {
   width: max-content !important;
@@ -20,8 +20,6 @@
 .fm-grid td,
 .advanced-grid th,
 .advanced-grid td,
-.fallidas-grid th,
-.fallidas-grid td,
 .historial-table th,
 .historial-table td,
 .subgrid-table th,
@@ -37,7 +35,6 @@
 
 .fm-grid th,
 .advanced-grid th,
-.fallidas-grid th,
 .historial-table th,
 .subgrid-table th {
   position: relative !important;
@@ -52,7 +49,6 @@
 
 .fm-grid thead tr:first-child th,
 .advanced-grid thead tr:first-child th,
-.fallidas-grid thead tr:first-child th,
 .historial-table thead tr:first-child th,
 .subgrid-table thead tr:first-child th {
   border-top: 1px solid #b8c7d0 !important;
@@ -62,8 +58,6 @@
 .fm-grid td:first-child,
 .advanced-grid th:first-child,
 .advanced-grid td:first-child,
-.fallidas-grid th:first-child,
-.fallidas-grid td:first-child,
 .historial-table th:first-child,
 .historial-table td:first-child,
 .subgrid-table th:first-child,
@@ -93,7 +87,6 @@
   color: #004b55 !important;
 }
 
-/* Encabezados ordenables: sin botón nativo, sin borde, como la captura 2 */
 .grid-sort-header,
 .sort-header,
 .historial-sort,
@@ -175,16 +168,14 @@ button.historial-sort:focus {
 
 .filter-row th,
 .fm-grid thead tr.filter-row th,
-.advanced-grid thead tr.filter-row th,
-.fallidas-grid thead tr.filter-row th {
+.advanced-grid thead tr.filter-row th {
   background: #ffffff !important;
   padding: 5px 6px !important;
 }
 
 .filter-row input,
 .fm-grid thead input,
-.advanced-grid thead input,
-.fallidas-grid thead input {
+.advanced-grid thead input {
   height: 26px !important;
   border: 1px solid #c7d2d9 !important;
   border-radius: 3px !important;
@@ -197,8 +188,7 @@ button.historial-sort:focus {
 
 .filter-row input:focus,
 .fm-grid thead input:focus,
-.advanced-grid thead input:focus,
-.fallidas-grid thead input:focus {
+.advanced-grid thead input:focus {
   border-color: #00bcd4 !important;
   box-shadow: 0 0 0 2px rgba(0, 188, 212, 0.12) !important;
 }
