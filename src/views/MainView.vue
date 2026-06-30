@@ -18,6 +18,7 @@
       <ConsultarNotaCredito v-if="activeModule === 'consultar-nota-credito'" />
       <ConsultarNotaDebito v-if="activeModule === 'consultar-nota-debito'" />
       <RegistroOtFallidas v-if="activeModule === 'registro-ots-fallidas'" />
+      <BusquedaOrdenesTrabajo v-if="activeModule === 'busqueda-ots'" />
       <ReporteSas v-if="activeModule === 'reporte-sas'" />
     </div>
   </div>
@@ -38,6 +39,7 @@ import ConsultarActas from '../components/certificacion/ConsultarActas.vue'
 import ConsultarNotaCredito from '../components/certificacion/ConsultarNotaCredito.vue'
 import ConsultarNotaDebito from '../components/certificacion/ConsultarNotaDebito.vue'
 import RegistroOtFallidas from '../components/certificacion/RegistroOtFallidas.vue'
+import BusquedaOrdenesTrabajo from '../components/certificacion/BusquedaOts.vue'
 import ReporteSas from '../components/reportes/ReporteSas.vue'
 
 const activeModule = ref('none')
