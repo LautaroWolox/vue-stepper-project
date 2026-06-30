@@ -1,12 +1,8 @@
 <template>
   <div class="main-layout">
     <AppMenu @load-module="loadModule" />
-    
     <div class="content-area" style="padding: 20px; max-width: 100%; margin: 0 auto;">
-      <div v-if="activeModule === 'none'" class="welcome-fm-screen">
-        <FmSplash />
-      </div>
-      
+      <div v-if="activeModule === 'none'" class="welcome-fm-screen"><FmSplash /></div>
       <SearchAccordion v-if="activeModule === 'search-classic'" />
       <ErroresGestionSucursal v-if="activeModule === 'errores-gestion-sucursal'" />
       <GestionMaterialesOt v-if="activeModule === 'materiales-ot'" />
@@ -42,20 +38,25 @@ import RegistroOtFallidas from '../components/certificacion/RegistroOtFallidas.v
 import BusquedaOrdenesTrabajo from '../components/certificacion/BusquedaOts.vue'
 import ReporteSas from '../components/reportes/ReporteSas.vue'
 
-const activeModule = ref('none')
-
+const allowedModules = new Set(['search-classic', 'errores-gestion-sucursal', 'materiales-ot', 'errores-gestion', 'materiales-descargados', 'config-jobtype', 'config-cmo', 'consultar-actas', 'consultar-nota-credito', 'consultar-nota-debito', 'registro-ots-fallidas', 'busqueda-ots', 'reporte-sas'])
+const getInitialModule = () => {
+  const moduleFromUrl = new URLSearchParams(window.location.search).get('module')
+  return allowedModules.has(moduleFromUrl) ? moduleFromUrl : 'none'
+}
+const activeModule = ref(getInitialModule())
 const loadModule = (action) => {
   activeModule.value = action
+  const url = new URL(window.location.href)
+  url.searchParams.delete('detalleNota')
+  url.searchParams.delete('tipoNota')
+  url.searchParams.delete('notaKey')
+  url.searchParams.delete('nota')
+  if (action && action !== 'none') url.searchParams.set('module', action)
+  else url.searchParams.delete('module')
+  window.history.replaceState({}, '', `${url.pathname}${url.search}${url.hash}`)
 }
 </script>
 
 <style scoped>
-.welcome-fm-screen {
-  width: 100%;
-  min-height: calc(100vh - 90px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto;
-}
+.welcome-fm-screen { width: 100%; min-height: calc(100vh - 90px); display: flex; align-items: center; justify-content: center; margin: 0 auto; }
 </style>
