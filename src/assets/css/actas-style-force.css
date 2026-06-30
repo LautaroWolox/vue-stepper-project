@@ -1,0 +1,8 @@
+.thin-accordion .grid-box .grid-scroll{height:500px;background:#fff;border:1px solid #d1d1d1;border-bottom:0}
+.thin-accordion .grid-box{padding:0;background:#fff}
+.thin-accordion .grid-box table{border-collapse:collapse;font-size:12px;background:#fff}
+.thin-accordion .grid-box table th{background:#f4f7f9;color:#2c4050;font-size:11px;font-weight:600;height:36px}
+.thin-accordion .grid-box table td,.thin-accordion .grid-box table th{border-right:1px solid #c9d3da;border-bottom:1px solid #dce3e8;padding:7px 8px}
+.thin-accordion .grid-box .filter-row th{height:34px;background:#fff;padding:4px 5px}
+.thin-accordion .grid-box .filter-row input{height:24px;font-size:11px;border:1px solid #c7d1d8;border-radius:3px}
+.thin-accordion .grid-box .grid-footer{min-height:38px;border:1px solid #d1d1d1;background:#fff;font-size:12px}
