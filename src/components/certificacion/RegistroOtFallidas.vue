@@ -78,7 +78,7 @@
 
     <div v-if="excludePopup.show" class="float-modal include-modal" :style="modalStyle(excludePopup)">
       <div class="float-head" @mousedown="startModalDrag($event, excludePopup)"><span>Alerta</span><button @click="excludePopup.show = false">×</button></div>
-      <div class="float-body"><p>Confirma que desea excluir la OT seleccionada?</p><label>Motivo<select v-model="excludePopup.motivo"><option value=""></option><option v-for="m in motivos" :key="m" :value="m">{{ m }}</option></select></label><label>Nota<textarea v-model="excludePopup.nota" placeholder="Opcional" rows="3"></textarea></label></div>
+      <div class="float-body"><p>¿Confirma que desea excluir la OT seleccionada?</p><label>Motivo<select v-model="excludePopup.motivo"><option value=""></option><option v-for="m in motivos" :key="m" :value="m">{{ m }}</option></select></label><label>Nota<textarea v-model="excludePopup.nota" placeholder="Opcional" rows="3"></textarea></label></div>
       <div class="float-actions"><button class="btn-outline" @click="excludePopup.show = false">CANCELAR</button><button class="btn-cyan" @click="openConfirmarExclusion">ACEPTAR</button></div>
     </div>
 
