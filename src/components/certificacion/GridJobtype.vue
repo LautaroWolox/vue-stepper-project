@@ -38,7 +38,7 @@
             </td>
           </tr>
           <tr v-if="paginatedData.length === 0">
-            <td :colspan="columns.length" class="jobtype-empty">No hay resultados con estos filtros.</td>
+            <td :colspan="columns.length" class="jobtype-empty">No hay resultados</td>
           </tr>
         </tbody>
       </table>
@@ -210,14 +210,16 @@ onBeforeUnmount(() => stopColumnResize())
 .jobtype-grid-wrapper {
   width: 100%;
   background: #ffffff;
+  border-left: 4px solid #00bcd4;
 }
 
 .jobtype-grid-scroll {
   width: 100%;
-  max-height: 448px;
+  max-height: 452px;
   overflow: auto;
-  border: 1px solid #d0d7de;
-  border-top: 0;
+  border: 1px solid #d1d1d1;
+  border-bottom: 0;
+  background: #ffffff;
 }
 
 .jobtype-grid {
@@ -225,19 +227,24 @@ onBeforeUnmount(() => stopColumnResize())
   min-width: 100%;
   table-layout: fixed;
   border-collapse: collapse;
+  border-spacing: 0;
   color: #263238;
-  font-size: 14px;
+  font-size: 12px;
+  background: #ffffff;
 }
 
 .jobtype-grid th,
 .jobtype-grid td {
   border-right: 1px solid #c9d3da;
   border-bottom: 1px solid #dce3e8;
-  padding: 9px 10px;
+  padding: 7px 8px;
   text-align: left;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  background: #ffffff;
+  font-size: 12px;
+  line-height: 18px;
 }
 
 .jobtype-grid thead th {
@@ -246,19 +253,23 @@ onBeforeUnmount(() => stopColumnResize())
   background: #f4f7f9;
   color: #2c4050;
   font-weight: 600;
+  font-size: 11px;
+  resize: none;
 }
 
 .jobtype-header-row th {
   top: 0;
-  height: 38px;
+  height: 36px;
+  padding-top: 6px;
+  padding-bottom: 6px;
 }
 
 .jobtype-filter-row th {
-  top: 38px;
-  height: 38px;
+  top: 36px;
+  height: 34px;
   background: #ffffff;
   z-index: 6;
-  padding: 5px;
+  padding: 4px 5px;
 }
 
 .jobtype-sort-button {
@@ -270,7 +281,7 @@ onBeforeUnmount(() => stopColumnResize())
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
+  gap: 6px;
   padding: 0;
   text-align: left;
   font: inherit;
@@ -285,9 +296,9 @@ onBeforeUnmount(() => stopColumnResize())
   display: inline-flex;
   flex-direction: column;
   color: #aab8c0;
-  font-size: 9px;
-  line-height: 8px;
-  min-width: 10px;
+  font-size: 8px;
+  line-height: 7px;
+  min-width: 9px;
 }
 
 .jobtype-sort-icons .active {
@@ -297,12 +308,12 @@ onBeforeUnmount(() => stopColumnResize())
 .jobtype-resize-handle {
   position: absolute;
   top: 0;
-  right: -4px;
-  width: 9px;
+  right: -3px;
+  width: 8px;
   height: 100%;
   cursor: col-resize;
   z-index: 12;
-  border-right: 2px solid transparent;
+  border-right: 1px solid transparent;
 }
 
 .jobtype-resize-handle:hover {
@@ -311,18 +322,21 @@ onBeforeUnmount(() => stopColumnResize())
 }
 
 .jobtype-filter-row .filter-prefix {
-  margin-right: 4px;
+  display: inline-block;
+  width: 14px;
   color: #263238;
 }
 
 .jobtype-filter-row input {
-  width: min(100%, calc(100% - 22px));
-  height: 25px;
-  min-width: 20px;
+  width: calc(100% - 32px);
+  height: 24px;
+  min-width: 18px;
   border: 1px solid #c7d1d8;
   border-radius: 3px;
   padding: 3px 6px;
   outline: none;
+  font-size: 11px;
+  box-sizing: border-box;
 }
 
 .jobtype-filter-row input:focus {
@@ -335,7 +349,8 @@ onBeforeUnmount(() => stopColumnResize())
   background: transparent;
   font-weight: 700;
   cursor: pointer;
-  padding: 0 0 0 4px;
+  padding: 0 0 0 5px;
+  font-size: 12px;
 }
 
 .jobtype-grid tbody tr {
@@ -348,25 +363,60 @@ onBeforeUnmount(() => stopColumnResize())
 }
 
 .jobtype-grid tbody tr.active-row td {
-  background: #9eeff7;
+  background: #d8f7fb;
   color: #003f47;
 }
 
 .jobtype-empty {
   text-align: center;
-  padding: 24px !important;
+  height: 118px;
+  line-height: 118px;
+  padding: 0 !important;
   color: #607d8b;
+  background: #ffffff;
+  font-size: 12px;
 }
 
 .jobtype-footer {
-  border: 1px solid #d0d7de;
+  border: 1px solid #d1d1d1;
   border-top: 0;
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
   gap: 10px;
-  padding: 7px 12px;
-  min-height: 44px;
+  padding: 6px 10px;
+  min-height: 38px;
+  background: #ffffff;
+  font-size: 12px;
+}
+
+.grid-footer-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.icon-btn {
+  width: 22px;
+  height: 22px;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #000000;
+}
+
+.icon-btn .material-icons {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.icon-btn:disabled {
+  opacity: .25;
+  cursor: not-allowed;
 }
 
 .jobtype-pagination {
@@ -374,14 +424,16 @@ onBeforeUnmount(() => stopColumnResize())
   align-items: center;
   justify-content: center;
   gap: 8px;
+  font-size: 12px;
 }
 
 .jobtype-pagination input {
-  width: 46px;
-  height: 26px;
+  width: 40px;
+  height: 24px;
   text-align: center;
   border: 1px solid #c7d1d8;
-  border-radius: 4px;
+  border-radius: 3px;
+  font-size: 12px;
 }
 
 .page-nav {
@@ -390,6 +442,7 @@ onBeforeUnmount(() => stopColumnResize())
   color: #263238;
   cursor: pointer;
   padding: 2px 4px;
+  font-size: 12px;
 }
 
 .page-nav:disabled {
@@ -403,6 +456,8 @@ onBeforeUnmount(() => stopColumnResize())
 
 .jobtype-count {
   justify-self: end;
+  font-size: 12px;
+  white-space: nowrap;
 }
 
 @media (max-width: 900px) {
