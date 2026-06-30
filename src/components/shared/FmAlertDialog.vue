@@ -8,7 +8,13 @@
           <button type="button" class="fm-dialog-close" @click="$emit('close')">×</button>
         </div>
         <div class="fm-dialog-body">
-          <div class="fm-dialog-icon"><span class="material-icons">info</span></div>
+          <div class="fm-dialog-icon fm-dialog-icon-warning">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path class="warning-triangle" d="M12 3.5 22 20.5H2L12 3.5Z"></path>
+              <path class="warning-mark" d="M12 8.4v6.1"></path>
+              <circle class="warning-dot" cx="12" cy="17.3" r="1"></circle>
+            </svg>
+          </div>
           <p>{{ message }}</p>
         </div>
         <div class="fm-dialog-actions">
@@ -22,18 +28,158 @@
 <script setup>
 import { ref, watch } from 'vue'
 import FmTypingLoader from './FmTypingLoader.vue'
-const props = defineProps({ show: { type: Boolean, default: false }, title: { type: String, default: 'Alerta' }, message: { type: String, default: '' } })
+
+const props = defineProps({
+  show: { type: Boolean, default: false },
+  title: { type: String, default: 'Alerta' },
+  message: { type: String, default: '' }
+})
+
 defineEmits(['close'])
+
 const loading = ref(false)
 let timer = null
+
 watch(() => props.show, (value) => {
   clearTimeout(timer)
-  if (!value) { loading.value = false; return }
+  if (!value) {
+    loading.value = false
+    return
+  }
   loading.value = true
-  timer = setTimeout(() => { loading.value = false }, 450)
+  timer = setTimeout(() => {
+    loading.value = false
+  }, 450)
 })
 </script>
 
 <style scoped>
-.fm-dialog-backdrop{position:fixed;inset:0;z-index:9500;display:flex;align-items:center;justify-content:center;background:rgba(38,50,56,.2)}.fm-alert-dialog{width:min(520px,calc(100vw - 28px));background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 18px 55px rgba(0,0,0,.28)}.fm-dialog-header{height:48px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;border-bottom:1px solid #eceff1;color:#263238;font-size:18px}.fm-dialog-close{border:0;background:transparent;color:#b0bec5;cursor:pointer;font-size:26px;font-weight:800}.fm-dialog-body{display:grid;grid-template-columns:58px 1fr;gap:14px;align-items:center;padding:22px 20px;color:#263238}.fm-dialog-body p{margin:0;line-height:1.45}.fm-dialog-icon{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#e0f7fa;color:#00a9bd}.fm-dialog-icon .material-icons{font-size:30px}.fm-dialog-actions{display:flex;justify-content:flex-end;gap:9px;padding:14px 18px 18px;border-top:1px solid #eceff1}.btn-cyan-outline{border-radius:20px;padding:8px 20px;font-size:13px;font-weight:400;cursor:pointer;background:#fff;border:1px solid #00a9bd;color:#00a9bd;transition:background-color .18s ease,box-shadow .18s ease,color .18s ease}.btn-cyan-outline:hover{background:#e0f7fa;color:#006f7f;box-shadow:0 4px 10px rgba(0,143,161,.14)}@media(max-width:560px){.fm-dialog-body{grid-template-columns:1fr;text-align:center}.fm-dialog-icon{margin:0 auto}.btn-cyan-outline{width:100%}}
+.fm-dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(38, 50, 56, .16);
+}
+
+.fm-alert-dialog {
+  width: min(520px, calc(100vw - 28px));
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 12px 34px rgba(0, 0, 0, .18);
+}
+
+.fm-dialog-header {
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  border-bottom: 1px solid #eceff1;
+  color: #263238;
+  font-size: 18px;
+}
+
+.fm-dialog-close {
+  border: 0;
+  background: transparent;
+  color: #b0bec5;
+  cursor: pointer;
+  font-size: 26px;
+  font-weight: 800;
+}
+
+.fm-dialog-close:hover {
+  color: #78909c;
+}
+
+.fm-dialog-body {
+  display: grid;
+  grid-template-columns: 58px 1fr;
+  gap: 14px;
+  align-items: center;
+  padding: 22px 20px;
+  color: #263238;
+}
+
+.fm-dialog-body p {
+  margin: 0;
+  line-height: 1.45;
+}
+
+.fm-dialog-icon {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fm-dialog-icon-warning svg {
+  width: 42px;
+  height: 42px;
+  filter: drop-shadow(0 3px 5px rgba(198, 40, 40, .22));
+}
+
+.warning-triangle {
+  fill: #fff5f5;
+  stroke: #d32f2f;
+  stroke-width: 1.8;
+  stroke-linejoin: round;
+}
+
+.warning-mark {
+  fill: none;
+  stroke: #d32f2f;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+}
+
+.warning-dot {
+  fill: #d32f2f;
+}
+
+.fm-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 9px;
+  padding: 14px 18px 18px;
+  border-top: 1px solid #eceff1;
+}
+
+.btn-cyan-outline {
+  border-radius: 20px;
+  padding: 8px 20px;
+  font-size: 13px;
+  font-weight: 400;
+  cursor: pointer;
+  background: #fff;
+  border: 1px solid #00a9bd;
+  color: #00a9bd;
+  transition: background-color .18s ease, box-shadow .18s ease, color .18s ease;
+}
+
+.btn-cyan-outline:hover {
+  background: #e0f7fa;
+  color: #006f7f;
+  box-shadow: 0 4px 10px rgba(0, 143, 161, .14);
+}
+
+@media (max-width: 560px) {
+  .fm-dialog-body {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .fm-dialog-icon {
+    margin: 0 auto;
+  }
+
+  .btn-cyan-outline {
+    width: 100%;
+  }
+}
 </style>
