@@ -27,4 +27,5 @@ const { isAuthenticated } = useAuth()
 @import './assets/css/materiales.css';
 @import './assets/css/certificacion.css';
 @import './assets/css/registro-ot-fallidas-tuning.css';
+@import './assets/css/unified-grids.css';
 </style>
