@@ -44,6 +44,8 @@ const menuList = ref([
     { id: 105, label: 'Registro OTs Fallidas', action: 'registro-ots-fallidas' },
     { id: 106, label: 'Búsqueda de OTs', action: 'none' }
   ] },
-  { title: 'Reportes', submenus: [] }
+  { title: 'Reportes', submenus: [
+    { id: 201, label: 'Extracción de Datos GM', action: 'reporte-sas' }
+  ] }
 ])
 </script>
