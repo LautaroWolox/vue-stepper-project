@@ -62,26 +62,27 @@
         <div class="footer-left">
           <button class="footer-icon footer-icon-export" title="Exportar Excel" aria-label="Exportar Excel" @click="$emit('export')">
             <svg class="fm-svg-icon" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M12 3v12"></path>
-              <path d="M7 10l5 5 5-5"></path>
-              <path d="M5 20h14"></path>
+              <path d="M12 3v11"></path>
+              <path d="M8.5 10.5 12 14l3.5-3.5"></path>
+              <path d="M5 18.5h14"></path>
+              <path d="M7 21h10"></path>
             </svg>
           </button>
           <button class="footer-icon footer-icon-delete" title="Excluir seleccionadas" aria-label="Excluir seleccionadas" @click="$emit('exclude')">
             <svg class="fm-svg-icon" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M4 7h16"></path>
-              <path d="M10 11v6"></path>
-              <path d="M14 11v6"></path>
-              <path d="M6 7l1 14h10l1-14"></path>
-              <path d="M9 7V4h6v3"></path>
+              <path d="M5 7h14"></path>
+              <path d="M9 7V4.8h6V7"></path>
+              <path d="M7 7l.8 13h8.4L17 7"></path>
+              <path d="M10 11v5.5"></path>
+              <path d="M14 11v5.5"></path>
             </svg>
           </button>
           <button class="footer-icon footer-icon-refresh" title="Reprocesar" aria-label="Reprocesar" @click="$emit('process')">
             <svg class="fm-svg-icon" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M20 11a8 8 0 0 0-14.2-4.9"></path>
-              <path d="M5 3v4h4"></path>
-              <path d="M4 13a8 8 0 0 0 14.2 4.9"></path>
-              <path d="M19 21v-4h-4"></path>
+              <path d="M19 7v5h-5"></path>
+              <path d="M5 17v-5h5"></path>
+              <path d="M18.1 12A6.2 6.2 0 0 0 7.2 8.3L5 10.5"></path>
+              <path d="M5.9 12a6.2 6.2 0 0 0 10.9 3.7L19 13.5"></path>
             </svg>
           </button>
         </div>
