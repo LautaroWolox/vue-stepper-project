@@ -1,0 +1,220 @@
+/* =========================================================
+   ESTILO ÚNICO PARA TODAS LAS GRILLAS MIGRADAS
+   Formato base igual al utilizado en Notas de Crédito/Débito.
+   ========================================================= */
+
+.fm-grid,
+.advanced-grid,
+.fallidas-grid,
+.historial-table,
+.subgrid-table {
+  width: max-content !important;
+  min-width: 100% !important;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+  table-layout: auto !important;
+  background: #ffffff !important;
+}
+
+.fm-grid th,
+.fm-grid td,
+.advanced-grid th,
+.advanced-grid td,
+.fallidas-grid th,
+.fallidas-grid td,
+.historial-table th,
+.historial-table td,
+.subgrid-table th,
+.subgrid-table td {
+  border-right: 1px solid #c9d5dc !important;
+  border-bottom: 1px solid #c9d5dc !important;
+  padding: 6px 8px !important;
+  white-space: nowrap !important;
+  font-size: 12px !important;
+  line-height: 1.25 !important;
+  color: #263238 !important;
+}
+
+.fm-grid th,
+.advanced-grid th,
+.fallidas-grid th,
+.historial-table th,
+.subgrid-table th {
+  position: relative !important;
+  background: #f8fafb !important;
+  color: #263f4d !important;
+  font-weight: 700 !important;
+  resize: horizontal !important;
+  overflow: auto !important;
+  min-width: 72px !important;
+  max-width: 420px !important;
+}
+
+.fm-grid thead tr:first-child th,
+.advanced-grid thead tr:first-child th,
+.fallidas-grid thead tr:first-child th,
+.historial-table thead tr:first-child th,
+.subgrid-table thead tr:first-child th {
+  border-top: 1px solid #b8c7d0 !important;
+}
+
+.fm-grid th:first-child,
+.fm-grid td:first-child,
+.advanced-grid th:first-child,
+.advanced-grid td:first-child,
+.fallidas-grid th:first-child,
+.fallidas-grid td:first-child,
+.historial-table th:first-child,
+.historial-table td:first-child,
+.subgrid-table th:first-child,
+.subgrid-table td:first-child {
+  border-left: 1px solid #c9d5dc !important;
+}
+
+.fm-grid tbody tr:nth-child(even) td,
+.advanced-grid tbody tr:nth-child(even) td,
+.historial-table tbody tr:nth-child(even) td,
+.subgrid-table tbody tr:nth-child(even) td {
+  background-color: #fbfcfd !important;
+}
+
+.fm-grid tbody tr:hover td,
+.advanced-grid tbody tr:hover td,
+.historial-table tbody tr:hover td,
+.subgrid-table tbody tr:hover td {
+  background-image: linear-gradient(rgba(0, 188, 212, 0.055), rgba(0, 188, 212, 0.055)) !important;
+}
+
+.fm-grid tbody tr.selected td,
+.advanced-grid tbody tr.selected td,
+.historial-table tbody tr.selected td,
+.subgrid-table tbody tr.selected td {
+  background: #dff8fb !important;
+  color: #004b55 !important;
+}
+
+/* Encabezados ordenables: sin botón nativo, sin borde, como la captura 2 */
+.grid-sort-header,
+.sort-header,
+.historial-sort,
+button.grid-sort-header,
+button.sort-header,
+button.historial-sort {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  width: 100% !important;
+  min-height: 18px !important;
+  border: 0 !important;
+  outline: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 8px !important;
+  text-align: left !important;
+  font: inherit !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  color: #263f4d !important;
+  cursor: pointer !important;
+}
+
+.grid-sort-header:hover,
+.sort-header:hover,
+.historial-sort:hover,
+button.grid-sort-header:hover,
+button.sort-header:hover,
+button.historial-sort:hover {
+  color: #008fa1 !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.grid-sort-header:focus,
+.sort-header:focus,
+.historial-sort:focus,
+button.grid-sort-header:focus,
+button.sort-header:focus,
+button.historial-sort:focus {
+  outline: 0 !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.sort-arrows,
+.sort-icons {
+  display: inline-flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0 !important;
+  min-width: 10px !important;
+  font-size: 9px !important;
+  line-height: 7px !important;
+  color: #a9bac4 !important;
+  flex: 0 0 auto !important;
+}
+
+.sort-arrows span,
+.sort-icons span {
+  display: block !important;
+  height: 7px !important;
+  line-height: 7px !important;
+}
+
+.sort-arrows .on,
+.sort-icons .on,
+.sort-arrows span.on,
+.sort-icons span.on {
+  color: #00a9bd !important;
+}
+
+.filter-row th,
+.fm-grid thead tr.filter-row th,
+.advanced-grid thead tr.filter-row th,
+.fallidas-grid thead tr.filter-row th {
+  background: #ffffff !important;
+  padding: 5px 6px !important;
+}
+
+.filter-row input,
+.fm-grid thead input,
+.advanced-grid thead input,
+.fallidas-grid thead input {
+  height: 26px !important;
+  border: 1px solid #c7d2d9 !important;
+  border-radius: 3px !important;
+  padding: 3px 6px !important;
+  font-size: 12px !important;
+  font-weight: 400 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+}
+
+.filter-row input:focus,
+.fm-grid thead input:focus,
+.advanced-grid thead input:focus,
+.fallidas-grid thead input:focus {
+  border-color: #00bcd4 !important;
+  box-shadow: 0 0 0 2px rgba(0, 188, 212, 0.12) !important;
+}
+
+.table-wrap,
+.table-responsive,
+.grid-scroll,
+.historial-table-wrap {
+  border-color: #b8c7d0 !important;
+  background: #ffffff !important;
+}
+
+.check-col,
+.arrow-col {
+  width: 38px !important;
+  min-width: 38px !important;
+  max-width: 42px !important;
+  text-align: center !important;
+}
