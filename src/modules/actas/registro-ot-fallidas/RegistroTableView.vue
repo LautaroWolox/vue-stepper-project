@@ -60,9 +60,30 @@
 
       <div class="fallidas-footer">
         <div class="footer-left">
-          <button class="footer-icon" title="Exportar Excel" @click="$emit('export')"><span class="material-icons">file_download</span></button>
-          <button class="footer-icon" title="Excluir seleccionadas" @click="$emit('exclude')"><span class="material-icons">delete</span></button>
-          <button class="footer-icon" title="Reprocesar" @click="$emit('process')"><span class="material-icons">published_with_changes</span></button>
+          <button class="footer-icon footer-icon-export" title="Exportar Excel" aria-label="Exportar Excel" @click="$emit('export')">
+            <svg class="fm-svg-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 3v12"></path>
+              <path d="M7 10l5 5 5-5"></path>
+              <path d="M5 20h14"></path>
+            </svg>
+          </button>
+          <button class="footer-icon footer-icon-delete" title="Excluir seleccionadas" aria-label="Excluir seleccionadas" @click="$emit('exclude')">
+            <svg class="fm-svg-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 7h16"></path>
+              <path d="M10 11v6"></path>
+              <path d="M14 11v6"></path>
+              <path d="M6 7l1 14h10l1-14"></path>
+              <path d="M9 7V4h6v3"></path>
+            </svg>
+          </button>
+          <button class="footer-icon footer-icon-refresh" title="Reprocesar" aria-label="Reprocesar" @click="$emit('process')">
+            <svg class="fm-svg-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M20 11a8 8 0 0 0-14.2-4.9"></path>
+              <path d="M5 3v4h4"></path>
+              <path d="M4 13a8 8 0 0 0 14.2 4.9"></path>
+              <path d="M19 21v-4h-4"></path>
+            </svg>
+          </button>
         </div>
         <div class="footer-pages">
           <button :disabled="page === 1" @click="$emit('page', 1)">|&lt;</button>
