@@ -92,6 +92,7 @@
 
 <script setup>
 import './registro-ot-fallidas-screen.css'
+import './fallidas-ui-polish.css'
 import FmTurquoiseSelect from '../../../components/shared/FmTurquoiseSelect.vue'
 import FmAlertDialog from '../../../components/shared/FmAlertDialog.vue'
 import FallidasFilters from './FallidasFilters.vue'
