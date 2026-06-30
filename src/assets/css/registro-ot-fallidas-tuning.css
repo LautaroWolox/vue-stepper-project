@@ -63,6 +63,44 @@
   font-size: 13px !important;
 }
 
+/* Selects: forzar turquesa en selección donde el navegador lo permita */
+.fallidas-page select {
+  color: #263238 !important;
+  font-weight: 400 !important;
+}
+
+.fallidas-page select option {
+  background: #ffffff !important;
+  color: #263238 !important;
+  font-weight: 400 !important;
+}
+
+.fallidas-page select option:checked,
+.fallidas-page select option:hover,
+.fallidas-page select option:focus {
+  background: #00a9bd !important;
+  background-color: #00a9bd !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 0 1000px #00a9bd inset !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+/* Botones de acción: texto normal, sin negrita exagerada */
+.fallidas-page .btn-cyan,
+.fallidas-page .btn-outline,
+.fallidas-page button.btn-cyan,
+.fallidas-page button.btn-outline {
+  font-weight: 500 !important;
+  letter-spacing: 0.2px !important;
+}
+
+.fallidas-page .float-actions .btn-cyan,
+.fallidas-page .float-actions .btn-outline,
+.fallidas-page .center-actions .btn-cyan,
+.fallidas-page .center-actions .btn-outline {
+  font-weight: 500 !important;
+}
+
 /* Columnas dinámicas reales: los anchos vienen desde Vue por colgroup/th/td */
 .fallidas-page .fallidas-grid {
   table-layout: fixed !important;
