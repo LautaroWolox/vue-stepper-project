@@ -6,13 +6,20 @@
 }
 
 .fallidas-page .include-modal .float-body label select,
-.fallidas-page .float-modal .float-body label select {
+.fallidas-page .float-modal .float-body label select,
+.fallidas-page .include-modal .float-body label .popup-select,
+.fallidas-page .float-modal .float-body label .popup-select {
   width: min(360px, 100%) !important;
   max-width: 360px !important;
   height: 30px !important;
-  padding: 4px 8px !important;
+  padding: 0 !important;
   font-size: 13px !important;
   display: block !important;
+}
+
+.fallidas-page .include-modal .float-body label .popup-select .fm-turquoise-select__button,
+.fallidas-page .float-modal .float-body label .popup-select .fm-turquoise-select__button {
+  height: 30px !important;
 }
 
 /* Fila incluida / recuperada: turquesa más fuerte */
@@ -56,15 +63,18 @@
 }
 
 .fallidas-page .filters-grid label:nth-child(6) select,
-.fallidas-page .filters-grid label:nth-child(7) select {
+.fallidas-page .filters-grid label:nth-child(7) select,
+.fallidas-page .filters-grid label:nth-child(6) .fm-turquoise-select,
+.fallidas-page .filters-grid label:nth-child(7) .fm-turquoise-select {
   width: 230px !important;
   max-width: 230px !important;
   height: 28px !important;
   font-size: 13px !important;
 }
 
-/* Selects: forzar turquesa en selección donde el navegador lo permita */
-.fallidas-page select {
+/* Selects: evitar que el valor vacío quede pintado al abrir el combo */
+.fallidas-page select,
+.fm-turquoise-select__button {
   color: #263238 !important;
   font-weight: 400 !important;
 }
@@ -83,6 +93,19 @@
   color: #ffffff !important;
   box-shadow: 0 0 0 1000px #00a9bd inset !important;
   -webkit-text-fill-color: #ffffff !important;
+}
+
+.fallidas-page select option[value=""]:checked,
+.fallidas-page select option[value=""]:hover,
+.fallidas-page select option[value=""]:focus,
+select option[value=""]:checked,
+select option[value=""]:hover,
+select option[value=""]:focus {
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+  color: #263238 !important;
+  box-shadow: 0 0 0 1000px #ffffff inset !important;
+  -webkit-text-fill-color: #263238 !important;
 }
 
 /* Botones de acción: texto normal, sin negrita exagerada */
@@ -162,7 +185,9 @@ body.column-resizing * {
   }
 
   .fallidas-page .filters-grid label:nth-child(6) select,
-  .fallidas-page .filters-grid label:nth-child(7) select {
+  .fallidas-page .filters-grid label:nth-child(7) select,
+  .fallidas-page .filters-grid label:nth-child(6) .fm-turquoise-select,
+  .fallidas-page .filters-grid label:nth-child(7) .fm-turquoise-select {
     width: 100% !important;
     max-width: 100% !important;
   }
