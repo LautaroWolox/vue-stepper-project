@@ -42,7 +42,7 @@ const menuList = ref([
       { id: 1042, label: 'Configuración CMO-Actividad', action: 'config-cmo' }
     ] },
     { id: 105, label: 'Registro OTs Fallidas', action: 'registro-ots-fallidas' },
-    { id: 106, label: 'Búsqueda de OTs', action: 'none' }
+    { id: 106, label: 'Búsqueda de OTs', action: 'busqueda-ots' }
   ] },
   { title: 'Reportes', submenus: [
     { id: 201, label: 'Extracción de Datos GM', action: 'reporte-sas' }
