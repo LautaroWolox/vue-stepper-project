@@ -1,16 +1,18 @@
 # Field Manager Vue
 
-Prototipo frontend de Field Manager construido con Vue 3 + Vite.
+Frontend de Field Manager construido con Vue 3 + Vite.
 
-La idea del proyecto es validar cómo se verían y cómo se organizarían pantallas migradas desde JSP hacia Vue, manteniendo una estructura lista para conectar contra backend real.
+El objetivo del proyecto es migrar pantallas tipo JSP/Field Manager hacia Vue, manteniendo la estética del sistema actual pero con una estructura más limpia, modular y fácil de mantener.
 
 ## Stack
 
 - Vue 3
 - Vue Router
 - Vite
-- CSS modular por pantalla/componente
-- Servicios preparados para consumir API REST
+- JavaScript / TypeScript según pantalla
+- CSS separado por pantalla y componente
+- Servicios preparados para API REST
+- Exportación a Excel reutilizable
 
 ## Instalación
 
@@ -19,12 +21,22 @@ npm install
 npm run dev
 ```
 
-## Variables de entorno
-
-Copiar `.env.example` a `.env` y ajustar según el ambiente:
+## Build
 
 ```bash
-cp .env.example .env
+npm run build
+```
+
+## Variables de entorno
+
+El proyecto soporta variables por ambiente:
+
+```txt
+.env
+.env.desa1
+.env.inte
+.env.uat
+.env.production
 ```
 
 Variables principales:
@@ -36,63 +48,133 @@ VITE_USE_MOCKS=true
 ```
 
 - `VITE_FM_MV_URL_2`: URL base del backend.
-- `VITE_AUTH_DEMO`: permite alternar entre login demo local y login real de backend.
-- `VITE_USE_MOCKS`: permite alternar entre datos mock locales y endpoints reales.
+- `VITE_AUTH_DEMO`: permite alternar login demo/local y login real.
+- `VITE_USE_MOCKS`: permite alternar datos mock y endpoints reales.
 
-## Organización relevante
+## Estructura general
 
 ```txt
 src/
+├── assets/
+│   ├── css/
+│   │   ├── nuestros.css
+│   │   └── theme.css
+│   ├── icons/
+│   └── images/
 ├── components/
-│   ├── login/
-│   ├── materiales/
-│   │   ├── GestionMateriales.vue
-│   │   ├── MaterialesFilters.vue
-│   │   ├── MaterialesStepperHeader.vue
-│   │   ├── MaterialesReview.vue
-│   │   └── MaterialesExport.vue
-│   └── ...
+│   ├── botones/
+│   │   ├── BotonBuscar.vue
+│   │   └── BotonLimpiar.vue
+│   ├── menu/
+│   └── shared/
 ├── composables/
-│   └── useAuth.js
-├── mocks/
-│   └── materialesMock.js
+│   └── useExportExcel.js
+├── modules/
+│   ├── notaCredito/
+│   ├── notaDebito/
+│   ├── registroOtsFallidasCT/
+│   ├── otFallidasGM/
+│   ├── validacionOtRedes/
+│   ├── gestionMaterialesOt/
+│   ├── configJobtypeContrato/
+│   ├── configCmoActividad/
+│   ├── consultarActas/
+│   └── reporteSas/
 ├── services/
-│   ├── apiClient.js
-│   ├── authService.js
-│   └── materialesService.js
-└── utils/
-    └── csv.js
+├── store/
+├── utils/
+└── views/
 ```
 
-## Integración backend
+## Regla para pantallas nuevas
 
-La capa preparada para backend está en `src/services`.
-
-### Auth
-
-`src/services/authService.js` consume:
+Toda pantalla nueva debe vivir dentro de `src/modules` y tener su propia estructura interna.
 
 ```txt
-POST /auth/login
+src/modules/nombrePantalla/
+├── NombrePantalla.vue
+├── components/
+│   ├── Filtros.vue
+│   ├── Tabla.vue
+│   ├── Grilla.vue
+│   ├── Popups.vue
+│   └── elementos/
+├── columns/
+│   └── columns.js
+├── store/
+│   └── nombrePantallaStore.js
+├── composables/
+│   └── useNombrePantalla.js
+├── utils/
+│   ├── exportarExcel.js
+│   └── helpers.js
+├── mocks/
+│   └── mockData.js
+└── types.js
 ```
 
-El frontend acepta respuestas con token en `token`, `accessToken` o `data.token`.
+## Regla para tablas y grillas
 
-### Materiales
+Cada pantalla debe tener su propia tabla o grilla dentro de su carpeta.
 
-`src/services/materialesService.js` define estos endpoints iniciales:
+Ejemplo:
 
 ```txt
-POST /materiales/ots/buscar
-POST /materiales/descargados/buscar
-POST /materiales/ots/guardar
-POST /materiales/descargados/guardar
+src/modules/notaCredito/components/Tabla.vue
+src/modules/notaDebito/components/Tabla.vue
+src/modules/registroOtsFallidasCT/components/Tabla.vue
 ```
 
-Cuando `VITE_USE_MOCKS=true`, los datos salen desde `src/mocks/materialesMock.js`.
+No se debe importar una tabla de otra pantalla. Los componentes compartidos quedan solamente para elementos realmente generales, como select, alertas, loaders, botones base o datepickers.
 
-Cuando `VITE_USE_MOCKS=false`, se usa `apiClient` con encabezado de autorización automáticamente.
+## Componentes compartidos
+
+Los componentes reutilizables generales están en:
+
+```txt
+src/components/shared/
+src/components/botones/
+```
+
+Ejemplos:
+
+- `FmTurquoiseSelect.vue`
+- `FmTypingLoader.vue`
+- `FmAlertDialog.vue`
+- `BotonBuscar.vue`
+- `BotonLimpiar.vue`
+
+## Exportar a Excel
+
+La lógica compartida está en:
+
+```txt
+src/composables/useExportExcel.js
+src/utils/excelExport.js
+```
+
+Cada pantalla puede tener además su propio wrapper local en:
+
+```txt
+src/modules/nombrePantalla/utils/exportarExcel.js
+```
+
+## Pantallas principales trabajadas
+
+- Registro OTs Fallidas CT
+- Registro OTs Fallidas Gestión de Materiales
+- Validación OT de Redes
+- Gestión de Materiales en OTs
+- Configuración Jobtype-Contrato
+- Configuración CMO-Actividad
+- Consultar Actas
+- Consultar Nota de Crédito
+- Consultar Nota de Débito
+- Reporte SAS
+- Búsqueda de OTs
 
 ## Estado actual
 
-El proyecto sigue siendo una maqueta funcional, pero la pantalla de Gestión de Materiales ya quedó separada en componentes más chicos y con una capa de servicios lista para reemplazar mocks por backend real.
+El proyecto sigue siendo una maqueta funcional en proceso de ordenamiento. Las pantallas nuevas deben respetar la estructura modular definida en este README.
+
+Los componentes antiguos que todavía existan quedan solo como compatibilidad hasta terminar la migración completa por pantalla.
