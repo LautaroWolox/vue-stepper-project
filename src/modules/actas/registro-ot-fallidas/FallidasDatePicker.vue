@@ -8,7 +8,12 @@
     <div v-if="open" class="fallidas-calendar-popover">
       <div class="fallidas-calendar-head">
         <button type="button" @click="previousMonth">‹</button>
-        <strong>{{ monthNames[currentMonth] }} {{ currentYear }}</strong>
+        <div class="fallidas-calendar-title">
+          <strong>{{ monthNames[currentMonth] }}</strong>
+          <select v-model.number="currentYear" aria-label="Año">
+            <option v-for="year in yearOptions" :key="year" :value="year">{{ year }}</option>
+          </select>
+        </div>
         <button type="button" @click="nextMonth">›</button>
       </div>
 
@@ -53,6 +58,10 @@ const currentYear = ref(props.modelValue ? Number(props.modelValue.slice(0, 4)) 
 const currentMonth = ref(props.modelValue ? Number(props.modelValue.slice(5, 7)) - 1 : now.getMonth())
 const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
 const weekDays = ['DO', 'LU', 'MA', 'MI', 'JU', 'VI', 'SA']
+const yearOptions = computed(() => {
+  const base = now.getFullYear()
+  return Array.from({ length: 31 }, (_, index) => base - 15 + index)
+})
 
 const displayValue = computed(() => props.modelValue ? formatDisplay(props.modelValue) : props.placeholder)
 const days = computed(() => {
