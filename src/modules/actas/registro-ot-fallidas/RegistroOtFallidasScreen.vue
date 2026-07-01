@@ -55,13 +55,13 @@
     </div>
 
     <div v-if="state.notaPopup.show" class="float-modal" :style="modalStyle(state.notaPopup)">
-      <div class="float-head"><span>Detalle Nota</span><button @click="state.notaPopup.show = false">x</button></div>
+      <div class="float-head" @mousedown="startPopupDrag($event, state.notaPopup)"><span>Detalle Nota</span><button @click="state.notaPopup.show = false">x</button></div>
       <div class="float-body"><textarea v-model="state.notaPopup.row.nota" rows="3"></textarea></div>
       <div class="float-actions"><button class="fallidas-btn-secondary" @click="state.notaPopup.show = false">ACEPTAR</button></div>
     </div>
 
     <div v-if="state.includePopup.show" class="float-modal include-modal" :style="modalStyle(state.includePopup)">
-      <div class="float-head"><span>Alerta</span><button @click="state.includePopup.show = false">x</button></div>
+      <div class="float-head" @mousedown="startPopupDrag($event, state.includePopup)"><span>Alerta</span><button @click="state.includePopup.show = false">x</button></div>
       <div class="float-body">
         <p>¿Confirma que desea recuperar la OT seleccionada?</p>
         <label>Motivo<FmTurquoiseSelect v-model="state.includePopup.motivo" :options="state.motivoOptions" class="popup-select" /></label>
@@ -74,7 +74,7 @@
     </div>
 
     <div v-if="state.excludePopup.show" class="float-modal include-modal" :style="modalStyle(state.excludePopup)">
-      <div class="float-head"><span>Alerta</span><button @click="state.excludePopup.show = false">x</button></div>
+      <div class="float-head" @mousedown="startPopupDrag($event, state.excludePopup)"><span>Alerta</span><button @click="state.excludePopup.show = false">x</button></div>
       <div class="float-body">
         <p>¿Confirma que desea excluir la OT seleccionada?</p>
         <label>Motivo<FmTurquoiseSelect v-model="state.excludePopup.motivo" :options="state.motivoOptions" class="popup-select" /></label>
@@ -91,8 +91,10 @@
 </template>
 
 <script setup>
+import { onBeforeUnmount } from 'vue'
 import './registro-ot-fallidas-screen.css'
 import './fallidas-ui-polish.css'
+import './fallidas-popup-drag.css'
 import FmTurquoiseSelect from '../../../components/shared/FmTurquoiseSelect.vue'
 import FmAlertDialog from '../../../components/shared/FmAlertDialog.vue'
 import FallidasFilters from './FallidasFilters.vue'
@@ -106,4 +108,42 @@ const setColumnFilter = (field, value) => { state.columnFilters[field] = value; 
 const setPage = (value) => { state.page.value = value; state.normalizePage() }
 const setPerPage = (value) => { state.perPage.value = value; state.page.value = 1 }
 const modalStyle = (popup) => ({ left: `${popup.x}px`, top: `${popup.y}px` })
+
+let draggingPopup = null
+let dragOffsetX = 0
+let dragOffsetY = 0
+let dragModalWidth = 0
+let dragModalHeight = 0
+
+const startPopupDrag = (event, popup) => {
+  if (event.button !== 0 || event.target.closest('button')) return
+  const modal = event.currentTarget.closest('.float-modal')
+  if (!modal) return
+  const rect = modal.getBoundingClientRect()
+  draggingPopup = popup
+  dragOffsetX = event.clientX - rect.left
+  dragOffsetY = event.clientY - rect.top
+  dragModalWidth = rect.width
+  dragModalHeight = rect.height
+  document.body.classList.add('fallidas-popup-dragging')
+  document.addEventListener('mousemove', movePopup)
+  document.addEventListener('mouseup', stopPopupDrag)
+}
+
+const movePopup = (event) => {
+  if (!draggingPopup) return
+  const maxX = Math.max(window.innerWidth - dragModalWidth - 8, 8)
+  const maxY = Math.max(window.innerHeight - dragModalHeight - 8, 8)
+  draggingPopup.x = Math.min(Math.max(event.clientX - dragOffsetX, 8), maxX)
+  draggingPopup.y = Math.min(Math.max(event.clientY - dragOffsetY, 8), maxY)
+}
+
+const stopPopupDrag = () => {
+  draggingPopup = null
+  document.body.classList.remove('fallidas-popup-dragging')
+  document.removeEventListener('mousemove', movePopup)
+  document.removeEventListener('mouseup', stopPopupDrag)
+}
+
+onBeforeUnmount(stopPopupDrag)
 </script>
