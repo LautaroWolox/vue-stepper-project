@@ -10,8 +10,16 @@
         <div class="filters-row filters-row-4">
           <div v-for="combo in combos" :key="combo.key" class="fm-field multi-field">
             <label>{{ combo.label }}</label>
-            <button class="multi-button" type="button" :class="{ error: combo.key === 'centros' && centroError }" @click.stop="openCombo = openCombo === combo.key ? null : combo.key">
-              <span>{{ comboText(combo) }}</span>
+            <button
+              class="multi-button"
+              type="button"
+              :class="{ error: combo.key === 'centros' && centroError, 'has-selection': filters[combo.key].length > 0 }"
+              @click.stop="openCombo = openCombo === combo.key ? null : combo.key"
+            >
+              <span class="multi-button-main">
+                <span class="multi-button-value">{{ comboText(combo) }}</span>
+                <span v-if="filters[combo.key].length" class="multi-button-count">{{ filters[combo.key].length }}</span>
+              </span>
               <span class="material-icons">arrow_drop_down</span>
             </button>
             <div v-if="combo.key === 'centros' && centroError" class="field-error">{{ centroError }}</div>
@@ -79,8 +87,14 @@
         <div v-if="generalError" class="validation-banner"><span class="material-icons">warning</span>{{ generalError }}</div>
 
         <div class="actions-row">
-          <button class="btn-cyan" type="button" :disabled="loading" @click="buscar">{{ loading ? 'BUSCANDO...' : 'BUSCAR' }}</button>
-          <button class="btn-outline" type="button" @click="limpiar">LIMPIAR</button>
+          <button class="btn-cyan" type="button" :disabled="loading" @click="buscar">
+            <span class="material-icons">search</span>
+            <span>{{ loading ? 'BUSCANDO...' : 'BUSCAR' }}</span>
+          </button>
+          <button class="btn-outline" type="button" @click="limpiar">
+            <span class="material-icons">sort</span>
+            <span>LIMPIAR</span>
+          </button>
         </div>
       </div>
     </section>
@@ -278,12 +292,11 @@ const limpiar = () => {
   filters.nroOt = ''
   filters.fechaDesde = ''
   filters.fechaHasta = ''
-  rows.value = []
+  Object.keys(comboSearch).forEach(key => { comboSearch[key] = '' })
   centroError.value = ''
   generalError.value = ''
   showSuggestions.value = false
   openCombo.value = null
-  limpiarFiltrosGrilla()
   openFilters.value = true
 }
 const limpiarFiltrosGrilla = () => { Object.keys(columnFilters).forEach(key => { columnFilters[key] = '' }); currentPage.value = 1 }
@@ -316,9 +329,14 @@ onBeforeUnmount(() => document.removeEventListener('mousedown', closeMenus))
 .fm-input, .multi-button { width: 100%; height: 31px; border: 1px solid #9e9e9e; border-radius: 3px; background: #fff; padding: 4px 8px; font-size: 13px; font-weight: 400; box-sizing: border-box; }
 .fm-input:focus, .multi-button:focus { outline: none; border-color: #00bcd4; box-shadow: 0 0 0 2px rgba(0,188,212,.20); }
 .fm-input.disabled { background: #e9e9e9; color: #777; cursor: not-allowed; }
-.multi-button { display: flex; align-items: center; justify-content: center; gap: 4px; background: linear-gradient(#fff,#eee); cursor: pointer; }
+.multi-button { display: flex; align-items: center; justify-content: space-between; gap: 8px; background: linear-gradient(180deg, #fff 0%, #f7fbfc 100%); cursor: pointer; color: #263238; padding: 0 11px; border-color: #b7c7cf; box-shadow: inset 0 1px 0 rgba(255,255,255,.8), 0 1px 2px rgba(0,0,0,.06); transition: border-color .16s ease, box-shadow .16s ease, background-color .16s ease, color .16s ease; }
+.multi-button:hover { border-color: #00a9bd; background: #f2fbfc; box-shadow: 0 0 0 2px rgba(0,188,212,.10), 0 2px 5px rgba(0,0,0,.08); }
+.multi-button.has-selection { border-color: #00a9bd; background: #effcfe; }
 .multi-button.error { border-color: #e91e63; }
-.multi-button .material-icons { font-size: 16px; }
+.multi-button .material-icons { font-size: 16px; color: #263238; }
+.multi-button-main { min-width: 0; display: inline-flex; align-items: center; justify-content: center; gap: 7px; flex: 1; }
+.multi-button-value { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.multi-button-count { min-width: 22px; height: 18px; padding: 0 6px; border-radius: 10px; background: #00a9bd; color: #fff; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; line-height: 18px; }
 .field-error { color: #e91e63; font-size: 12px; margin-top: 5px; }
 .multi-menu, .ot-suggestions { position: absolute; top: 52px; left: 0; right: 0; z-index: 30; background: #fff; border: 1px solid #bdbdbd; box-shadow: 0 10px 28px rgba(0,0,0,.2); max-height: 315px; overflow: auto; }
 .multi-menu { border-color: #00bcd4; border-radius: 4px; overflow: hidden; }
@@ -343,11 +361,12 @@ onBeforeUnmount(() => document.removeEventListener('mousedown', closeMenus))
 .validation-banner { margin: 10px 20px 0; padding: 9px 12px; border: 1px solid rgba(233,30,99,.25); background: #fff3f7; color: #c2185b; border-radius: 4px; display: flex; gap: 8px; align-items: center; }
 .validation-banner .material-icons { font-size: 18px; }
 .actions-row { display: flex; justify-content: center; gap: 8px; padding: 18px 0 20px; }
-.btn-cyan, .btn-outline { border-radius: 18px; padding: 8px 18px; font-size: 13px; font-weight: 400; cursor: pointer; transition: .18s; }
+.btn-cyan, .btn-outline { height: 32px; display: inline-flex; align-items: center; justify-content: center; gap: 7px; border-radius: 4px; padding: 0 16px; font-size: 12px; font-weight: 500; letter-spacing: .2px; cursor: pointer; transition: background-color .16s ease, border-color .16s ease, color .16s ease, box-shadow .16s ease, transform .16s ease; box-shadow: 0 3px 8px rgba(0,0,0,.12); }
+.btn-cyan .material-icons, .btn-outline .material-icons { font-size: 15px; line-height: 1; }
 .btn-cyan { background: #00a9bd; border: 1px solid #00a9bd; color: #fff; }
-.btn-cyan:hover:not(:disabled) { background: #008fa1; border-color: #008fa1; box-shadow: 0 4px 10px rgba(0,143,161,.22); }
+.btn-cyan:hover:not(:disabled) { background: #008fa1; border-color: #008fa1; box-shadow: 0 5px 12px rgba(0,143,161,.28); transform: translateY(-1px); }
 .btn-outline { background: #fff; border: 1px solid #00a9bd; color: #00a9bd; }
-.btn-outline:hover { background: #e0f7fa; }
+.btn-outline:hover { background: #e0f7fa; border-color: #008fa1; color: #008fa1; box-shadow: 0 5px 12px rgba(0,143,161,.18); transform: translateY(-1px); }
 .grid-body { padding: 8px; }
 .table-wrap { overflow: auto; min-height: 350px; border: 1px solid #cfcfcf; }
 .fm-grid { border-collapse: collapse; table-layout: fixed; width: max-content; min-width: 100%; }
