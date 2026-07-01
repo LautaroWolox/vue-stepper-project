@@ -1,7 +1,4 @@
-<template>
-  <ConfigCmoActividadScreen />
-</template>
-
+<template><LocalEntry /></template>
 <script setup>
-import ConfigCmoActividadScreen from '../actas/config-cmo-actividad/ConfigCmoActividadScreen.vue'
+import LocalEntry from './LocalEntry.vue'
 </script>
