@@ -23,7 +23,7 @@ export function useRegistroOtFallidasScreen() {
   const motivoOptions = [{ value: '', label: '' }, ...motivosRecuperoFallidasMock.map((item) => ({ value: item, label: item }))]
 
   const columns = [
-    { field: 'nroOt', label: 'Nro. OT', width: 120 },
+    { field: 'nroOt', label: 'NRO. OT', width: 120 },
     { field: 'fechaCierre', label: 'FECHA CIERRE', width: 135 },
     { field: 'codTarea', label: 'COD TAREA', width: 110 },
     { field: 'direccion', label: 'DIRECCION', width: 150 },
