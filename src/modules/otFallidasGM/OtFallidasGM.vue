@@ -1,7 +1,4 @@
-<template>
-  <RegistroOtsFallidasMaterialesScreen />
-</template>
-
+<template><Screen /></template>
 <script setup>
-import RegistroOtsFallidasMaterialesScreen from '../gestion-materiales/registro-ots-fallidas-materiales/RegistroOtsFallidasMaterialesScreen.vue'
+import Screen from './Screen.vue'
 </script>
