@@ -23,7 +23,7 @@ const menuList = ref([
     { id: 4, label: 'Errores de Gestión Sucursal', action: 'errores-gestion-sucursal' },
     { id: 5, label: 'Gestionar Materiales en OTs', action: 'materiales-ot' },
     { id: 7, label: 'Errores de Gestión', action: 'errores-gestion' },
-    { id: 8, label: 'Registro de OTs Fallidas', action: 'registro-ots-fallidas' },
+    { id: 8, label: 'Registro de OTs Fallidas', action: 'registro-ots-fallidas-materiales' },
     { id: 6, label: 'Materiales Descargados', action: 'materiales-descargados' }
   ] },
   { title: 'Certificación Contratista', submenus: [
@@ -41,7 +41,7 @@ const menuList = ref([
       { id: 1041, label: 'Configuración Jobtype-Contrato', action: 'config-jobtype' },
       { id: 1042, label: 'Configuración CMO-Actividad', action: 'config-cmo' }
     ] },
-    { id: 105, label: 'Registro OTs Fallidas', action: 'registro-ots-fallidas' }
+    { id: 105, label: 'Registro OTs Fallidas', action: 'registro-ots-fallidas-certificacion' }
   ] },
   { title: 'Reportes', submenus: [
     { id: 201, label: 'Extracción de Datos GM', action: 'reporte-sas' }
