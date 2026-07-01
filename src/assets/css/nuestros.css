@@ -1,0 +1,16 @@
+@import './theme.css';
+
+.fm-module-page {
+  width: 100%;
+  max-width: 100%;
+}
+
+.fm-module-section {
+  border: 1px solid var(--fm-border);
+  background: #fff;
+  margin-bottom: 8px;
+}
+
+.fm-module-section--accent {
+  border-left: 4px solid var(--fm-cyan);
+}
