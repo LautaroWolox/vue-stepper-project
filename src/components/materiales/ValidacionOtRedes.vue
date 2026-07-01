@@ -11,7 +11,7 @@
           <div v-for="combo in combos" :key="combo.key" class="fm-field multi-field">
             <label>{{ combo.label }}</label>
             <button class="multi-button" type="button" :class="{ error: combo.key === 'centros' && centroError }" @click.stop="openCombo = openCombo === combo.key ? null : combo.key">
-              {{ comboText(combo) }}
+              <span>{{ comboText(combo) }}</span>
               <span class="material-icons">arrow_drop_down</span>
             </button>
             <div v-if="combo.key === 'centros' && centroError" class="field-error">{{ centroError }}</div>
@@ -19,23 +19,24 @@
             <div v-if="openCombo === combo.key" class="multi-menu" @click.stop>
               <div class="multi-search">
                 <span class="material-icons">search</span>
-                <input v-model="comboSearch[combo.key]" placeholder="Search" />
-                <button type="button" @click="clearCombo(combo.key)">⊗</button>
+                <input v-model.trim="comboSearch[combo.key]" placeholder="Buscar" autocomplete="off" />
+                <button type="button" title="Limpiar búsqueda" @click="comboSearch[combo.key] = ''">⊗</button>
               </div>
 
-              <label v-if="combo.allowAll" class="multi-option" :class="{ selected: allSelected(combo) }">
+              <label v-if="combo.allowAll" class="multi-option multi-option-all" :class="{ selected: allSelected(combo) }">
                 <input type="checkbox" :checked="allSelected(combo)" @change="toggleAll(combo)" />
-                <span>Select all</span>
+                <span>Seleccionar todo</span>
+                <small>{{ filters[combo.key].length }} / {{ combo.items.length }}</small>
               </label>
 
-              <label v-for="item in filteredComboItems(combo)" :key="item" class="multi-option" :class="{ selected: filters[combo.key].includes(item) }">
-                <input type="checkbox" :checked="filters[combo.key].includes(item)" @change="toggleItem(combo.key, item)" />
-                <span>{{ item }}</span>
-              </label>
-
-              <div v-if="filteredComboItems(combo).length === 0" class="multi-empty">
-                {{ comboSearch[combo.key].trim().length < 3 ? 'Escribí al menos 3 letras' : 'Sin resultados' }}
+              <div class="multi-options-list">
+                <label v-for="item in filteredComboItems(combo)" :key="item" class="multi-option" :class="{ selected: filters[combo.key].includes(item) }">
+                  <input type="checkbox" :checked="filters[combo.key].includes(item)" @change="toggleItem(combo.key, item)" />
+                  <span>{{ item }}</span>
+                </label>
               </div>
+
+              <div v-if="filteredComboItems(combo).length === 0" class="multi-empty">Sin resultados</div>
             </div>
           </div>
         </div>
@@ -64,12 +65,12 @@
 
           <div class="fm-field">
             <label>Fecha Ult. Modif. Desde</label>
-            <input class="fm-input" type="datetime-local" v-model="filters.fechaDesde" />
+            <ValidacionDatePicker v-model="filters.fechaDesde" placeholder="Seleccionar fecha" />
           </div>
 
           <div class="fm-field">
             <label>Fecha Ult. Modif. Hasta</label>
-            <input class="fm-input" :class="{ disabled: isFechaHastaDisabled }" type="datetime-local" v-model="filters.fechaHasta" :disabled="isFechaHastaDisabled" />
+            <ValidacionDatePicker v-model="filters.fechaHasta" placeholder="Seleccionar fecha" :disabled="isFechaHastaDisabled" />
           </div>
 
           <div></div>
@@ -149,6 +150,7 @@
 <script setup>
 import { computed, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
 import FmTypingLoader from '../shared/FmTypingLoader.vue'
+import ValidacionDatePicker from './ValidacionDatePicker.vue'
 import { downloadExcel } from '../../utils/excelExport.js'
 
 const openFilters = ref(true)
@@ -184,9 +186,9 @@ const isNroOtDisabled = computed(() => !!hasAnyLocation.value)
 const isFechaHastaDisabled = computed(() => !hasAnyLocation.value && !hasOt.value)
 
 const otSuggestions = computed(() => {
-  const term = filters.nroOt.trim().toLowerCase()
+  const term = normalize(filters.nroOt.trim())
   if (!term || isNroOtDisabled.value) return []
-  return otOptions.filter(item => item.toLowerCase().includes(term)).slice(0, 10)
+  return otOptions.filter(item => normalize(item).includes(term)).slice(0, 10)
 })
 
 const columns = reactive([
@@ -202,7 +204,8 @@ const columns = reactive([
 const columnFilters = reactive(Object.fromEntries(columns.map(column => [column.field, ''])))
 const rows = ref([])
 
-const norm = value => String(value || '').toLowerCase()
+const normalize = value => String(value || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+const norm = value => normalize(value)
 const filteredRows = computed(() => rows.value.filter(row => columns.every(column => !norm(columnFilters[column.field]) || norm(row[column.field]).includes(norm(columnFilters[column.field])))))
 const totalPages = computed(() => Math.max(1, Math.ceil(filteredRows.value.length / itemsPerPage.value)))
 const pageRows = computed(() => filteredRows.value.slice((currentPage.value - 1) * itemsPerPage.value, currentPage.value * itemsPerPage.value))
@@ -212,10 +215,9 @@ const toRow = computed(() => Math.min(currentPage.value * itemsPerPage.value, fi
 const comboText = combo => filters[combo.key].length === 0 ? 'Seleccionar' : filters[combo.key].length === combo.items.length ? `Todos seleccionados (${filters[combo.key].length})` : `${filters[combo.key].length} seleccionados`
 const allSelected = combo => combo.items.length > 0 && filters[combo.key].length === combo.items.length
 const filteredComboItems = combo => {
-  const term = comboSearch[combo.key].trim().toLowerCase()
+  const term = normalize(comboSearch[combo.key].trim())
   if (!term) return combo.items
-  if (term.length < 3) return []
-  return combo.items.filter(item => item.toLowerCase().includes(term))
+  return combo.items.filter(item => normalize(item).includes(term))
 }
 const toggleItem = (key, item) => {
   const selected = filters[key]
@@ -301,5 +303,75 @@ onBeforeUnmount(() => document.removeEventListener('mousedown', closeMenus))
 </script>
 
 <style scoped>
-.validacion-redes-page{font-size:13px;color:#111}.fm-panel{background:#fff;border:1px solid #d8d8d8;margin-bottom:7px}.fm-panel-header{height:31px;background:#f7f7f7;border-bottom:1px solid #d8d8d8;display:flex;align-items:center;justify-content:space-between;padding:0 10px;cursor:pointer}.fm-panel-header .material-icons{font-size:18px;color:#666}.filters-body{border-left:4px solid #00bcd4}.results-panel{border-left:4px solid #00bcd4}.filters-row{display:grid;gap:20px;padding:12px 20px 14px;border-bottom:1px solid #d8d8d8}.filters-row-4{grid-template-columns:repeat(4,minmax(180px,1fr))}.fm-field{position:relative;min-width:0}.fm-field label{display:block;margin-bottom:6px;font-weight:400}.fm-input,.multi-button{width:100%;height:31px;border:1px solid #9e9e9e;border-radius:3px;background:#fff;padding:4px 8px;font-size:13px;font-weight:400}.fm-input.disabled{background:#e9e9e9;color:#777;cursor:not-allowed}.multi-button{display:flex;align-items:center;justify-content:center;gap:4px;background:linear-gradient(#fff,#eee);cursor:pointer}.multi-button.error{border-color:#e91e63}.multi-button .material-icons{font-size:16px}.field-error{color:#e91e63;font-size:12px;margin-top:5px}.multi-menu,.ot-suggestions{position:absolute;top:52px;left:0;right:0;z-index:30;background:#fff;border:1px solid #bdbdbd;box-shadow:0 10px 28px rgba(0,0,0,.2);max-height:315px;overflow:auto}.multi-search{display:grid;grid-template-columns:40px 1fr 40px;height:40px;border-bottom:1px solid #ddd;background:#fff;position:sticky;top:0;z-index:2}.multi-search span{display:flex;align-items:center;justify-content:center}.multi-search input{border:0;border-left:1px solid #ddd;padding:0 10px;outline:none}.multi-search button{border:1px solid #00bcd4;background:#fff;color:#00a9bd;border-radius:16px;margin:5px}.multi-option{display:flex;align-items:center;gap:8px;min-height:34px;padding:7px 12px;cursor:pointer;font-weight:400}.multi-option:hover{background:#eef7f8}.multi-option.selected{background:#4dd0e1;color:#fff}.multi-option input{width:14px;height:14px;accent-color:#00a9bd}.multi-empty{padding:14px;color:#607d8b}.ot-suggestions{max-height:235px}.ot-suggestions button{display:block;width:100%;border:0;background:#fff;text-align:left;padding:8px 11px;cursor:pointer}.ot-suggestions button:hover,.ot-suggestions button.active{background:#e0f7fa;color:#006f7f}.validation-banner{margin:10px 20px 0;padding:9px 12px;border:1px solid rgba(233,30,99,.25);background:#fff3f7;color:#c2185b;border-radius:4px;display:flex;gap:8px;align-items:center}.validation-banner .material-icons{font-size:18px}.actions-row{display:flex;justify-content:center;gap:8px;padding:18px 0 20px}.btn-cyan,.btn-outline{border-radius:18px;padding:8px 18px;font-size:13px;font-weight:400;cursor:pointer;transition:.18s}.btn-cyan{background:#00a9bd;border:1px solid #00a9bd;color:#fff}.btn-cyan:hover:not(:disabled){background:#008fa1;border-color:#008fa1;box-shadow:0 4px 10px rgba(0,143,161,.22)}.btn-outline{background:#fff;border:1px solid #00a9bd;color:#00a9bd}.btn-outline:hover{background:#e0f7fa}.grid-body{padding:8px}.table-wrap{overflow:auto;min-height:350px;border:1px solid #cfcfcf}.fm-grid{border-collapse:collapse;table-layout:fixed;width:max-content;min-width:100%}.fm-grid th,.fm-grid td{border-right:1px solid #b7c7cf;border-bottom:1px solid #b7c7cf;padding:8px;white-space:nowrap;text-align:left;overflow:hidden;text-overflow:ellipsis}.fm-grid th{background:#f7f7f7;color:#263f4d}.th-content{position:relative;display:flex;align-items:center;justify-content:space-between;gap:6px;height:18px;padding-right:8px}.sort-icon{font-size:12px;color:#90a4ae}.resize-handle{position:absolute;right:-8px;top:-8px;width:10px;height:36px;cursor:col-resize}.resize-handle:hover{border-right:2px solid #00a9bd}.filter-row th{background:#fff}.filter-row input{width:calc(100% - 35px);height:28px;border:1px solid #c5c5c5;border-radius:4px;padding:4px}.filter-row button{border:0;background:transparent;font-weight:700;cursor:pointer}.empty-row-wrap{height:255px}.empty-row{text-align:right!important;vertical-align:bottom;padding:0 14px 18px 0!important;color:#111}.grid-footer{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;border:1px solid #d1d1d1;border-top:0;padding:6px 10px}.footer-icons{display:flex;gap:8px}.footer-icons button,.pager button{border:0;background:transparent;cursor:pointer}.footer-icons .material-icons{font-size:18px}.pager{display:flex;align-items:center;gap:8px}.pager input{width:42px;height:26px;border:1px solid #c5c5c5;border-radius:4px;text-align:center}.pager select{height:28px}.showing{text-align:right}@media(max-width:1000px){.filters-row-4{grid-template-columns:repeat(2,minmax(180px,1fr))}}@media(max-width:600px){.filters-row-4{grid-template-columns:1fr}.grid-footer{grid-template-columns:1fr;gap:8px}.showing{text-align:left}}
+.validacion-redes-page { font-size: 13px; color: #111; }
+.fm-panel { background: #fff; border: 1px solid #d8d8d8; margin-bottom: 7px; }
+.fm-panel-header { height: 31px; background: #f7f7f7; border-bottom: 1px solid #d8d8d8; display: flex; align-items: center; justify-content: space-between; padding: 0 10px; cursor: pointer; }
+.fm-panel-header .material-icons { font-size: 18px; color: #666; }
+.filters-body { border-left: 4px solid #00bcd4; }
+.results-panel { border-left: 4px solid #00bcd4; }
+.filters-row { display: grid; gap: 20px; padding: 12px 20px 14px; border-bottom: 1px solid #d8d8d8; }
+.filters-row-4 { grid-template-columns: repeat(4, minmax(180px, 1fr)); }
+.fm-field { position: relative; min-width: 0; }
+.fm-field label { display: block; margin-bottom: 6px; font-weight: 400; }
+.fm-input, .multi-button { width: 100%; height: 31px; border: 1px solid #9e9e9e; border-radius: 3px; background: #fff; padding: 4px 8px; font-size: 13px; font-weight: 400; box-sizing: border-box; }
+.fm-input:focus, .multi-button:focus { outline: none; border-color: #00bcd4; box-shadow: 0 0 0 2px rgba(0,188,212,.20); }
+.fm-input.disabled { background: #e9e9e9; color: #777; cursor: not-allowed; }
+.multi-button { display: flex; align-items: center; justify-content: center; gap: 4px; background: linear-gradient(#fff,#eee); cursor: pointer; }
+.multi-button.error { border-color: #e91e63; }
+.multi-button .material-icons { font-size: 16px; }
+.field-error { color: #e91e63; font-size: 12px; margin-top: 5px; }
+.multi-menu, .ot-suggestions { position: absolute; top: 52px; left: 0; right: 0; z-index: 30; background: #fff; border: 1px solid #bdbdbd; box-shadow: 0 10px 28px rgba(0,0,0,.2); max-height: 315px; overflow: auto; }
+.multi-menu { border-color: #00bcd4; border-radius: 4px; overflow: hidden; }
+.multi-search { display: grid; grid-template-columns: 40px 1fr 40px; height: 40px; border-bottom: 1px solid #dce8ec; background: #fff; position: sticky; top: 0; z-index: 2; }
+.multi-search span { display: flex; align-items: center; justify-content: center; color: #263238; }
+.multi-search input { border: 0; border-left: 1px solid #dce8ec; padding: 0 10px; outline: none; font-size: 13px; }
+.multi-search input:focus { box-shadow: inset 0 -2px 0 #00bcd4; }
+.multi-search button { border: 1px solid #00bcd4; background: #fff; color: #00a9bd; border-radius: 16px; margin: 5px; cursor: pointer; }
+.multi-search button:hover { background: #e0f7fa; color: #008fa1; }
+.multi-options-list { max-height: 232px; overflow: auto; padding: 4px 0; }
+.multi-option { display: grid; grid-template-columns: 20px 1fr auto; align-items: center; gap: 6px; min-height: 34px; padding: 7px 10px; cursor: pointer; font-weight: 400; color: #111; border-left: 3px solid transparent; transition: background-color .14s ease, border-color .14s ease, color .14s ease; }
+.multi-option:hover { background: #eefbfc; }
+.multi-option.selected { background: #f5fdff; color: #111; border-left-color: #00bcd4; }
+.multi-option-all { position: sticky; top: 40px; z-index: 1; border-bottom: 1px solid #dce8ec; background: #f8fcfd; font-weight: 500; }
+.multi-option-all.selected { background: #e0f7fa; color: #004d57; }
+.multi-option small { color: #607d8b; font-size: 11px; }
+.multi-option input { width: 14px; height: 14px; accent-color: #00a9bd; }
+.multi-empty { padding: 14px; color: #607d8b; text-align: center; }
+.ot-suggestions { max-height: 235px; }
+.ot-suggestions button { display: block; width: 100%; border: 0; background: #fff; text-align: left; padding: 8px 11px; cursor: pointer; }
+.ot-suggestions button:hover, .ot-suggestions button.active { background: #e0f7fa; color: #006f7f; }
+.validation-banner { margin: 10px 20px 0; padding: 9px 12px; border: 1px solid rgba(233,30,99,.25); background: #fff3f7; color: #c2185b; border-radius: 4px; display: flex; gap: 8px; align-items: center; }
+.validation-banner .material-icons { font-size: 18px; }
+.actions-row { display: flex; justify-content: center; gap: 8px; padding: 18px 0 20px; }
+.btn-cyan, .btn-outline { border-radius: 18px; padding: 8px 18px; font-size: 13px; font-weight: 400; cursor: pointer; transition: .18s; }
+.btn-cyan { background: #00a9bd; border: 1px solid #00a9bd; color: #fff; }
+.btn-cyan:hover:not(:disabled) { background: #008fa1; border-color: #008fa1; box-shadow: 0 4px 10px rgba(0,143,161,.22); }
+.btn-outline { background: #fff; border: 1px solid #00a9bd; color: #00a9bd; }
+.btn-outline:hover { background: #e0f7fa; }
+.grid-body { padding: 8px; }
+.table-wrap { overflow: auto; min-height: 350px; border: 1px solid #cfcfcf; }
+.fm-grid { border-collapse: collapse; table-layout: fixed; width: max-content; min-width: 100%; }
+.fm-grid th, .fm-grid td { border-right: 1px solid #b7c7cf; border-bottom: 1px solid #b7c7cf; padding: 8px; white-space: nowrap; text-align: left; overflow: hidden; text-overflow: ellipsis; }
+.fm-grid th { background: #f7f7f7; color: #263f4d; }
+.th-content { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 6px; height: 18px; padding-right: 8px; }
+.sort-icon { font-size: 12px; color: #90a4ae; }
+.resize-handle { position: absolute; right: -8px; top: -8px; width: 10px; height: 36px; cursor: col-resize; }
+.resize-handle:hover { border-right: 2px solid #00a9bd; }
+.filter-row th { background: #fff; }
+.filter-row input { width: calc(100% - 35px); height: 28px; border: 1px solid #c5c5c5; border-radius: 4px; padding: 4px; }
+.filter-row input:focus { outline: none; border-color: #00bcd4; box-shadow: 0 0 0 2px rgba(0,188,212,.14); }
+.filter-row button { border: 0; background: transparent; font-weight: 700; cursor: pointer; }
+.empty-row-wrap { height: 255px; }
+.empty-row { text-align: center !important; vertical-align: middle !important; padding: 0 !important; color: #607d8b; }
+.grid-footer { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; border: 1px solid #d1d1d1; border-top: 0; padding: 6px 10px; }
+.footer-icons { display: flex; gap: 8px; }
+.footer-icons button, .pager button { border: 0; background: transparent; cursor: pointer; }
+.footer-icons .material-icons { font-size: 18px; color: #455a64; }
+.footer-icons button:hover .material-icons { color: #00a9bd; }
+.pager { display: flex; align-items: center; gap: 8px; }
+.pager input { width: 42px; height: 26px; border: 1px solid #c5c5c5; border-radius: 4px; text-align: center; }
+.pager select { height: 28px; accent-color: #00bcd4; }
+.showing { text-align: right; }
+@media(max-width:1000px) { .filters-row-4 { grid-template-columns: repeat(2, minmax(180px, 1fr)); } }
+@media(max-width:600px) { .filters-row-4 { grid-template-columns: 1fr; } .grid-footer { grid-template-columns: 1fr; gap: 8px; } .showing { text-align: left; } }
 </style>
