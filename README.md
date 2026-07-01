@@ -1,4 +1,4 @@
-# Field Manager Vue
+# Vue
 
 Frontend de Field Manager construido con Vue 3 + Vite.
 
