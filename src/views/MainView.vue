@@ -8,13 +8,14 @@
       <GestionMaterialesOtScreen v-if="activeModule === 'materiales-ot'" />
       <ErroresGestionScreen v-if="activeModule === 'errores-gestion'" />
       <MaterialesDescargadosScreen v-if="activeModule === 'materiales-descargados'" />
+      <RegistroOtsFallidasMaterialesScreen v-if="activeModule === 'registro-ots-fallidas-materiales'" />
       <ValidacionOtRedesScreen v-if="activeModule === 'validacion-ot-redes'" />
       <ConfigJobtypeScreen v-if="activeModule === 'config-jobtype'" />
       <ConfigCmoActividadScreen v-if="activeModule === 'config-cmo'" />
       <ActasListaScreen v-if="activeModule === 'consultar-actas'" />
       <NcScreen v-if="activeModule === 'consultar-nota-credito'" />
       <NdScreen v-if="activeModule === 'consultar-nota-debito'" />
-      <RegistroOtFallidasScreen v-if="activeModule === 'registro-ots-fallidas'" />
+      <RegistroOtFallidasScreen v-if="activeModule === 'registro-ots-fallidas-certificacion' || activeModule === 'registro-ots-fallidas'" />
       <OtSearchScreen v-if="activeModule === 'busqueda-ots'" />
       <ReporteSasScreen v-if="activeModule === 'reporte-sas'" />
     </div>
@@ -30,6 +31,7 @@ import ErroresGestionSucursalScreen from '../modules/gestion-materiales/errores-
 import GestionMaterialesOtScreen from '../modules/gestion-materiales/gestion-materiales-ot/GestionMaterialesOtScreen.vue'
 import ErroresGestionScreen from '../modules/gestion-materiales/errores-gestion/ErroresGestionScreen.vue'
 import MaterialesDescargadosScreen from '../modules/gestion-materiales/materiales-descargados/MaterialesDescargadosScreen.vue'
+import RegistroOtsFallidasMaterialesScreen from '../modules/gestion-materiales/registro-ots-fallidas-materiales/RegistroOtsFallidasMaterialesScreen.vue'
 import ValidacionOtRedesScreen from '../modules/gestion-materiales/validacion-ot-redes/ValidacionOtRedesScreen.vue'
 import ConfigJobtypeScreen from '../modules/actas/config-jobtype/ConfigJobtypeScreen.vue'
 import ConfigCmoActividadScreen from '../modules/actas/config-cmo-actividad/ConfigCmoActividadScreen.vue'
@@ -40,7 +42,7 @@ import RegistroOtFallidasScreen from '../modules/actas/registro-ot-fallidas/Regi
 import OtSearchScreen from '../modules/actas/ot-search/OtSearchScreen.vue'
 import ReporteSasScreen from '../modules/reportes/reporte-sas/ReporteSasScreen.vue'
 
-const allowedModules = new Set(['search-classic', 'errores-gestion-sucursal', 'materiales-ot', 'errores-gestion', 'materiales-descargados', 'validacion-ot-redes', 'config-jobtype', 'config-cmo', 'consultar-actas', 'consultar-nota-credito', 'consultar-nota-debito', 'registro-ots-fallidas', 'busqueda-ots', 'reporte-sas'])
+const allowedModules = new Set(['search-classic', 'errores-gestion-sucursal', 'materiales-ot', 'errores-gestion', 'materiales-descargados', 'registro-ots-fallidas-materiales', 'validacion-ot-redes', 'config-jobtype', 'config-cmo', 'consultar-actas', 'consultar-nota-credito', 'consultar-nota-debito', 'registro-ots-fallidas-certificacion', 'registro-ots-fallidas', 'busqueda-ots', 'reporte-sas'])
 const getInitialModule = () => {
   const moduleFromUrl = new URLSearchParams(window.location.search).get('module')
   return allowedModules.has(moduleFromUrl) ? moduleFromUrl : 'none'
