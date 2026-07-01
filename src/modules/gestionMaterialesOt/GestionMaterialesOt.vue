@@ -1,7 +1,7 @@
 <template>
-  <GestionMaterialesOtScreen />
+  <Screen />
 </template>
 
 <script setup>
-import GestionMaterialesOtScreen from '../gestion-materiales/gestion-materiales-ot/GestionMaterialesOtScreen.vue'
+import Screen from './Screen.vue'
 </script>
