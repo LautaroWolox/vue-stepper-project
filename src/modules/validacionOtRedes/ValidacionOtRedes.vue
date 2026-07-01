@@ -1,7 +1,4 @@
-<template>
-  <ValidacionOtRedesScreen />
-</template>
-
+<template><Screen /></template>
 <script setup>
-import ValidacionOtRedesScreen from '../gestion-materiales/validacion-ot-redes/ValidacionOtRedesScreen.vue'
+import Screen from './Screen.vue'
 </script>
