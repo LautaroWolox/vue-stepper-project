@@ -8,35 +8,33 @@
         </div>
 
         <div class="fm-panel-content filters-content" v-show="openFilters">
-          <div class="filters-row first-row">
-            <div class="fm-field">
+          <div class="filters-grid">
+            <div class="fm-field span-3">
               <label>Provincia</label>
               <FmTurquoiseSelect v-model="form.provincia" :options="provinciaOptions" class="nc-select" />
             </div>
 
-            <div class="fm-field">
+            <div class="fm-field span-3">
               <label>Contratista Acta</label>
               <FmTurquoiseSelect v-model="form.contratista" :options="contratistaOptions" class="nc-select" />
             </div>
 
-            <div class="fm-field">
+            <div class="fm-field span-3">
               <label>Sociedad Acta</label>
               <FmTurquoiseSelect v-model="form.sociedad" :options="sociedadOptions" class="nc-select" />
             </div>
 
-            <div class="fm-field">
+            <div class="fm-field span-3">
               <label>Tipo de Contrato</label>
               <FmTurquoiseSelect v-model="form.tipo_contrato" :options="tipoContratoOptions" class="nc-select" />
             </div>
-          </div>
 
-          <div class="filters-row second-row">
-            <div class="fm-field anio-field">
+            <div class="fm-field span-2 anio-field">
               <label>Año</label>
               <FmTurquoiseSelect v-model="form.anio" :options="anioOptions" class="nc-select" />
             </div>
 
-            <div class="fm-field periodo-field">
+            <div class="fm-field span-2 periodo-field">
               <label>Periodo</label>
               <FmTurquoiseSelect
                 v-model="form.periodo"
@@ -46,24 +44,22 @@
               />
             </div>
 
-            <div class="fm-field estado-field">
+            <div class="fm-field span-2 estado-field">
               <label>Estado</label>
               <FmTurquoiseSelect v-model="form.estado" :options="estadoOptions" class="nc-select" />
             </div>
-          </div>
 
-          <div class="filters-row third-row">
-            <div class="fm-field">
+            <div class="fm-field span-2">
               <label>Nota de Credito</label>
               <input type="text" class="form-control" v-model.trim="form.nota_credito" />
             </div>
 
-            <div class="fm-field">
+            <div class="fm-field span-2">
               <label>N° de OT</label>
               <input type="text" class="form-control" v-model.trim="form.nro_ot" />
             </div>
 
-            <div class="fm-field">
+            <div class="fm-field span-2">
               <label>Nro Acta Asociada</label>
               <input type="text" class="form-control" v-model.trim="form.acta_asociada" />
             </div>
@@ -232,24 +228,21 @@ onMounted(openDetalleFromUrl)
   border-left: 4px solid #00bcd4;
 }
 
-.filters-row {
+.filters-grid {
   display: grid;
-  gap: 18px;
-  padding: 12px 20px 14px;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 14px 18px;
+  padding: 14px 22px 16px;
   border-bottom: 1px solid #d8d8d8;
   align-items: end;
 }
 
-.first-row {
-  grid-template-columns: repeat(4, minmax(190px, 1fr));
+.span-2 {
+  grid-column: span 2;
 }
 
-.second-row {
-  grid-template-columns: 155px 270px 270px 1fr;
-}
-
-.third-row {
-  grid-template-columns: 270px 270px 270px 1fr;
+.span-3 {
+  grid-column: span 3;
 }
 
 .fm-field {
@@ -304,11 +297,6 @@ onMounted(openDetalleFromUrl)
 .nc-select :deep(.fm-turquoise-select__option:hover) {
   background: #e0f7fa;
   color: #006f7f;
-}
-
-.periodo-field,
-.estado-field {
-  max-width: 270px;
 }
 
 .periodo-field :deep(.fm-turquoise-select.disabled .fm-turquoise-select__button) {
@@ -392,26 +380,27 @@ onMounted(openDetalleFromUrl)
 }
 
 @media(max-width: 1180px) {
-  .first-row,
-  .second-row,
-  .third-row {
-    grid-template-columns: repeat(2, minmax(180px, 1fr));
+  .span-3 {
+    grid-column: span 6;
   }
 
-  .periodo-field,
-  .estado-field {
-    max-width: none;
+  .span-2 {
+    grid-column: span 4;
+  }
+}
+
+@media(max-width: 760px) {
+  .span-3,
+  .span-2 {
+    grid-column: span 12;
+  }
+
+  .filters-grid {
+    padding: 12px;
   }
 }
 
 @media(max-width: 560px) {
-  .first-row,
-  .second-row,
-  .third-row {
-    grid-template-columns: 1fr;
-    padding: 12px;
-  }
-
   .filters-actions {
     flex-direction: column;
     padding: 12px;
