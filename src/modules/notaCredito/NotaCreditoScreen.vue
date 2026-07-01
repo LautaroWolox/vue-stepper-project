@@ -1,35 +1,41 @@
 <template>
   <div class="nota-credito-page">
-    <section class="fm-panel">
-      <div class="fm-panel-header" @click="openFilters = !openFilters"><span>FILTROS DE BÚSQUEDA</span><span class="material-icons">{{ openFilters ? 'remove' : 'add' }}</span></div>
-      <div v-show="openFilters" class="filters-content">
-        <div class="filters-grid">
-          <div class="field span-3"><label>Provincia</label><FmTurquoiseSelect v-model="form.provincia" :options="provinciaOptions" /></div>
-          <div class="field span-3"><label>Contratista Acta</label><FmTurquoiseSelect v-model="form.contratista" :options="contratistaOptions" /></div>
-          <div class="field span-3"><label>Sociedad Acta</label><FmTurquoiseSelect v-model="form.sociedad" :options="sociedadOptions" /></div>
-          <div class="field span-3"><label>Tipo de Contrato</label><FmTurquoiseSelect v-model="form.tipo_contrato" :options="tipoContratoOptions" /></div>
-          <div class="field span-2"><label>Año</label><FmTurquoiseSelect v-model="form.anio" :options="anioOptions" /></div>
-          <div class="field span-2"><label>Periodo</label><FmTurquoiseSelect v-model="form.periodo" :options="periodoOptions" :disabled="!form.anio" /></div>
-          <div class="field span-2"><label>Estado</label><FmTurquoiseSelect v-model="form.estado" :options="estadoOptions" /></div>
-          <div class="field span-2"><label>Nota de Credito</label><input v-model.trim="form.nota_credito" /></div>
-          <div class="field span-2"><label>N° de OT</label><input v-model.trim="form.nro_ot" /></div>
-          <div class="field span-2"><label>Nro Acta Asociada</label><input v-model.trim="form.acta_asociada" /></div>
+    <div v-if="currentView === 'search'">
+      <section class="fm-panel">
+        <div class="fm-panel-header" @click="openFilters = !openFilters"><span>FILTROS DE BÚSQUEDA</span><span class="material-icons">{{ openFilters ? 'remove' : 'add' }}</span></div>
+        <div v-show="openFilters" class="filters-content">
+          <div class="filters-grid">
+            <div class="field span-3"><label>Provincia</label><FmTurquoiseSelect v-model="form.provincia" :options="provinciaOptions" /></div>
+            <div class="field span-3"><label>Contratista Acta</label><FmTurquoiseSelect v-model="form.contratista" :options="contratistaOptions" /></div>
+            <div class="field span-3"><label>Sociedad Acta</label><FmTurquoiseSelect v-model="form.sociedad" :options="sociedadOptions" /></div>
+            <div class="field span-3"><label>Tipo de Contrato</label><FmTurquoiseSelect v-model="form.tipo_contrato" :options="tipoContratoOptions" /></div>
+            <div class="field span-2"><label>Año</label><FmTurquoiseSelect v-model="form.anio" :options="anioOptions" /></div>
+            <div class="field span-2"><label>Periodo</label><FmTurquoiseSelect v-model="form.periodo" :options="periodoOptions" :disabled="!form.anio" /></div>
+            <div class="field span-2"><label>Estado</label><FmTurquoiseSelect v-model="form.estado" :options="estadoOptions" /></div>
+            <div class="field span-2"><label>Nota de Credito</label><input v-model.trim="form.nota_credito" /></div>
+            <div class="field span-2"><label>N° de OT</label><input v-model.trim="form.nro_ot" /></div>
+            <div class="field span-2"><label>Nro Acta Asociada</label><input v-model.trim="form.acta_asociada" /></div>
+          </div>
+          <div class="actions"><button class="primary" @click="buscar"><span class="material-icons">search</span>BUSCAR</button><button class="outline" @click="limpiar"><span class="material-icons">sort</span>LIMPIAR</button></div>
         </div>
-        <div class="actions"><button class="primary" @click="buscar"><span class="material-icons">search</span>BUSCAR</button><button class="outline" @click="limpiar"><span class="material-icons">sort</span>LIMPIAR</button></div>
-      </div>
-    </section>
-    <FmTypingLoader v-if="loading" title="Recuperando Notas de Crédito" message="Consultando datos y preparando la grilla..." />
-    <section v-if="searched && !loading" class="fm-panel"><div class="fm-panel-header"><span>NOTAS DE CREDITO</span><span>-</span></div><Tabla :data="rows" file-name="notas_credito.xls" @open-nota="abrirNota" /></section>
+      </section>
+      <FmTypingLoader v-if="loading" title="Recuperando Notas de Crédito" message="Consultando datos y preparando la grilla..." />
+      <section v-if="searched && !loading" class="fm-panel"><div class="fm-panel-header"><span>NOTAS DE CREDITO</span><span>-</span></div><Tabla :data="rows" file-name="notas_credito.xls" @open-nota="abrirNota" /></section>
+    </div>
+    <DetalleNotaCreditoView v-if="currentView === 'detail'" :nota="selectedNota" tipo-nota="credito" @volver="volverDesdeDetalle" />
   </div>
 </template>
 
 <script setup>
-import { reactive, ref, watch } from 'vue'
+import { onMounted, reactive, ref, watch } from 'vue'
 import FmTypingLoader from '../../components/shared/FmTypingLoader.vue'
 import FmTurquoiseSelect from '../../components/shared/FmTurquoiseSelect.vue'
+import DetalleNotaCreditoView from '../../components/certificacion/notas/DetalleNotaCreditoView.vue'
 import Tabla from './components/Tabla.vue'
 import { searchNotasCredito } from '../../services/certificacionService.js'
 import { provinciasCertificacion } from '../../mocks/certificacionMock.js'
+const currentView = ref('search')
+const selectedNota = ref(null)
 const openFilters = ref(true)
 const searched = ref(false)
 const loading = ref(false)
@@ -47,7 +53,10 @@ const estadoOptions = opt(['En Curso', 'Cerrado'])
 watch(() => form.anio, v => { if (!v) form.periodo = '' })
 const limpiar = () => Object.assign(form, empty())
 const buscar = async () => { openFilters.value = false; searched.value = true; loading.value = true; try { rows.value = await searchNotasCredito({ ...form }) } finally { loading.value = false } }
-const abrirNota = row => { const key = `fm-detalle-nota-credito-${row?.nro_nota || Date.now()}`; localStorage.setItem(key, JSON.stringify(row)); const url = new URL(window.location.href); url.searchParams.set('module', 'consultar-nota-credito'); url.searchParams.set('detalleNota', '1'); url.searchParams.set('tipoNota', 'credito'); url.searchParams.set('notaKey', key); window.open(url.toString(), '_blank') }
+const abrirNota = row => { const key = `fm-detalle-nota-credito-${row?.nro_nota || Date.now()}`; localStorage.setItem(key, JSON.stringify(row)); const url = new URL(window.location.href); url.searchParams.set('module', 'consultar-nota-credito'); url.searchParams.set('detalleNota', '1'); url.searchParams.set('tipoNota', 'credito'); url.searchParams.set('notaKey', key); window.open(url.toString(), '_blank', 'noopener,noreferrer') }
+const openDetalleFromUrl = () => { const params = new URLSearchParams(window.location.search); if (params.get('detalleNota') !== '1') return; const key = params.get('notaKey'); if (!key) return; const saved = localStorage.getItem(key); if (!saved) return; selectedNota.value = JSON.parse(saved); currentView.value = 'detail' }
+const volverDesdeDetalle = () => { if (new URLSearchParams(window.location.search).get('detalleNota') === '1') window.close(); else currentView.value = 'search' }
+onMounted(openDetalleFromUrl)
 </script>
 
 <style scoped>
