@@ -1,0 +1,22 @@
+:root {
+  --fm-cyan: #00a9bd;
+  --fm-cyan-strong: #008fa1;
+  --fm-cyan-soft: #e0f7fa;
+  --fm-cyan-row: #9eeff7;
+  --fm-border: #d8d8d8;
+  --fm-grid-border: #c9d3da;
+  --fm-grid-line: #dce3e8;
+  --fm-header-bg: #f7f7f7;
+  --fm-grid-header-bg: #f4f7f9;
+  --fm-text: #111;
+  --fm-muted: #607d8b;
+  --fm-shadow: 0 3px 8px rgba(0, 0, 0, .12);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  color: var(--fm-text);
+}
