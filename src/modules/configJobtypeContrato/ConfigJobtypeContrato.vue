@@ -1,7 +1,4 @@
-<template>
-  <ConfigJobtypeScreen />
-</template>
-
+<template><Local /></template>
 <script setup>
-import ConfigJobtypeScreen from '../actas/config-jobtype/ConfigJobtypeScreen.vue'
+import Local from './Local.vue'
 </script>
