@@ -101,26 +101,34 @@
 
     <FmTypingLoader v-if="loading" title="Validando OT de Redes" message="Buscando registros y preparando la grilla..." />
 
-    <section class="fm-panel results-panel">
+    <section class="fm-panel results-panel validacion-grid-panel">
       <div class="fm-panel-header" @click="openResults = !openResults">
         <span>VALIDACION DE OT</span>
         <span class="material-icons">{{ openResults ? 'remove' : 'add' }}</span>
       </div>
 
       <div v-show="openResults" class="fm-panel-body grid-body">
-        <div class="table-wrap">
-          <table class="fm-grid">
+        <div class="table-wrap validacion-table-wrap">
+          <table class="fm-grid validacion-grid-table">
+            <colgroup>
+              <col style="width: 38px; min-width: 38px; max-width: 38px" />
+              <col v-for="column in columns" :key="`col-${column.field}`" :style="colStyle(column)" />
+            </colgroup>
             <thead>
-              <tr>
+              <tr class="validacion-head-row">
+                <th class="check-col">
+                  <input type="checkbox" :checked="allPageSelected" :disabled="pageRows.length === 0" @change="toggleAllPage" />
+                </th>
                 <th v-for="column in columns" :key="column.field" :style="colStyle(column)">
                   <div class="th-content">
                     <span>{{ column.label }}</span>
-                    <span class="sort-icon">↕</span>
+                    <span class="sort-stack"><span>▲</span><span>▼</span></span>
                     <span class="resize-handle" @mousedown.prevent="startResize(column, $event)"></span>
                   </div>
                 </th>
               </tr>
-              <tr class="filter-row">
+              <tr class="filter-row validacion-filter-row">
+                <th class="check-col"></th>
                 <th v-for="column in columns" :key="`filter-${column.field}`" :style="colStyle(column)">
                   <span>~</span>
                   <input v-model="columnFilters[column.field]" @input="currentPage = 1" />
@@ -129,17 +137,20 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="row in pageRows" :key="row.nro_ot">
+              <tr v-for="row in pageRows" :key="row.nro_ot" :class="{ selected: selectedRowSet.has(row.nro_ot) }" @click="toggleRow(row)">
+                <td class="check-col" @click.stop>
+                  <input type="checkbox" :checked="selectedRowSet.has(row.nro_ot)" @change="toggleRow(row)" />
+                </td>
                 <td v-for="column in columns" :key="`${row.nro_ot}-${column.field}`" :style="colStyle(column)">{{ row[column.field] }}</td>
               </tr>
-              <tr v-if="pageRows.length === 0" class="empty-row-wrap">
-                <td class="empty-row" :colspan="columns.length">No hay resultados</td>
+              <tr v-if="pageRows.length === 0" class="empty-row-wrap validacion-empty-row-wrap">
+                <td class="empty-row" :colspan="columns.length + 1">No hay resultados</td>
               </tr>
             </tbody>
           </table>
         </div>
 
-        <div class="grid-footer">
+        <div class="grid-footer validacion-grid-footer">
           <div class="footer-icons">
             <button title="Exportar Excel" @click="exportar"><span class="material-icons">file_download</span></button>
             <button title="Limpiar filtros" @click="limpiarFiltrosGrilla"><span class="material-icons">filter_alt_off</span></button>
@@ -148,7 +159,7 @@
             <button :disabled="currentPage === 1" @click="currentPage = 1">|&lt;</button>
             <button :disabled="currentPage === 1" @click="currentPage--">&lt;</button>
             <span>Página</span>
-            <input type="number" min="1" :max="totalPages" v-model.number="currentPage" />
+            <input type="number" min="1" :max="totalPages" v-model.number="currentPage" @change="normalizePage" />
             <span>de {{ totalPages }}</span>
             <button :disabled="currentPage === totalPages" @click="currentPage++">&gt;</button>
             <button :disabled="currentPage === totalPages" @click="currentPage = totalPages">&gt;|</button>
@@ -177,6 +188,7 @@ const centroError = ref('')
 const generalError = ref('')
 const showSuggestions = ref(false)
 const activeSuggestion = ref(0)
+const selectedRows = ref([])
 
 const filters = reactive({ regiones: [], subRegiones: [], centros: [], almacenes: [], nroOt: '', fechaDesde: '', fechaHasta: '' })
 const comboSearch = reactive({ regiones: '', subRegiones: '', centros: '', almacenes: '' })
@@ -206,14 +218,14 @@ const otSuggestions = computed(() => {
 })
 
 const columns = reactive([
-  { field: 'nro_ot', label: 'NRO OT', width: 220 },
-  { field: 'estado_ot', label: 'Estado OT', width: 220 },
-  { field: 'cod_centro', label: 'COD CENTRO', width: 220 },
-  { field: 'centro', label: 'CENTRO', width: 220 },
-  { field: 'cod_almacen', label: 'COD ALMACEN', width: 220 },
-  { field: 'almacen', label: 'ALMACEN', width: 220 },
+  { field: 'nro_ot', label: 'NRO OT', width: 120 },
+  { field: 'estado_ot', label: 'ESTADO OT', width: 160 },
+  { field: 'cod_centro', label: 'COD CENTRO', width: 160 },
+  { field: 'centro', label: 'CENTRO', width: 160 },
+  { field: 'cod_almacen', label: 'COD ALMACEN', width: 170 },
+  { field: 'almacen', label: 'ALMACEN', width: 170 },
   { field: 'direccion', label: 'DIRECCION', width: 220 },
-  { field: 'codigo_tarea', label: 'CODIGO TAREA', width: 220 }
+  { field: 'codigo_tarea', label: 'CODIGO TAREA', width: 170 }
 ])
 const columnFilters = reactive(Object.fromEntries(columns.map(column => [column.field, ''])))
 const rows = ref([])
@@ -225,6 +237,8 @@ const totalPages = computed(() => Math.max(1, Math.ceil(filteredRows.value.lengt
 const pageRows = computed(() => filteredRows.value.slice((currentPage.value - 1) * itemsPerPage.value, currentPage.value * itemsPerPage.value))
 const fromRow = computed(() => filteredRows.value.length ? (currentPage.value - 1) * itemsPerPage.value + 1 : 0)
 const toRow = computed(() => Math.min(currentPage.value * itemsPerPage.value, filteredRows.value.length))
+const selectedRowSet = computed(() => new Set(selectedRows.value))
+const allPageSelected = computed(() => pageRows.value.length > 0 && pageRows.value.every(row => selectedRowSet.value.has(row.nro_ot)))
 
 const comboText = combo => filters[combo.key].length === 0 ? 'Seleccionar' : filters[combo.key].length === combo.items.length ? `Todos seleccionados (${filters[combo.key].length})` : `${filters[combo.key].length} seleccionados`
 const allSelected = combo => combo.items.length > 0 && filters[combo.key].length === combo.items.length
@@ -239,7 +253,6 @@ const toggleItem = (key, item) => {
   index >= 0 ? selected.splice(index, 1) : selected.push(item)
 }
 const toggleAll = combo => { filters[combo.key] = allSelected(combo) ? [] : [...combo.items] }
-const clearCombo = key => { comboSearch[key] = ''; filters[key] = [] }
 
 const showOtAutocomplete = () => { showSuggestions.value = otSuggestions.value.length > 0; activeSuggestion.value = 0 }
 const hideOtAutocomplete = () => setTimeout(() => { showSuggestions.value = false }, 150)
@@ -254,6 +267,7 @@ const confirmSuggestion = () => { if (showSuggestions.value && otSuggestions.val
 watch(isNroOtDisabled, disabled => { if (disabled) filters.nroOt = '' })
 watch(isFechaHastaDisabled, disabled => { if (disabled) filters.fechaHasta = '' })
 watch(() => filters.centros.length, () => { centroError.value = ''; generalError.value = '' })
+watch(totalPages, () => normalizePage())
 
 const validar = () => {
   if ((filters.regiones.length || filters.subRegiones.length) && filters.centros.length === 0) {
@@ -279,6 +293,7 @@ const buscar = () => {
       direccion: ['PERON JUAN DOMINGO','SOLIS 329','AV ALTE BROWN 1020','CHILE 1326'][i % 4],
       codigo_tarea: ['9HDA0','RCD13','9DSPC','GIACN'][i % 4]
     }))
+    selectedRows.value = []
     currentPage.value = 1
     loading.value = false
   }, 650)
@@ -300,6 +315,18 @@ const limpiar = () => {
   openFilters.value = true
 }
 const limpiarFiltrosGrilla = () => { Object.keys(columnFilters).forEach(key => { columnFilters[key] = '' }); currentPage.value = 1 }
+const normalizePage = () => { if (currentPage.value < 1) currentPage.value = 1; if (currentPage.value > totalPages.value) currentPage.value = totalPages.value }
+const toggleRow = row => {
+  const index = selectedRows.value.indexOf(row.nro_ot)
+  index >= 0 ? selectedRows.value.splice(index, 1) : selectedRows.value.push(row.nro_ot)
+}
+const toggleAllPage = event => {
+  pageRows.value.forEach(row => {
+    const index = selectedRows.value.indexOf(row.nro_ot)
+    if (event.target.checked && index === -1) selectedRows.value.push(row.nro_ot)
+    if (!event.target.checked && index >= 0) selectedRows.value.splice(index, 1)
+  })
+}
 const colStyle = column => ({ width: `${column.width}px`, minWidth: `${column.width}px`, maxWidth: `${column.width}px` })
 const startResize = (column, event) => {
   const startX = event.clientX
@@ -368,29 +395,37 @@ onBeforeUnmount(() => document.removeEventListener('mousedown', closeMenus))
 .btn-outline { background: #fff; border: 1px solid #00a9bd; color: #00a9bd; }
 .btn-outline:hover { background: #e0f7fa; border-color: #008fa1; color: #008fa1; box-shadow: 0 5px 12px rgba(0,143,161,.18); transform: translateY(-1px); }
 .grid-body { padding: 8px; }
-.table-wrap { overflow: auto; min-height: 350px; border: 1px solid #cfcfcf; }
-.fm-grid { border-collapse: collapse; table-layout: fixed; width: max-content; min-width: 100%; }
-.fm-grid th, .fm-grid td { border-right: 1px solid #b7c7cf; border-bottom: 1px solid #b7c7cf; padding: 8px; white-space: nowrap; text-align: left; overflow: hidden; text-overflow: ellipsis; }
-.fm-grid th { background: #f7f7f7; color: #263f4d; }
+.validacion-table-wrap { overflow: auto; height: 350px; min-height: 350px; border: 1px solid #c7d6de; border-bottom: 0; background: #eefdff; }
+.validacion-grid-table { border-collapse: collapse; table-layout: fixed; width: max-content; min-width: 100%; color: #263238; font-size: 12px; }
+.validacion-grid-table th, .validacion-grid-table td { border-right: 1px solid #c7d6de; border-bottom: 1px solid #d5e1e7; padding: 6px 8px; white-space: nowrap; text-align: left; overflow: hidden; text-overflow: ellipsis; line-height: 18px; background: #fff; }
+.validacion-grid-table thead th { position: sticky; z-index: 8; background: #f4f8fa; color: #2c4050; font-size: 11px; font-weight: 600; }
+.validacion-head-row th { top: 0; height: 34px; padding-top: 5px; padding-bottom: 5px; }
+.validacion-filter-row th { top: 34px; height: 38px; background: #fff; z-index: 7; padding: 5px 6px; }
+.check-col { text-align: center !important; padding-left: 0 !important; padding-right: 0 !important; }
+.check-col input[type='checkbox'] { width: 14px; height: 14px; accent-color: #00a9bd; cursor: pointer; }
 .th-content { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 6px; height: 18px; padding-right: 8px; }
-.sort-icon { font-size: 12px; color: #90a4ae; }
+.sort-stack { display: inline-flex; flex-direction: column; gap: 0; line-height: 7px; font-size: 8px; color: #9fb2bd; min-width: 10px; }
 .resize-handle { position: absolute; right: -8px; top: -8px; width: 10px; height: 36px; cursor: col-resize; }
 .resize-handle:hover { border-right: 2px solid #00a9bd; }
-.filter-row th { background: #fff; }
-.filter-row input { width: calc(100% - 35px); height: 28px; border: 1px solid #c5c5c5; border-radius: 4px; padding: 4px; }
+.filter-row input { width: calc(100% - 35px); height: 24px; border: 1px solid #c4d0d8; border-radius: 3px; padding: 3px 5px; box-sizing: border-box; font-size: 11px; }
 .filter-row input:focus { outline: none; border-color: #00bcd4; box-shadow: 0 0 0 2px rgba(0,188,212,.14); }
-.filter-row button { border: 0; background: transparent; font-weight: 700; cursor: pointer; }
-.empty-row-wrap { height: 255px; }
-.empty-row { text-align: center !important; vertical-align: middle !important; padding: 0 !important; color: #607d8b; }
-.grid-footer { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; border: 1px solid #d1d1d1; border-top: 0; padding: 6px 10px; }
-.footer-icons { display: flex; gap: 8px; }
-.footer-icons button, .pager button { border: 0; background: transparent; cursor: pointer; }
-.footer-icons .material-icons { font-size: 18px; color: #455a64; }
-.footer-icons button:hover .material-icons { color: #00a9bd; }
-.pager { display: flex; align-items: center; gap: 8px; }
+.filter-row button { border: 0; background: transparent; font-weight: 700; cursor: pointer; padding-left: 5px; }
+.validacion-grid-table tbody tr:not(.empty-row-wrap) { cursor: pointer; }
+.validacion-grid-table tbody tr:not(.empty-row-wrap):hover td { background: #edfafd; }
+.validacion-grid-table tbody tr.selected td { background: #d8f7fb; color: #003f47; }
+.validacion-empty-row-wrap { height: 255px; }
+.validacion-empty-row-wrap .empty-row { text-align: center !important; vertical-align: middle !important; padding: 0 !important; color: #607d8b; background: #eefdff !important; font-size: 13px; }
+.validacion-grid-footer { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; border: 1px solid #d1d1d1; border-top: 0; padding: 6px 10px; min-height: 38px; background: #fff; font-size: 12px; }
+.footer-icons { display: flex; gap: 10px; align-items: center; }
+.footer-icons button, .pager button { border: 0; background: transparent; cursor: pointer; color: #455a64; padding: 2px 4px; }
+.footer-icons .material-icons { font-size: 19px; color: #455a64; }
+.footer-icons button:hover .material-icons, .pager button:hover:not(:disabled) { color: #00a9bd; }
+.pager { display: flex; align-items: center; justify-content: center; gap: 8px; }
+.pager button:disabled { opacity: .35; cursor: not-allowed; }
 .pager input { width: 42px; height: 26px; border: 1px solid #c5c5c5; border-radius: 4px; text-align: center; }
-.pager select { height: 28px; accent-color: #00bcd4; }
-.showing { text-align: right; }
+.pager input:focus, .pager select:focus { outline: none; border-color: #00bcd4; box-shadow: 0 0 0 2px rgba(0,188,212,.14); }
+.pager select { height: 28px; border: 1px solid #c5c5c5; border-radius: 4px; background: #fff; accent-color: #00bcd4; }
+.showing { text-align: right; white-space: nowrap; }
 @media(max-width:1000px) { .filters-row-4 { grid-template-columns: repeat(2, minmax(180px, 1fr)); } }
-@media(max-width:600px) { .filters-row-4 { grid-template-columns: 1fr; } .grid-footer { grid-template-columns: 1fr; gap: 8px; } .showing { text-align: left; } }
+@media(max-width:600px) { .filters-row-4 { grid-template-columns: 1fr; } .validacion-grid-footer { grid-template-columns: 1fr; gap: 8px; } .showing { text-align: left; } }
 </style>
