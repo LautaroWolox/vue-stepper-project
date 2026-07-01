@@ -74,14 +74,35 @@
     </div>
 
     <div v-if="state.excludePopup.show" class="float-modal include-modal" :style="modalStyle(state.excludePopup)">
-      <div class="float-head" @mousedown="startPopupDrag($event, state.excludePopup)"><span>Alerta</span><button @click="state.excludePopup.show = false">x</button></div>
+      <div class="float-head" @mousedown="startPopupDrag($event, state.excludePopup)"><span>Alerta</span><button @click="state.excludePopup.show = false; state.excludeConfirmPopup.show = false">x</button></div>
       <div class="float-body">
         <p>¿Confirma que desea excluir la OT seleccionada?</p>
         <label>Motivo<FmTurquoiseSelect v-model="state.excludePopup.motivo" :options="state.motivoOptions" class="popup-select" /></label>
         <label>Nota<textarea v-model="state.excludePopup.nota" placeholder="Opcional" rows="3"></textarea></label>
       </div>
       <div class="float-actions">
-        <button class="fallidas-btn-secondary" @click="state.excludePopup.show = false">CANCELAR</button>
+        <button class="fallidas-btn-secondary" @click="state.excludePopup.show = false; state.excludeConfirmPopup.show = false">CANCELAR</button>
+        <button class="fallidas-btn-primary" @click="state.pedirConfirmacionExcluir">ACEPTAR</button>
+      </div>
+    </div>
+
+    <div v-if="state.excludeConfirmPopup.show" class="float-modal include-modal confirm-exclude-modal" :style="modalStyle(state.excludeConfirmPopup)">
+      <div class="float-head" @mousedown="startPopupDrag($event, state.excludeConfirmPopup)"><span>Alerta</span><button @click="state.cancelarConfirmacionExcluir">x</button></div>
+      <div class="float-body">
+        <p class="confirm-question">¿Está seguro que desea confirmar?</p>
+        <div class="confirm-summary">
+          <div class="confirm-summary-row">
+            <span>Motivo</span>
+            <strong>{{ state.excludePopup.motivo }}</strong>
+          </div>
+          <div class="confirm-summary-row">
+            <span>Nota</span>
+            <strong>{{ state.excludePopup.nota?.trim() || 'Sin nota cargada' }}</strong>
+          </div>
+        </div>
+      </div>
+      <div class="float-actions">
+        <button class="fallidas-btn-secondary" @click="state.cancelarConfirmacionExcluir">CANCELAR</button>
         <button class="fallidas-btn-primary" @click="state.confirmarExcluir">ACEPTAR</button>
       </div>
     </div>
