@@ -8,7 +8,12 @@
     <div v-if="open" class="validacion-calendar-popover">
       <div class="validacion-calendar-head">
         <button type="button" @click="previousMonth">‹</button>
-        <strong>{{ monthNames[currentMonth] }} {{ currentYear }}</strong>
+        <div class="validacion-calendar-title">
+          <strong>{{ monthNames[currentMonth] }}</strong>
+          <select v-model.number="currentYear" aria-label="Año">
+            <option v-for="year in yearOptions" :key="year" :value="year">{{ year }}</option>
+          </select>
+        </div>
         <button type="button" @click="nextMonth">›</button>
       </div>
 
@@ -55,6 +60,10 @@ const currentYear = ref(props.modelValue ? Number(props.modelValue.slice(0, 4)) 
 const currentMonth = ref(props.modelValue ? Number(props.modelValue.slice(5, 7)) - 1 : now.getMonth())
 const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
 const weekDays = ['DO', 'LU', 'MA', 'MI', 'JU', 'VI', 'SA']
+const yearOptions = computed(() => {
+  const base = now.getFullYear()
+  return Array.from({ length: 31 }, (_, index) => base - 15 + index)
+})
 
 const displayValue = computed(() => props.modelValue ? formatDisplay(props.modelValue) : props.placeholder)
 const days = computed(() => {
@@ -183,7 +192,7 @@ onBeforeUnmount(() => document.removeEventListener('mousedown', handleDocumentMo
   z-index: 9500;
   top: 36px;
   left: 0;
-  width: 252px;
+  width: 268px;
   background: #fff;
   border: 1px solid #00bcd4;
   border-radius: 6px;
@@ -199,12 +208,38 @@ onBeforeUnmount(() => document.removeEventListener('mousedown', handleDocumentMo
   color: #263238;
 }
 
-.validacion-calendar-head strong {
+.validacion-calendar-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-width: 168px;
+}
+
+.validacion-calendar-title strong {
   font-size: 13px;
   font-weight: 600;
 }
 
-.validacion-calendar-head button {
+.validacion-calendar-title select {
+  height: 26px;
+  border: 1px solid #c7d1d8;
+  border-radius: 3px;
+  background: #fff;
+  color: #263238;
+  font-size: 12px;
+  outline: none;
+  padding: 2px 5px;
+  accent-color: #00bcd4;
+}
+
+.validacion-calendar-title select:focus,
+.validacion-calendar-title select:hover {
+  border-color: #00bcd4;
+  box-shadow: 0 0 0 2px rgba(0, 188, 212, .14);
+}
+
+.validacion-calendar-head > button {
   width: 26px;
   height: 26px;
   border: 1px solid #d4e3e8;
@@ -216,7 +251,7 @@ onBeforeUnmount(() => document.removeEventListener('mousedown', handleDocumentMo
   line-height: 20px;
 }
 
-.validacion-calendar-head button:hover {
+.validacion-calendar-head > button:hover {
   background: #e0f7fa;
 }
 
