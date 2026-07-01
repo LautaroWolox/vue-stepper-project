@@ -1,6 +1,6 @@
 <template>
   <div>
-    <MaterialesFilters :title="title" @search="handleSearch" @reset="resetState" />
+    <MaterialesFilters :title="title" @search="handleSearch" @reset="handleClearFilters" />
 
     <div v-if="isLoading" class="main-loader-container">
       <svg class="svg-coder" viewBox="0 0 200 150" xmlns="http://www.w3.org/2000/svg">
@@ -32,7 +32,7 @@
 
     <div class="soft-accordion" v-if="hasSearched && !isLoading">
       <div class="soft-accordion-header" @click="openResults = !openResults">
-        <span style="text-transform: uppercase;"><span class="material-icons" style="vertical-align: middle;">list_alt</span> GESTIÓN EN LOTE - {{ title }}</span>
+        <span style="text-transform: uppercase;">GESTIÓN EN LOTE - {{ title }}</span>
         <span class="material-icons">{{ openResults ? 'remove' : 'add' }}</span>
       </div>
 
@@ -134,6 +134,10 @@ const resetState = () => {
   modifiedOts.value = []
   gridData.value = []
   gridColumns.value = getMaterialesColumns(props.type)
+}
+
+const handleClearFilters = () => {
+  operationError.value = ''
 }
 
 const handleSearch = async (filters) => {
