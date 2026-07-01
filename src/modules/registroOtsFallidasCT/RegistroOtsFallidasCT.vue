@@ -1,7 +1,37 @@
 <template>
-  <RegistroOtFallidasScreen />
+  <div class="fallidas-screen">
+    <Filtros :open="state.openFilters.value" :loading="state.loading.value" :model="state.filters" :contratista-options="state.contratistaOptions" :excluida-options="state.excluidaOptions" :pais-options="state.paisOptions" @toggle="state.openFilters.value = !state.openFilters.value" @search="state.buscar" @clear="state.limpiar" />
+    <Tabla :open="state.openGrid.value" :has-rows="state.rows.value.length > 0" :columns="state.columns" :page-rows="state.pageRows.value" :column-filters="state.columnFilters" :sort-state="state.sortState" :page="state.page.value" :per-page="state.perPage.value" :total-pages="state.totalPages.value" :total-count="state.filteredRows.value.length" :from-row="state.fromRow.value" :to-row="state.toRow.value" :all-visible-selected="state.allVisibleSelected.value" :selectable-count="state.selectableVisibleRows.value.length" :col-style="state.colStyle" :row-class="rowClass" @toggle="state.openGrid.value = !state.openGrid.value" @toggle-all="state.toggleAllVisible" @toggle-row="state.toggleRowSelection" @set-row="setRowSelection" @sort="state.toggleSort" @filter="setColumnFilter" @start-resize="state.startColumnResize" @reset-width="state.resetColumnWidth" @open-nota="state.openNota" @open-incluir="state.openIncluir" @export="state.exportarIncluidas" @exclude="state.openExcluirSeleccionadas" @process="state.reprocesar" @page="setPage" @per-page="setPerPage" />
+    <div v-if="state.loading.value" class="loader-backdrop"><div class="typing-loader"><div class="head-dot"></div><div class="screen"><span></span><span></span><span></span></div><p>Procesando OTs...</p></div></div>
+    <div v-if="state.notaPopup.show" class="float-modal" :style="modalStyle(state.notaPopup)"><div class="float-head" @mousedown="startPopupDrag($event, state.notaPopup)"><span>Detalle Nota</span><button @click="state.notaPopup.show = false">x</button></div><div class="float-body"><textarea v-model="state.notaPopup.row.nota" rows="3"></textarea></div><div class="float-actions"><button class="fallidas-btn-secondary" @click="state.notaPopup.show = false">ACEPTAR</button></div></div>
+    <div v-if="state.includePopup.show" class="float-modal include-modal" :style="modalStyle(state.includePopup)"><div class="float-head" @mousedown="startPopupDrag($event, state.includePopup)"><span>Alerta</span><button @click="state.includePopup.show = false">x</button></div><div class="float-body"><p>¿Confirma que desea recuperar la OT seleccionada?</p><label>Motivo<FmTurquoiseSelect v-model="state.includePopup.motivo" :options="state.motivoOptions" class="popup-select" /></label><label>Nota<textarea v-model="state.includePopup.nota" placeholder="Opcional" rows="3"></textarea></label></div><div class="float-actions"><button class="fallidas-btn-secondary" @click="state.includePopup.show = false">CANCELAR</button><button class="fallidas-btn-primary" @click="state.confirmarIncluir">ACEPTAR</button></div></div>
+    <div v-if="state.excludePopup.show" class="float-modal include-modal" :style="modalStyle(state.excludePopup)"><div class="float-head" @mousedown="startPopupDrag($event, state.excludePopup)"><span>Alerta</span><button @click="state.excludePopup.show = false; state.excludeConfirmPopup.show = false">x</button></div><div class="float-body"><p>¿Confirma que desea excluir la OT seleccionada?</p><label>Motivo<FmTurquoiseSelect v-model="state.excludePopup.motivo" :options="state.motivoOptions" class="popup-select" /></label><label>Nota<textarea v-model="state.excludePopup.nota" placeholder="Opcional" rows="3"></textarea></label></div><div class="float-actions"><button class="fallidas-btn-secondary" @click="state.excludePopup.show = false; state.excludeConfirmPopup.show = false">CANCELAR</button><button class="fallidas-btn-primary" @click="state.pedirConfirmacionExcluir">ACEPTAR</button></div></div>
+    <div v-if="state.excludeConfirmPopup.show" class="float-modal include-modal confirm-exclude-modal" :style="modalStyle(state.excludeConfirmPopup)"><div class="float-head" @mousedown="startPopupDrag($event, state.excludeConfirmPopup)"><span>Alerta</span><button @click="state.cancelarConfirmacionExcluir">x</button></div><div class="float-body"><p class="confirm-question">¿Está seguro que desea confirmar?</p><div class="confirm-summary"><div class="confirm-summary-row"><span>Motivo</span><strong>{{ state.excludePopup.motivo }}</strong></div><div class="confirm-summary-row"><span>Nota</span><strong>{{ state.excludePopup.nota?.trim() || 'Sin nota cargada' }}</strong></div></div></div><div class="float-actions"><button class="fallidas-btn-secondary" @click="state.cancelarConfirmacionExcluir">CANCELAR</button><button class="fallidas-btn-primary" @click="state.confirmarExcluir">ACEPTAR</button></div></div>
+    <FmAlertDialog :show="state.alert.show" :title="state.alert.title" :message="state.alert.message" :type="state.alert.type" @close="state.alert.show = false" />
+  </div>
 </template>
 
 <script setup>
-import RegistroOtFallidasScreen from '../actas/registro-ot-fallidas/RegistroOtFallidasScreen.vue'
+import { onBeforeUnmount } from 'vue'
+import '../actas/registro-ot-fallidas/registro-ot-fallidas-screen.css'
+import '../actas/registro-ot-fallidas/fallidas-ui-polish.css'
+import '../actas/registro-ot-fallidas/fallidas-popup-drag.css'
+import '../actas/registro-ot-fallidas/fallidas-confirm-year.css'
+import FmTurquoiseSelect from '../../components/shared/FmTurquoiseSelect.vue'
+import FmAlertDialog from '../../components/shared/FmAlertDialog.vue'
+import Filtros from './components/Filtros.vue'
+import Tabla from './components/Tabla.vue'
+import { useRegistroOtFallidasScreen } from './store/CtFallidaStore.js'
+const state = useRegistroOtFallidasScreen()
+const rowClass = row => ({ excluded: row.excluida === 'S', recovered: row.recovered, selected: row.selected, selectable: row.excluida !== 'S' })
+const setRowSelection = (row, checked) => { if (row.excluida !== 'S') row.selected = checked }
+const setColumnFilter = (field, value) => { state.columnFilters[field] = value; state.page.value = 1 }
+const setPage = value => { state.page.value = value; state.normalizePage() }
+const setPerPage = value => { state.perPage.value = value; state.page.value = 1 }
+const modalStyle = popup => ({ left: `${popup.x}px`, top: `${popup.y}px` })
+let draggingPopup = null, dragOffsetX = 0, dragOffsetY = 0, dragModalWidth = 0, dragModalHeight = 0
+const startPopupDrag = (event, popup) => { if (event.button !== 0 || event.target.closest('button')) return; const modal = event.currentTarget.closest('.float-modal'); if (!modal) return; const rect = modal.getBoundingClientRect(); draggingPopup = popup; dragOffsetX = event.clientX - rect.left; dragOffsetY = event.clientY - rect.top; dragModalWidth = rect.width; dragModalHeight = rect.height; document.body.classList.add('fallidas-popup-dragging'); document.addEventListener('mousemove', movePopup); document.addEventListener('mouseup', stopPopupDrag) }
+const movePopup = event => { if (!draggingPopup) return; const maxX = Math.max(window.innerWidth - dragModalWidth - 8, 8); const maxY = Math.max(window.innerHeight - dragModalHeight - 8, 8); draggingPopup.x = Math.min(Math.max(event.clientX - dragOffsetX, 8), maxX); draggingPopup.y = Math.min(Math.max(event.clientY - dragOffsetY, 8), maxY) }
+const stopPopupDrag = () => { draggingPopup = null; document.body.classList.remove('fallidas-popup-dragging'); document.removeEventListener('mousemove', movePopup); document.removeEventListener('mouseup', stopPopupDrag) }
+onBeforeUnmount(stopPopupDrag)
 </script>
