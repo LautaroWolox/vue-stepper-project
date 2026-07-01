@@ -1,7 +1,7 @@
 <template>
-  <ConsultarNotaDebito />
+  <NotaDebitoScreen />
 </template>
 
 <script setup>
-import ConsultarNotaDebito from '../../components/certificacion/ConsultarNotaDebito.vue'
+import NotaDebitoScreen from './NotaDebitoScreen.vue'
 </script>
